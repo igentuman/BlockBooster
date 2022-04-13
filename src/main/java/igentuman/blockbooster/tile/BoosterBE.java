@@ -11,7 +11,9 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -64,6 +66,15 @@ public class BoosterBE extends BlockEntity {
     public int fePerTick = CommonConfig.GENERAL.fe_per_tick.get();
     public boolean[] sides = CommonConfig.GENERAL.getSides();
     public void tickServer() {
+
+        if(level.hasNeighborSignal(worldPosition) && CommonConfig.GENERAL.deactivate_with_redstone.get()) {
+            if(level.getBlockState(worldPosition).getValue(BlockStateProperties.POWERED) != false) {
+                setChanged();
+                level.setBlock(worldPosition, level.getBlockState(worldPosition).setValue(BlockStateProperties.POWERED, false),
+                        Block.UPDATE_ALL);
+            }
+            return;
+        }
         boolean changedFlag = false;
         boolean curWorkingFlag = false;
         for(int s = 0; s < 4; s++) {

@@ -39,6 +39,8 @@ public class CommonConfig {
       /*public final ForgeConfigSpec.ConfigValue<Boolean> boost_left;
         public final ForgeConfigSpec.ConfigValue<Boolean> boost_right;*/
 
+        public final ForgeConfigSpec.ConfigValue<Boolean> deactivate_with_redstone;
+
       public final ForgeConfigSpec.ConfigValue<ArrayList> white_list;
       public final ForgeConfigSpec.ConfigValue<ArrayList> black_list;
 
@@ -63,6 +65,10 @@ public class CommonConfig {
             boost_right = builder
                     .comment("Boost entities on right of booster block?")
                     .define("boost_right", true);*/
+            deactivate_with_redstone = builder
+                    .comment("Deactivate booster with redstone signal")
+                    .define("deactivate_with_redstone", true);
+
             black_list = builder
                     .comment("Blacklist of block entities (example: \"minecraft:furnace\",\"somemod:machine\")")
                     .define("black_list", new ArrayList());
