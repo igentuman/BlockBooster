@@ -35,9 +35,12 @@ public class CommonConfig {
         public final ForgeConfigSpec.ConfigValue<Integer> boost_rate;
 
         public final ForgeConfigSpec.ConfigValue<Boolean> boost_top;
-        public final ForgeConfigSpec.ConfigValue<Boolean> boost_bottom;/*
-        public final ForgeConfigSpec.ConfigValue<Boolean> boost_left;
+        public final ForgeConfigSpec.ConfigValue<Boolean> boost_bottom;
+      /*public final ForgeConfigSpec.ConfigValue<Boolean> boost_left;
         public final ForgeConfigSpec.ConfigValue<Boolean> boost_right;*/
+
+      public final ForgeConfigSpec.ConfigValue<ArrayList> white_list;
+      public final ForgeConfigSpec.ConfigValue<ArrayList> black_list;
 
 
         public General(ForgeConfigSpec.Builder builder) {
@@ -49,10 +52,10 @@ public class CommonConfig {
                     .comment("Boost rate")
                     .define("boost_rate", 5);
             boost_top = builder
-                    .comment("Boost entities on top of booster block?")
+                    .comment("Boost entities at the top of booster block?")
                     .define("boost_top", true);
             boost_bottom = builder
-                    .comment("Boost entities on bottom of booster block?")
+                    .comment("Boost entities at the bottom of booster block?")
                     .define("boost_bottom", true);
            /* boost_left = builder
                     .comment("Boost entities on left of booster block?")
@@ -60,6 +63,12 @@ public class CommonConfig {
             boost_right = builder
                     .comment("Boost entities on right of booster block?")
                     .define("boost_right", true);*/
+            black_list = builder
+                    .comment("Blacklist of block entities (example: \"minecraft:furnace\",\"somemod:machine\")")
+                    .define("black_list", new ArrayList());
+            white_list = builder
+                    .comment("Whitelist of block entities (example: \"minecraft:furnace\",\"somemod:machine\") has higher priority")
+                    .define("white_list", new ArrayList());
             builder.pop();
         }
 

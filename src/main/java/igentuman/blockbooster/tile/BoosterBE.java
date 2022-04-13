@@ -24,6 +24,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 public class BoosterBE extends BlockEntity {
 
@@ -32,6 +33,8 @@ public class BoosterBE extends BlockEntity {
     public BoosterBE(BlockPos pos, BlockState state) {
         super(Registration.BLOCKBOOSTER_BE.get(), pos, state);
     }
+    private ArrayList<String> whiteList = CommonConfig.GENERAL.white_list.get();
+    private ArrayList<String> blackList = CommonConfig.GENERAL.black_list.get();
 
 
     @Override
@@ -96,8 +99,17 @@ public class BoosterBE extends BlockEntity {
                     lastRightBlock = rightBlock;
                     break;
             }
-
+            //avoid infinite loop
+            if(targetTE instanceof BoosterBE) return;
             if (targetTE != null && getEnergy() >= fePerTick && sides[s]) {
+                //whitelist higher priority
+                if(whiteList.size() > 0) {
+                    if (!whiteList.contains(targetTE.getType().getRegistryName().toString())) {
+                        continue;
+                    }
+                } else if(blackList.contains(targetTE.getType().getRegistryName().toString())) {
+                    continue;
+                }
                 BlockEntityTicker<BlockEntity> ticker = targetTE.getBlockState()
                         .getTicker(level, (BlockEntityType<BlockEntity>) targetTE.getType());
                 if (ticker != null) {
