@@ -53,9 +53,16 @@ public class BoosterBE extends BlockEntity {
     public String bottomBlock = "";
     public String leftBlock = "";
     public String rightBlock = "";
+    public String lastLeftBlock = "";
+    public String lastTopBlock = "";
+    public String lastBottomBlock = "";
+    public String lastRightBlock = "";
+    public boolean workingFlag = false;
     public int fePerTick = CommonConfig.GENERAL.fe_per_tick.get();
     public boolean[] sides = CommonConfig.GENERAL.getSides();
     public void tickServer() {
+        boolean changedFlag = false;
+        boolean curWorkingFlag = false;
         for(int s = 0; s < 4; s++) {
             BlockPos pos = null;
             BlockEntity targetTE = null;
@@ -64,39 +71,57 @@ public class BoosterBE extends BlockEntity {
                     pos = worldPosition.above();
                     targetTE = level.getBlockEntity(pos);
                     topBlock = targetTE != null ? targetTE.getType().getRegistryName().toString(): "";
+                    changedFlag = lastLeftBlock.equals(topBlock) || changedFlag;
+                    lastTopBlock = topBlock;
                     break;
                 case 1:
                     pos = worldPosition.below();
                     targetTE = level.getBlockEntity(pos);
                     bottomBlock = targetTE != null ? targetTE.getType().getRegistryName().toString() : "";;
+                    changedFlag = lastBottomBlock.equals(bottomBlock) || changedFlag;
+                    lastBottomBlock = bottomBlock;
                     break;
                 case 2:
                     pos = worldPosition.relative(Direction.WEST);
                     targetTE = level.getBlockEntity(pos);
-                    leftBlock = targetTE != null ? targetTE.getType().getRegistryName().toString() : "";;
+                    leftBlock = targetTE != null ? targetTE.getType().getRegistryName().toString() : "";
+                    changedFlag = lastLeftBlock.equals(leftBlock) || changedFlag;
+                    lastLeftBlock = leftBlock;
                     break;
                 case 3:
                     pos = worldPosition.relative(Direction.EAST);
                     targetTE = level.getBlockEntity(pos);
-                    rightBlock = targetTE != null ? targetTE.getType().getRegistryName().toString() : "";;
+                    rightBlock = targetTE != null ? targetTE.getType().getRegistryName().toString() : "";
+                    changedFlag = lastRightBlock.equals(rightBlock) || changedFlag;
+                    lastRightBlock = rightBlock;
                     break;
             }
-            setChanged();
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-            if(getEnergy() < fePerTick || !sides[s]) return;
-            if (targetTE != null) {
+
+            if (targetTE != null && getEnergy() >= fePerTick && sides[s]) {
                 BlockEntityTicker<BlockEntity> ticker = targetTE.getBlockState()
                         .getTicker(level, (BlockEntityType<BlockEntity>) targetTE.getType());
-
-                for (int i = 0; i < CommonConfig.GENERAL.boost_rate.get(); i++) {
-                    if (ticker != null) {
+                if (ticker != null) {
+                    for (int i = 0; i < CommonConfig.GENERAL.boost_rate.get(); i++) {
                         ticker.tick(level, pos, targetTE.getBlockState(), targetTE);
-                        consumeEnergy(fePerTick);
                     }
+                    consumeEnergy(fePerTick);
+                    changedFlag = true;
+                    curWorkingFlag = true;
                 }
-            } else if (targetTE != null && targetTE.getBlockState().isRandomlyTicking()) {
+            } /*else if (targetTE != null && targetTE.getBlockState().isRandomlyTicking()) {
                 if (level.random.nextInt(CommonConfig.GENERAL.boost_rate.get().intValue()) == 0) {
                     targetTE.getBlockState().randomTick((ServerLevel) level, pos, level.random);
+                }
+            }*/
+
+            if(changedFlag) {
+                setChanged();
+                if (level.getBlockState(worldPosition).getValue(BlockStateProperties.POWERED) != curWorkingFlag) {
+                    level.setBlock(worldPosition, level.getBlockState(worldPosition).setValue(BlockStateProperties.POWERED, curWorkingFlag),
+                            Block.UPDATE_ALL);
+                    workingFlag = curWorkingFlag;
+                } else {
+                    level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
                 }
             }
         }
@@ -104,8 +129,8 @@ public class BoosterBE extends BlockEntity {
 
     private CustomEnergyStorage createEnergyStorage() {
         return new CustomEnergyStorage (
-                CommonConfig.GENERAL.fe_per_tick.get()*10,
-                        CommonConfig.GENERAL.fe_per_tick.get()
+                CommonConfig.GENERAL.fe_per_tick.get()*16,
+                        CommonConfig.GENERAL.fe_per_tick.get()*4
         ) {
             @Override
             public int receiveEnergy(int maxReceive, boolean simulate) {
@@ -147,7 +172,7 @@ public class BoosterBE extends BlockEntity {
     private void saveClientData(CompoundTag tag) {
         tag.put("Energy", energy.serializeNBT());
         tag.putString("topBlock",topBlock);
-        tag.putString("bottomBlock",leftBlock);
+        tag.putString("bottomBlock",bottomBlock);
         tag.putString("leftBlock",leftBlock);
         tag.putString("rightBlock",rightBlock);
     }
@@ -178,7 +203,7 @@ public class BoosterBE extends BlockEntity {
     public void saveAdditional(CompoundTag tag) {
        tag.put("Energy", energy.serializeNBT());
         tag.putString("topBlock",topBlock);
-        tag.putString("bottomBlock",leftBlock);
+        tag.putString("bottomBlock",bottomBlock);
         tag.putString("leftBlock",leftBlock);
         tag.putString("rightBlock",rightBlock);
     }
