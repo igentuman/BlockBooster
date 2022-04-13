@@ -61,12 +61,12 @@ public class BoosterBE extends BlockEntity {
             BlockEntity targetTE = null;
             switch (s) {
                 case 0:
-                    pos = worldPosition.relative(Direction.NORTH);
+                    pos = worldPosition.above();
                     targetTE = level.getBlockEntity(pos);
                     topBlock = targetTE != null ? targetTE.getType().getRegistryName().toString(): "";
                     break;
                 case 1:
-                    pos = worldPosition.relative(Direction.SOUTH);
+                    pos = worldPosition.below();
                     targetTE = level.getBlockEntity(pos);
                     bottomBlock = targetTE != null ? targetTE.getType().getRegistryName().toString() : "";;
                     break;
