@@ -8,10 +8,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 
-public class BoosterBE extends BlockEntity {
+public class BoosterBE extends BlockEntity implements BlockEntityTicker {
 
     private final CustomEnergyStorage energy = createEnergyStorage();
     private final LazyOptional<IEnergyStorage> energyHandler = LazyOptional.of(() -> energy);
@@ -65,6 +65,12 @@ public class BoosterBE extends BlockEntity {
     public boolean workingFlag = false;
     public int fePerTick = CommonConfig.GENERAL.fe_per_tick.get();
     public boolean[] sides = CommonConfig.GENERAL.getSides();
+
+    protected String getRegistryLineForBE(BlockEntity be)
+    {
+        return BlockEntityType.getKey(be.getType()).toString();
+    }
+
     public void tickServer() {
 
         if(level.hasNeighborSignal(worldPosition) && CommonConfig.GENERAL.deactivate_with_redstone.get()) {
@@ -84,28 +90,28 @@ public class BoosterBE extends BlockEntity {
                 case 0:
                     pos = worldPosition.above();
                     targetTE = level.getBlockEntity(pos);
-                    topBlock = targetTE != null ? targetTE.getType().getRegistryName().toString(): "";
+                    topBlock = targetTE != null ? getRegistryLineForBE(targetTE): "";
                     changedFlag = lastLeftBlock.equals(topBlock) || changedFlag;
                     lastTopBlock = topBlock;
                     break;
                 case 1:
                     pos = worldPosition.below();
                     targetTE = level.getBlockEntity(pos);
-                    bottomBlock = targetTE != null ? targetTE.getType().getRegistryName().toString() : "";;
+                    bottomBlock = targetTE != null ? getRegistryLineForBE(targetTE) : "";;
                     changedFlag = lastBottomBlock.equals(bottomBlock) || changedFlag;
                     lastBottomBlock = bottomBlock;
                     break;
                 case 2:
                     pos = worldPosition.relative(Direction.WEST);
                     targetTE = level.getBlockEntity(pos);
-                    leftBlock = targetTE != null ? targetTE.getType().getRegistryName().toString() : "";
+                    leftBlock = targetTE != null ? getRegistryLineForBE(targetTE) : "";
                     changedFlag = lastLeftBlock.equals(leftBlock) || changedFlag;
                     lastLeftBlock = leftBlock;
                     break;
                 case 3:
                     pos = worldPosition.relative(Direction.EAST);
                     targetTE = level.getBlockEntity(pos);
-                    rightBlock = targetTE != null ? targetTE.getType().getRegistryName().toString() : "";
+                    rightBlock = targetTE != null ? getRegistryLineForBE(targetTE) : "";
                     changedFlag = lastRightBlock.equals(rightBlock) || changedFlag;
                     lastRightBlock = rightBlock;
                     break;
@@ -115,10 +121,10 @@ public class BoosterBE extends BlockEntity {
             if (targetTE != null && getEnergy() >= fePerTick && sides[s]) {
                 //whitelist higher priority
                 if(whiteList.size() > 0) {
-                    if (!whiteList.contains(targetTE.getType().getRegistryName().toString())) {
+                    if (!whiteList.contains(targetTE.getType().toString())) {
                         continue;
                     }
-                } else if(blackList.contains(targetTE.getType().getRegistryName().toString())) {
+                } else if(blackList.contains(targetTE.getType().toString())) {
                     continue;
                 }
                 BlockEntityTicker<BlockEntity> ticker = targetTE.getBlockState()
@@ -134,7 +140,7 @@ public class BoosterBE extends BlockEntity {
             } /*else if (targetTE != null && targetTE.getBlockState().isRandomlyTicking()) {
                 if (level.random.nextInt(CommonConfig.GENERAL.boost_rate.get().intValue()) == 0) {
                     targetTE.getBlockState().randomTick((ServerLevel) level, pos, level.random);
-                }
+                }sa
             }*/
 
             if(changedFlag) {
@@ -238,5 +244,12 @@ public class BoosterBE extends BlockEntity {
             return energyHandler.cast();
         }
         return super.getCapability(cap, side);
+    }
+
+    @Override
+    public void tick(Level world, BlockPos p_155254_, BlockState p_155255_, BlockEntity p_155256_) {
+        if(!world.isClientSide()) {
+            //tickServer();
+        }
     }
 }

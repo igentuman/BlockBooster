@@ -14,15 +14,15 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0'
+version = '1.0.1'
 group = 'igentuman.blockbooster'
-archivesBaseName = 'BlockBooster'
+archivesBaseName = 'BlockBooster-1.19'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
 
-    mappings channel: 'parchment', version: "1.18.1-2022.03.06-1.18.2"
+    mappings channel: 'official', version: "1.19"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
@@ -83,12 +83,12 @@ repositories {
 
 dependencies {
 
-    minecraft 'net.minecraftforge:forge:1.18.2-40.0.44'
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-    implementation fg.deobf("mezz.jei:jei-${jei_version}")
+    minecraft 'net.minecraftforge:forge:1.19-41.0.17'
+    //runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
+   // compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
+    //implementation fg.deobf("mezz.jei:jei-${jei_version}")
 
-    implementation fg.deobf("curse.maven:the-one-probe-245211:3550084")
+    //implementation fg.deobf("curse.maven:the-one-probe-245211:3550084")
 }
 
 jar {

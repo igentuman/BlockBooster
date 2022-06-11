@@ -14,6 +14,6 @@ public class ItemModels extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        withExistingParent(Registration.BLOCKBOOSTER_ITEM.get().getRegistryName().getPath(), modLoc("block/blockbooster/main"));
+        withExistingParent(Registration.BLOCKBOOSTER_ITEM.getId().getPath(), modLoc("block/blockbooster/main"));
     }
 }

@@ -13,14 +13,14 @@ public class DataGenerators {
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         if (event.includeServer()) {
-            generator.addProvider(new TutRecipes(generator));
+            generator.addProvider(true, new TutRecipes(generator));
             BlockTags blockTags = new BlockTags(generator, event.getExistingFileHelper());
-            generator.addProvider(blockTags);
+            generator.addProvider(true, blockTags);
         }
         if (event.includeClient()) {
-            generator.addProvider(new BlockStates(generator, event.getExistingFileHelper()));
-            generator.addProvider(new ItemModels(generator, event.getExistingFileHelper()));
-            generator.addProvider(new TutLanguageProvider(generator, "en_us"));
+            generator.addProvider(true, new BlockStates(generator, event.getExistingFileHelper()));
+            generator.addProvider(true, new ItemModels(generator, event.getExistingFileHelper()));
+            generator.addProvider(true, new TutLanguageProvider(generator, "en_us"));
         }
     }
 }

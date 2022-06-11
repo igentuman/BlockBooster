@@ -4,7 +4,9 @@ import igentuman.blockbooster.tile.BoosterBE;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -60,8 +62,7 @@ public class BlockBooster extends Block implements EntityBlock {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter reader, List<Component> list, TooltipFlag flags) {
-        list.add(new TranslatableComponent(MESSAGE_BLOCKBOOSTER)
-                .withStyle(ChatFormatting.BLUE));
+        list.add(MutableComponent.create(ComponentContents.EMPTY).withStyle(ChatFormatting.BLUE));
     }
 
     @Nullable
@@ -104,7 +105,7 @@ public class BlockBooster extends Block implements EntityBlock {
                 MenuProvider containerProvider = new MenuProvider() {
                     @Override
                     public Component getDisplayName() {
-                        return new TranslatableComponent(SCREEN_TUTORIAL_BLOCKBOOSTER);
+                        return MutableComponent.create(ComponentContents.EMPTY);
                     }
 
                     @Override
