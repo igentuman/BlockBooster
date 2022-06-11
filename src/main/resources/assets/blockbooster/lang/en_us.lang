@@ -1,0 +1,7 @@
+tile.booster.name=Booster
+booster.container.title=Booster
+booster.container.energy=Energy:
+booster.container.top_te=Block on Top:
+booster.container.bottom_te=Block on Bottom:
+booster.container.is_not_working=Not boosting
+booster.container.is_working=Boosting

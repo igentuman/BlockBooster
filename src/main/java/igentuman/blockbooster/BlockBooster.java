@@ -1,39 +1,63 @@
 package igentuman.blockbooster;
 
-import igentuman.blockbooster.config.CommonConfig;
-import igentuman.blockbooster.setup.ModSetup;
-import igentuman.blockbooster.setup.ClientSetup;
-import igentuman.blockbooster.setup.Registration;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModLoadingContext;
+import igentuman.blockbooster.network.GuiProxy;
+import igentuman.blockbooster.network.ModPacketHandler;
+import igentuman.blockbooster.proxy.ISidedProxy;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(BlockBooster.MODID)
+import static igentuman.blockbooster.ModInfo.MODID;
+
+@Mod(
+    name = ModInfo.NAME,
+    modid = MODID,
+    version = ModInfo.VERSION,
+    acceptedMinecraftVersions = ModInfo.MC_VERSION,
+    dependencies = ModInfo.DEPENDENCIES
+)
 public class BlockBooster {
 
-    public static final Logger LOGGER = LogManager.getLogger();
-    public static final String MODID = "blockbooster";
+  @Mod.Instance(MODID)
+  public static BlockBooster instance;
 
-    public BlockBooster() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.spec);
-        ModSetup.setup();
-        Registration.init();
-        IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
-        modbus.addListener(ModSetup::init);
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> modbus.addListener(ClientSetup::init));
-    }
+  @SidedProxy(clientSide = "igentuman.blockbooster.proxy.ClientProxy", serverSide = "igentuman.blockbooster.proxy.CommonProxy")
+  public static ISidedProxy proxy;
 
-    @SubscribeEvent
-    public static void onModConfigEvent(final ModConfigEvent event) {
-        if (event.getConfig().getType() == ModConfig.Type.COMMON)
-            CommonConfig.setLoaded();
+  public static final Logger logger = LogManager.getLogger(MODID);
+
+  @EventHandler
+  public void preInit(FMLPreInitializationEvent event) {
+    logger.info("Starting PreInitialization.");
+    proxy.preInit(event);
+
+    MinecraftForge.EVENT_BUS.register(new RegistryHandler());
+    MinecraftForge.EVENT_BUS.register(this);
+    ModPacketHandler.registerMessages(MODID);
+  }
+
+  @EventHandler
+  public void init(FMLInitializationEvent event) {
+    logger.info("Starting Initialization.");
+    proxy.init(event);
+    ConfigManager.sync(MODID, Config.Type.INSTANCE);
+    NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiProxy());
+  }
+
+  @SubscribeEvent
+  public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+    if(event.getModID().equals(MODID)) {
+      ConfigManager.sync(MODID, Config.Type.INSTANCE);
     }
+  }
 }

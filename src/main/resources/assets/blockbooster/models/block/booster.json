@@ -1,0 +1,11 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "front": "blockbooster:blocks/booster_output",
+    "side": "blockbooster:blocks/booster_input",
+    "south": "blockbooster:blocks/booster_side",
+    "top": "blockbooster:blocks/booster_top",
+    "down": "blockbooster:blocks/booster_top",
+    "particle": "blockbooster:blocks/booster_side"
+  }
+}

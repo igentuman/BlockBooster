@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "I#I",
+    "IGI"
+  ],
+  "key": {
+    "#": {
+      "type": "forge:ore_dict",
+      "ore": "workbench"
+    },
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "gearIron"
+    }
+  },
+  "result": {
+    "item": "blockbooster:booster"
+  }
+}

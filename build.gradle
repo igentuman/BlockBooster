@@ -1,123 +1,105 @@
 buildscript {
     repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://maven.parchmentmc.org' }
-        mavenCentral()
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.parchmentmc:librarian:1.+'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = '1.0'
-group = 'igentuman.blockbooster'
-archivesBaseName = 'BlockBooster'
+version = "${mc_version}-${mod_version}"
+group = "igentuman.blockbooster"
+archivesBaseName = "BlockBooster"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+sourceCompatibility = targetCompatibility = "1.8"
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.8"
+    options.encoding = 'UTF-8'
+}
 
 minecraft {
-
-    mappings channel: 'parchment', version: "1.18.1-2022.03.06-1.18.2"
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-    runs {
-        client {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                blockbooster {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                blockbooster {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', 'blockbooster', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-            mods {
-                blockbooster {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
+    version = "${mc_version}-${forge_version}"
+    runDir = "run"
+    replace "@VERSION@", "${mod_version}"
+    mappings = "${mapping_version}"
+    makeObfSourceJar = true
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+configurations {
+    shade
+    compile.extendsFrom(shade)
+}
 
 repositories {
-    maven { // JEI
-        url "https://dvs1.progwml6.com/files/maven"
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url 'https://minecraft.curseforge.com/api/maven/'
     }
-    maven { // TOP
-        url "https://cursemaven.com"
+    maven {url "http://maven.blamejared.com"}
+    maven {url "http://dvs1.progwml6.com/files/maven"}
+    maven {
+        url 'https://jitpack.io'
     }
     maven {
-        name 'Modmaven'
-        url 'https://modmaven.dev/'
-        content {
-            includeGroup 'mekanism'
-        }
+        url = "https://www.cursemaven.com"
+    }
+    maven {
+        name = "mcmoddev"
+        url = "https://maven.mcmoddev.com"
+    }
+    maven {
+        name = "ModMaven"
+        url = "https://modmaven.dev/"
     }
 }
 
 dependencies {
+    shade "com.github.MJaroslav.Reflectors:library:v4"
+    compileOnly "org.jetbrains:annotations:17.0.0"
+    deobfCompile "mekanism:Mekanism:${mekanism_version}"
+    deobfProvided "nuclearcraft-overhauled:NuclearCraft:${nuclearcraft_version}:${mc_version}"
+    deobfCompile "curse.maven:ae2-extended-life-570458:3791235"
+    deobfCompile "net.industrial-craft:industrialcraft-2:${ic2_version}:api"
+    deobfCompile "net.industrial-craft:industrialcraft-2:${ic2_version}"
+    deobfCompile "curse.maven:immersive-engineering-231951:2974106"
+    deobfProvided "com.blamejared:MTLib:${mtlib_version}"
+    runtime "com.blamejared:MTLib:${mtlib_version}"
+    deobfProvided "mezz.jei:jei_${mc_version}:${jei_version}:api"
+    implementation "mezz.jei:jei_${mc_version}:${jei_version}"
+    runtime "mezz.jei:jei_${mc_version}:${jei_version}"
+}
 
-    minecraft 'net.minecraftforge:forge:1.18.2-40.0.44'
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-    implementation fg.deobf("mezz.jei:jei-${jei_version}")
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mc_version", project.mc_version
 
-    implementation fg.deobf("curse.maven:the-one-probe-245211:3550084")
+    rename '(.+_at.cfg)', 'META-INF/$1'
 }
 
 jar {
+    configurations.shade.each { dep ->
+        from project.zipTree(dep)
+    }
     manifest {
         attributes([
-                "Specification-Title"     : "blockbooster",
-                "Specification-Vendor"    : "blockboostersareus",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.jar.archiveVersion,
-                "Implementation-Vendor"   : "blockboostersareus",
+                "Specification-Title": "blockbooster",
+                "Specification-Vendor": "igentuman",
+                "Specification-Version": "1",
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" : "igentuman",
+                "FMLAT": "blockbooster_at.cfg",
+                "FMLCorePlugin": "igentuman.blockbooster.reflection.ReflectorsPlugin",
+                "FMLCorePluginContainsFMLMod": "true",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
 
-
 jar.finalizedBy('reobfJar')
-
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/mcmodsrepo"
-        }
-    }
-}
