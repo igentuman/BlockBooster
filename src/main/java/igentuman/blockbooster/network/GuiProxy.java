@@ -27,8 +27,7 @@ public class GuiProxy implements IGuiHandler {
         BlockPos pos = new BlockPos(x, y, z);
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileBlockBooster) {
-            TileBlockBooster containerTileEntity = (TileBlockBooster) te;
-            return new GuiBlockBooster(new ContainerBlockBooster(containerTileEntity));
+            return new GuiBlockBooster(new ContainerBlockBooster((TileBlockBooster) te));
         }
         return null;
     }

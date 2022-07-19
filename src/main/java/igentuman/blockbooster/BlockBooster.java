@@ -49,7 +49,6 @@ public class BlockBooster {
   @EventHandler
   public void init(FMLInitializationEvent event) {
     logger.info("Starting Initialization.");
-    proxy.init(event);
     ConfigManager.sync(MODID, Config.Type.INSTANCE);
     NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiProxy());
   }
