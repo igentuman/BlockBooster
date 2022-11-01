@@ -5,15 +5,20 @@ import igentuman.blockbooster.network.TileProcessUpdatePacket;
 
 import nc.ModCheck;
 import nc.config.NCConfig;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -88,13 +93,27 @@ public class TileBlockBooster  extends TileEntity implements ITickable, IEnergyS
     private boolean isAllowedToBoost(TileEntity te) {
         boolean goodTE = te instanceof ITickable && !(te instanceof TileBlockBooster);
         if(!goodTE) return false;
+        String blockName = getBlockDataInfo(te.getPos());
         if(boosterConfig.white_list.length > 0) {
-            return Arrays.stream(boosterConfig.white_list).anyMatch(str -> te.getDisplayName().getUnformattedText().equals(str));
+            return Arrays.stream(boosterConfig.white_list).anyMatch(str -> blockName.equals(str));
         }
         if(boosterConfig.black_list.length > 0) {
-            return Arrays.stream(boosterConfig.black_list).noneMatch(str -> te.getDisplayName().getUnformattedText().equals(str));
+            return Arrays.stream(boosterConfig.black_list).noneMatch(str -> blockName.equals(str));
         }
         return true;
+    }
+
+
+    public String getBlockDataInfo(BlockPos pos)
+    {
+        IBlockState actualState = world.getBlockState(pos).getActualState(world, pos);
+        Block block = actualState.getBlock();
+
+        int id = Block.getIdFromBlock(block);
+        int meta = block.getMetaFromState(actualState);
+        ResourceLocation rl = ForgeRegistries.BLOCKS.getKey(block);
+        String registryName = rl != null ? rl.toString() : "<null>";
+        return registryName+":"+id+":"+meta;
     }
 
     @Override
