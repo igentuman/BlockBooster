@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.IEnergyStorage;
 
 public class BoosterContainer extends AbstractContainerMenu {
@@ -32,6 +32,11 @@ public class BoosterContainer extends AbstractContainerMenu {
         return blockEntity.bottomBlock;
     }
 
+    public boolean isWorking()
+    {
+        return blockEntity.workingFlag;
+    }
+
     public String getLeftBlock()
     {
         return blockEntity.leftBlock;
@@ -43,7 +48,7 @@ public class BoosterContainer extends AbstractContainerMenu {
     }
 
     public int getEnergy() {
-        return blockEntity.getCapability(CapabilityEnergy.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
+        return blockEntity.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
     }
 
     @Override

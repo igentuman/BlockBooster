@@ -4,6 +4,7 @@ import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.block.BoosterContainer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import igentuman.blockbooster.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -27,11 +28,15 @@ public class BoosterScreen extends AbstractContainerScreen<BoosterContainer> {
 
     @Override
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-        drawString(matrixStack, Minecraft.getInstance().font, "Energy: " + menu.getEnergy(), 10, 10, 0x000000);
-        drawString(matrixStack, Minecraft.getInstance().font, "On Top: " + menu.getTopBlock(), 10, 20, 0x000000);
-        drawString(matrixStack, Minecraft.getInstance().font, "On Bottom: " + menu.getBottomBlock(), 10, 30, 0x000000);
-       // drawString(matrixStack, Minecraft.getInstance().font, "On Left: " + menu.getLeftBlock(), 10, 40, 0xffffff);
-        //drawString(matrixStack, Minecraft.getInstance().font, "On Right: " + menu.getRightBlock(), 10, 50, 0xffffff);
+        drawCenteredString(matrixStack,Minecraft.getInstance().font,"Block Booster", imageWidth/2, 10, 0xffffff);
+        drawString(matrixStack, Minecraft.getInstance().font, "Energy: " + menu.getEnergy(), 10, 25, 0xffffff);
+        drawString(matrixStack, Minecraft.getInstance().font, "Energy per tick: " + CommonConfig.GENERAL.fe_per_tick.get(), 10, 35, 0xffffff);
+
+        drawString(matrixStack, Minecraft.getInstance().font, "On Top: " + menu.getTopBlock(), 10, 45, 0xffffff);
+        drawString(matrixStack, Minecraft.getInstance().font, "On Bottom: " + menu.getBottomBlock(), 10, 55, 0xffffff);
+        if(menu.isWorking()) {
+            drawString(matrixStack, Minecraft.getInstance().font, "Boosting", 10, 65, 0xffffff);
+        }
     }
 
     @Override

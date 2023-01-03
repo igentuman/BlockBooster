@@ -2,9 +2,9 @@ package igentuman.blockbooster.datagen;
 
 import igentuman.blockbooster.BlockBooster;
 import net.minecraft.data.DataGenerator;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 @Mod.EventBusSubscriber(modid = BlockBooster.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DataGenerators {

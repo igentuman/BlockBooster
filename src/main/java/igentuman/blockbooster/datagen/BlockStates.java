@@ -2,10 +2,12 @@ package igentuman.blockbooster.datagen;
 
 import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.setup.Registration;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
@@ -48,7 +50,7 @@ public class BlockStates extends BlockStateProvider {
 
         frame.texture("window", modLoc("block/blockbooster_window"));
         frame.texture("particle", modLoc("block/blockbooster_off"));
-
+        frame.renderType("translucent");
         createPowergenModel(Registration.BLOCKBOOSTER.get(), frame);
     }
 
@@ -69,7 +71,6 @@ public class BlockStates extends BlockStateProvider {
                 .texture("single", modLoc("block/blockbooster_on"));
 
         MultiPartBlockStateBuilder bld = getMultipartBuilder(block);
-
         bld.part().modelFile(frame).addModel();
 
         BlockModelBuilder[] models = new BlockModelBuilder[] { singleOff, singleOn };

@@ -2,6 +2,7 @@ package igentuman.blockbooster.datagen;
 
 import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.setup.Registration;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;

@@ -16,7 +16,7 @@ public class ClientSetup {
     public static void init(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             MenuScreens.register(Registration.BLOCKBOOSTER_CONTAINER.get(), BoosterScreen::new);
-            ItemBlockRenderTypes.setRenderLayer(Registration.BLOCKBOOSTER.get(), RenderType.translucent());
+           //ItemBlockRenderTypes.setRenderLayer(Registration.BLOCKBOOSTER.get(), RenderType.translucent());
             BoosterRenderer.register();
         });
        

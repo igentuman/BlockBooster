@@ -6,113 +6,113 @@
       }
     },
     {
-      "when": {
-        "powered": "false"
-      },
       "apply": {
         "model": "blockbooster:block/blockbooster/singleoff"
+      },
+      "when": {
+        "powered": "false"
       }
     },
     {
-      "when": {
-        "powered": "false"
-      },
       "apply": {
         "model": "blockbooster:block/blockbooster/singleoff",
         "x": 180
+      },
+      "when": {
+        "powered": "false"
       }
     },
     {
-      "when": {
-        "powered": "false"
-      },
       "apply": {
         "model": "blockbooster:block/blockbooster/singleoff",
         "x": 90
+      },
+      "when": {
+        "powered": "false"
       }
     },
     {
-      "when": {
-        "powered": "false"
-      },
       "apply": {
         "model": "blockbooster:block/blockbooster/singleoff",
         "x": 270
+      },
+      "when": {
+        "powered": "false"
       }
     },
     {
-      "when": {
-        "powered": "false"
-      },
       "apply": {
         "model": "blockbooster:block/blockbooster/singleoff",
         "x": 90,
         "y": 90
+      },
+      "when": {
+        "powered": "false"
       }
     },
     {
-      "when": {
-        "powered": "false"
-      },
       "apply": {
         "model": "blockbooster:block/blockbooster/singleoff",
         "x": 90,
         "y": 270
+      },
+      "when": {
+        "powered": "false"
       }
     },
     {
-      "when": {
-        "powered": "true"
-      },
       "apply": {
         "model": "blockbooster:block/blockbooster/singleon"
+      },
+      "when": {
+        "powered": "true"
       }
     },
     {
-      "when": {
-        "powered": "true"
-      },
       "apply": {
         "model": "blockbooster:block/blockbooster/singleon",
         "x": 180
+      },
+      "when": {
+        "powered": "true"
       }
     },
     {
-      "when": {
-        "powered": "true"
-      },
       "apply": {
         "model": "blockbooster:block/blockbooster/singleon",
         "x": 90
+      },
+      "when": {
+        "powered": "true"
       }
     },
     {
-      "when": {
-        "powered": "true"
-      },
       "apply": {
         "model": "blockbooster:block/blockbooster/singleon",
         "x": 270
+      },
+      "when": {
+        "powered": "true"
       }
     },
     {
-      "when": {
-        "powered": "true"
-      },
       "apply": {
         "model": "blockbooster:block/blockbooster/singleon",
         "x": 90,
         "y": 90
+      },
+      "when": {
+        "powered": "true"
       }
     },
     {
-      "when": {
-        "powered": "true"
-      },
       "apply": {
         "model": "blockbooster:block/blockbooster/singleon",
         "x": 90,
         "y": 270
+      },
+      "when": {
+        "powered": "true"
       }
     }
   ]

@@ -2,6 +2,7 @@ package igentuman.blockbooster.setup;
 
 import igentuman.blockbooster.block.*;
 import igentuman.blockbooster.tile.BoosterBE;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -20,8 +21,8 @@ public class Registration {
 
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, igentuman.blockbooster.BlockBooster.MODID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, igentuman.blockbooster.BlockBooster.MODID);
-    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, igentuman.blockbooster.BlockBooster.MODID);
-    private static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, igentuman.blockbooster.BlockBooster.MODID);
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, igentuman.blockbooster.BlockBooster.MODID);
+    private static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, igentuman.blockbooster.BlockBooster.MODID);
     public static void init() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         BLOCKS.register(bus);
@@ -40,7 +41,6 @@ public class Registration {
     public static final RegistryObject<BlockEntityType<BoosterBE>> BLOCKBOOSTER_BE = BLOCK_ENTITIES.register("blockbooster", () -> BlockEntityType.Builder.of(BoosterBE::new, BLOCKBOOSTER.get()).build(null));
     public static final RegistryObject<MenuType<BoosterContainer>> BLOCKBOOSTER_CONTAINER = CONTAINERS.register("blockbooster",
             () -> IForgeMenuType.create((windowId, inv, data) -> new BoosterContainer(windowId, data.readBlockPos(), inv, inv.player)));
-
 
     public static <B extends Block> RegistryObject<Item> fromBlock(RegistryObject<B> block) {
         return ITEMS.register(block.getId().getPath(), () -> new BlockItem(block.get(), ITEM_PROPERTIES));

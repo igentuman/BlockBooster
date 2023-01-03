@@ -1,9 +1,11 @@
 {
-  "textures": {
-    "single": "blockbooster:block/blockbooster_on"
-  },
   "elements": [
     {
+      "faces": {
+        "down": {
+          "texture": "#single"
+        }
+      },
       "from": [
         3,
         3,
@@ -13,12 +15,10 @@
         13,
         13,
         13
-      ],
-      "faces": {
-        "down": {
-          "texture": "#single"
-        }
-      }
+      ]
     }
-  ]
+  ],
+  "textures": {
+    "single": "blockbooster:block/blockbooster_on"
+  }
 }

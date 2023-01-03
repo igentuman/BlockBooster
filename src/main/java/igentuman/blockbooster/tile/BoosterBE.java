@@ -1,6 +1,5 @@
 package igentuman.blockbooster.tile;
 
-import com.sun.jna.platform.unix.solaris.LibKstat;
 import igentuman.blockbooster.config.CommonConfig;
 import igentuman.blockbooster.setup.Registration;
 import igentuman.blockbooster.util.CustomEnergyStorage;
@@ -9,19 +8,16 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nonnull;
@@ -200,6 +196,7 @@ public class BoosterBE extends BlockEntity implements BlockEntityTicker {
 
     private void saveClientData(CompoundTag tag) {
         tag.put("Energy", energy.serializeNBT());
+        tag.putBoolean("isWorking", workingFlag);
         tag.putString("topBlock",topBlock);
         tag.putString("bottomBlock",bottomBlock);
         tag.putString("leftBlock",leftBlock);
@@ -210,6 +207,7 @@ public class BoosterBE extends BlockEntity implements BlockEntityTicker {
         if (tag.contains("Energy")) {
             energy.deserializeNBT(tag.get("Energy"));
         }
+        workingFlag = tag.getBoolean("isWorking");
         topBlock = tag.getString("topBlock");
         bottomBlock = tag.getString("bottomBlock");
         leftBlock = tag.getString("leftBlock");
@@ -221,6 +219,7 @@ public class BoosterBE extends BlockEntity implements BlockEntityTicker {
         if (tag.contains("Energy")) {
             energy.deserializeNBT(tag.get("Energy"));
         }
+        workingFlag = tag.getBoolean("isWorking");
         topBlock = tag.getString("topBlock");
         bottomBlock = tag.getString("bottomBlock");
         leftBlock = tag.getString("leftBlock");
@@ -231,6 +230,7 @@ public class BoosterBE extends BlockEntity implements BlockEntityTicker {
     @Override
     public void saveAdditional(CompoundTag tag) {
        tag.put("Energy", energy.serializeNBT());
+        tag.putBoolean("isWorking", workingFlag);
         tag.putString("topBlock",topBlock);
         tag.putString("bottomBlock",bottomBlock);
         tag.putString("leftBlock",leftBlock);
@@ -240,7 +240,7 @@ public class BoosterBE extends BlockEntity implements BlockEntityTicker {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityEnergy.ENERGY) {
+        if (cap == ForgeCapabilities.ENERGY) {
             return energyHandler.cast();
         }
         return super.getCapability(cap, side);

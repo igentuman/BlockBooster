@@ -40,7 +40,7 @@ import java.util.List;
 public class BlockBooster extends Block implements EntityBlock {
 
     public static final String MESSAGE_BLOCKBOOSTER = "message.blockbooster";
-    public static final String SCREEN_TUTORIAL_BLOCKBOOSTER = "screen.igentuman.blockbooster";
+    public static final String SCREEN_BLOCKBOOSTER = "screen.igentuman.blockbooster";
 
     private static final VoxelShape RENDER_SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
@@ -113,7 +113,7 @@ public class BlockBooster extends Block implements EntityBlock {
                         return new BoosterContainer(windowId, pos, playerInventory, playerEntity);
                     }
                 };
-                NetworkHooks.openGui((ServerPlayer) player, containerProvider, be.getBlockPos());
+                NetworkHooks.openScreen((ServerPlayer) player, containerProvider, be.getBlockPos());
             } else {
                 throw new IllegalStateException("Our named container provider is missing!");
             }
