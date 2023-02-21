@@ -3,7 +3,7 @@ package igentuman.blockbooster.container;
 import igentuman.blockbooster.network.BoosterPacket;
 import igentuman.blockbooster.setup.Messages;
 import igentuman.blockbooster.setup.Registration;
-import igentuman.blockbooster.tile.TileBoosterT1;
+import igentuman.blockbooster.tile.TileBoosterT2;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -15,16 +15,15 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import java.util.HashMap;
-import java.util.List;
 
-public class BoosterT1Container extends AbstractContainerMenu {
+public class BoosterT2Container extends AbstractContainerMenu {
 
-    private TileBoosterT1 blockEntity;
+    private TileBoosterT2 blockEntity;
     private Player playerEntity;
 
-    public BoosterT1Container(int windowId, BlockPos pos, Inventory playerInventory, Player player) {
-        super(Registration.BLOCKBOOSTER_T1_CONTAINER.get(), windowId);
-        blockEntity = (TileBoosterT1)player.getCommandSenderWorld().getBlockEntity(pos);
+    public BoosterT2Container(int windowId, BlockPos pos, Inventory playerInventory, Player player) {
+        super(Registration.BLOCKBOOSTER_T2_CONTAINER.get(), windowId);
+        blockEntity = (TileBoosterT2)player.getCommandSenderWorld().getBlockEntity(pos);
         this.playerEntity = player;
     }
 
@@ -50,7 +49,7 @@ public class BoosterT1Container extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player playerIn) {
-        return stillValid(ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()), playerEntity, Registration.BLOCKBOOSTER_T1.get());
+        return stillValid(ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()), playerEntity, Registration.BLOCKBOOSTER_T2.get());
     }
 
     public HashMap<Integer, BlockEntity> getAttachedBlocks() {

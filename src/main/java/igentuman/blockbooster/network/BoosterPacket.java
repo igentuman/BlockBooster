@@ -1,5 +1,6 @@
 package igentuman.blockbooster.network;
 
+import igentuman.blockbooster.tile.ITileBooster;
 import igentuman.blockbooster.tile.TileBoosterT1;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -40,8 +41,8 @@ public class BoosterPacket {
 
             ServerPlayer player = context.getSender();
             BlockEntity be = player.level.getBlockEntity(pos);
-            if(be instanceof TileBoosterT1) {
-                ((TileBoosterT1) be).setIndexStatus(id, val);
+            if(be instanceof ITileBooster) {
+                ((ITileBooster) be).setIndexStatus(id, val);
             }
         });
         return true;

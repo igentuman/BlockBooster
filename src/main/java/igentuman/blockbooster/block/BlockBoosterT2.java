@@ -1,8 +1,8 @@
 package igentuman.blockbooster.block;
 
 import igentuman.blockbooster.config.CommonConfig;
-import igentuman.blockbooster.container.BoosterT1Container;
-import igentuman.blockbooster.tile.TileBoosterT1;
+import igentuman.blockbooster.container.BoosterT2Container;
+import igentuman.blockbooster.tile.TileBoosterT2;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
@@ -39,14 +39,14 @@ import net.minecraftforge.network.NetworkHooks;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockBoosterT1 extends Block implements EntityBlock {
+public class BlockBoosterT2 extends Block implements EntityBlock {
 
     public static final String MESSAGE_BLOCKBOOSTER = "message.blockbooster";
     public static final String SCREEN_BLOCKBOOSTER = "screen.igentuman.blockbooster";
 
     private static final VoxelShape RENDER_SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
-    public BlockBoosterT1() {
+    public BlockBoosterT2() {
         super(Properties.of(Material.METAL)
                 .sound(SoundType.METAL)
                 .strength(2.0f)
@@ -64,13 +64,14 @@ public class BlockBoosterT1 extends Block implements EntityBlock {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter reader, List<Component> list, TooltipFlag flags) {
-        list.add(Component.literal(I18n.get("hint.booster_t1", CommonConfig.GENERAL.t1_boost_rate.get())).withStyle(ChatFormatting.BLUE));
+        list.add(Component.literal(I18n.get("hint.booster_t2", CommonConfig.GENERAL.t2_boost_rate.get())).withStyle(ChatFormatting.BLUE));
+
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return new TileBoosterT1(blockPos, blockState);
+        return new TileBoosterT2(blockPos, blockState);
     }
 
     @Nullable
@@ -78,13 +79,13 @@ public class BlockBoosterT1 extends Block implements EntityBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return (lvl, pos, blockState, t) -> {
-                if (t instanceof TileBoosterT1 tile) {
+                if (t instanceof TileBoosterT2 tile) {
                     tile.tickClient();
                 }
             };
         }
         return (lvl, pos, blockState, t)-> {
-            if (t instanceof TileBoosterT1 tile) {
+            if (t instanceof TileBoosterT2 tile) {
                 tile.tickServer();
             }
         };
@@ -107,7 +108,7 @@ public class BlockBoosterT1 extends Block implements EntityBlock {
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult trace) {
         if (!level.isClientSide) {
             BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof TileBoosterT1) {
+            if (be instanceof TileBoosterT2) {
                 MenuProvider containerProvider = new MenuProvider() {
                     @Override
                     public Component getDisplayName() {
@@ -116,7 +117,7 @@ public class BlockBoosterT1 extends Block implements EntityBlock {
 
                     @Override
                     public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
-                        return new BoosterT1Container(windowId, pos, playerInventory, playerEntity);
+                        return new BoosterT2Container(windowId, pos, playerInventory, playerEntity);
                     }
                 };
                 NetworkHooks.openScreen((ServerPlayer) player, containerProvider, be.getBlockPos());

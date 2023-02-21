@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TileBoosterT1 extends BlockEntity implements BlockEntityTicker, ITileBooster {
+public class TileBoosterT2 extends BlockEntity implements BlockEntityTicker, ITileBooster {
 
     private final CustomEnergyStorage energy = createEnergyStorage();
     private final LazyOptional<IEnergyStorage> energyHandler = LazyOptional.of(() -> energy);
@@ -40,10 +40,10 @@ public class TileBoosterT1 extends BlockEntity implements BlockEntityTicker, ITi
         return boostFlag;
     }
 
-    private byte[] boostFlag = new byte[] {0,0};
+    private byte[] boostFlag = new byte[] {0,0,0,0,0,0};
 
-    public TileBoosterT1(BlockPos pos, BlockState state) {
-        super(Registration.BLOCKBOOSTER_T1_BE.get(), pos, state);
+    public TileBoosterT2(BlockPos pos, BlockState state) {
+        super(Registration.BLOCKBOOSTER_T2_BE.get(), pos, state);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class TileBoosterT1 extends BlockEntity implements BlockEntityTicker, ITi
     }
 
     public boolean isDisabled = false;
-    public int fePerTick = CommonConfig.GENERAL.t1_fe_per_tick.get();
+    public int fePerTick = CommonConfig.GENERAL.t2_fe_per_tick.get();
     private long tick = 0;
 
     protected String getRegistryLineForBE(BlockEntity be)
@@ -85,11 +85,15 @@ public class TileBoosterT1 extends BlockEntity implements BlockEntityTicker, ITi
         isDisabled = false;
     }
 
+    public String getBlockName(BlockEntity be)
+    {
+        return Registry.BLOCK.getKey(be.getBlockState().getBlock()).toString();
+    }
+
     public void updateAttachedBlocks()
     {
         boolean changed = false;
         for(Direction direction: Direction.values()) {
-            if(direction.ordinal() > 1) continue;
             BlockEntity be = level.getBlockEntity(new BlockPos(getBlockPos().relative(direction, 1)));
             boolean contains = attachedBlocks.containsKey(direction.ordinal());
             if(be == null) {
@@ -119,11 +123,6 @@ public class TileBoosterT1 extends BlockEntity implements BlockEntityTicker, ITi
         }
     }
 
-    public String getBlockName(BlockEntity be)
-    {
-        return Registry.BLOCK.getKey(be.getBlockState().getBlock()).toString();
-    }
-
     public void tickServer() {
         if(level == null) return;
         tick++;
@@ -140,6 +139,7 @@ public class TileBoosterT1 extends BlockEntity implements BlockEntityTicker, ITi
             }
             updateAttachedBlocks();
         }
+
         for(Integer id: attachedBlocks.keySet()) {
             if(id > boostFlag.length-1) break;
             if(boostFlag[id] == 0) continue;
@@ -148,7 +148,7 @@ public class TileBoosterT1 extends BlockEntity implements BlockEntityTicker, ITi
             BlockEntityTicker<BlockEntity> ticker = be.getBlockState()
                     .getTicker(level, (BlockEntityType<BlockEntity>) be.getType());
             if (ticker != null) {
-                for (int i = 0; i < CommonConfig.GENERAL.t1_boost_rate.get(); i++) {
+                for (int i = 0; i < CommonConfig.GENERAL.t2_boost_rate.get(); i++) {
                     ticker.tick(level, be.getBlockPos(), be.getBlockState(), be);
                 }
                 consumeEnergy(fePerTick);
@@ -159,7 +159,7 @@ public class TileBoosterT1 extends BlockEntity implements BlockEntityTicker, ITi
     private CustomEnergyStorage createEnergyStorage() {
         return new CustomEnergyStorage (
                 getMaxEnergy(),
-                        CommonConfig.GENERAL.t1_fe_per_tick.get()*10
+                        CommonConfig.GENERAL.t2_fe_per_tick.get()*10
         ) {
             @Override
             public int receiveEnergy(int maxReceive, boolean simulate) {
@@ -209,7 +209,7 @@ public class TileBoosterT1 extends BlockEntity implements BlockEntityTicker, ITi
             energy.deserializeNBT(tag.get("Energy"));
         }
         isDisabled = tag.getBoolean("isDisabled");
-        if(tag.getByteArray("boostFlag").length == 2) {
+        if(tag.getByteArray("boostFlag").length == 6) {
             boostFlag = tag.getByteArray("boostFlag");
         }
     }
@@ -220,7 +220,7 @@ public class TileBoosterT1 extends BlockEntity implements BlockEntityTicker, ITi
             energy.deserializeNBT(tag.get("Energy"));
         }
         isDisabled = tag.getBoolean("isDisabled");
-        if(tag.getByteArray("boostFlag").length == 2) {
+        if(tag.getByteArray("boostFlag").length == 6) {
             boostFlag = tag.getByteArray("boostFlag");
         }
         super.load(tag);
@@ -251,7 +251,7 @@ public class TileBoosterT1 extends BlockEntity implements BlockEntityTicker, ITi
     }
 
     public int getMaxEnergy() {
-        return CommonConfig.GENERAL.t1_fe_per_tick.get()*100;
+        return CommonConfig.GENERAL.t2_fe_per_tick.get()*100;
     }
 
     public boolean isIndexEnabled(int i) {
