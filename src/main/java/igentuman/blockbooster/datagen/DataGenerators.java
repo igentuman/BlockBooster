@@ -18,8 +18,6 @@ public class DataGenerators {
             generator.addProvider(true, blockTags);
         }
         if (event.includeClient()) {
-            generator.addProvider(true, new BlockStates(generator, event.getExistingFileHelper()));
-            generator.addProvider(true, new ItemModels(generator, event.getExistingFileHelper()));
             generator.addProvider(true, new TutLanguageProvider(generator, "en_us"));
         }
     }

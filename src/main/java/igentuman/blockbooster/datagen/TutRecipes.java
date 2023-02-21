@@ -22,7 +22,7 @@ public class TutRecipes extends RecipeProvider {
 
     @Override
     protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
-        ShapedRecipeBuilder.shaped(Registration.BLOCKBOOSTER.get())
+        ShapedRecipeBuilder.shaped(Registration.BLOCKBOOSTER_T1.get())
                 .pattern("mmm")
                 .pattern("x#x")
                 .pattern("#x#")

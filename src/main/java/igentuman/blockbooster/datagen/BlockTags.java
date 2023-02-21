@@ -15,9 +15,9 @@ public class BlockTags extends BlockTagsProvider {
     @Override
     protected void addTags() {
         tag(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE)
-                .add(Registration.BLOCKBOOSTER.get());
+                .add(Registration.BLOCKBOOSTER_T1.get());
         tag(net.minecraft.tags.BlockTags.NEEDS_IRON_TOOL)
-                .add(Registration.BLOCKBOOSTER.get());
+                .add(Registration.BLOCKBOOSTER_T1.get());
     }
 
     @Override

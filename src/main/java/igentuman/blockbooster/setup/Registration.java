@@ -1,8 +1,8 @@
 package igentuman.blockbooster.setup;
 
 import igentuman.blockbooster.block.*;
-import igentuman.blockbooster.tile.BoosterBE;
-import net.minecraft.world.entity.EntityType;
+import igentuman.blockbooster.container.BoosterT1Container;
+import igentuman.blockbooster.tile.TileBoosterT1;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -36,11 +36,11 @@ public class Registration {
     public static final Item.Properties ITEM_PROPERTIES = new Item.Properties().tab(ModSetup.ITEM_GROUP);
 
        
-    public static final RegistryObject<BlockBooster> BLOCKBOOSTER = BLOCKS.register("blockbooster", BlockBooster::new);
-    public static final RegistryObject<Item> BLOCKBOOSTER_ITEM = fromBlock(BLOCKBOOSTER);
-    public static final RegistryObject<BlockEntityType<BoosterBE>> BLOCKBOOSTER_BE = BLOCK_ENTITIES.register("blockbooster", () -> BlockEntityType.Builder.of(BoosterBE::new, BLOCKBOOSTER.get()).build(null));
-    public static final RegistryObject<MenuType<BoosterContainer>> BLOCKBOOSTER_CONTAINER = CONTAINERS.register("blockbooster",
-            () -> IForgeMenuType.create((windowId, inv, data) -> new BoosterContainer(windowId, data.readBlockPos(), inv, inv.player)));
+    public static final RegistryObject<BlockBoosterT1> BLOCKBOOSTER_T1 = BLOCKS.register("booster_t1", BlockBoosterT1::new);
+    public static final RegistryObject<Item> BLOCKBOOSTER_T1_ITEM = fromBlock(BLOCKBOOSTER_T1);
+    public static final RegistryObject<BlockEntityType<TileBoosterT1>> BLOCKBOOSTER_T1_BE = BLOCK_ENTITIES.register("booster_t1", () -> BlockEntityType.Builder.of(TileBoosterT1::new, BLOCKBOOSTER_T1.get()).build(null));
+    public static final RegistryObject<MenuType<BoosterT1Container>> BLOCKBOOSTER_T1_CONTAINER = CONTAINERS.register("booster_t1",
+            () -> IForgeMenuType.create((windowId, inv, data) -> new BoosterT1Container(windowId, data.readBlockPos(), inv, inv.player)));
 
     public static <B extends Block> RegistryObject<Item> fromBlock(RegistryObject<B> block) {
         return ITEMS.register(block.getId().getPath(), () -> new BlockItem(block.get(), ITEM_PROPERTIES));

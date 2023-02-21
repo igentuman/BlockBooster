@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "blockbooster:block/booster_t1"
+    },
+    "powered=true": {
+      "model": "blockbooster:block/booster_t1"
+    }
+  }
+}
