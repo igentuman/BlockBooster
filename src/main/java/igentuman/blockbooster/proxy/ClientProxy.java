@@ -2,6 +2,7 @@ package igentuman.blockbooster.proxy;
 
 import igentuman.blockbooster.network.TileBoosterUpdatePacket;
 import igentuman.blockbooster.tile.TileBlockBoosterT1;
+import igentuman.blockbooster.tile.TileBlockBoosterT2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -13,6 +14,9 @@ public class ClientProxy implements ISidedProxy {
         TileEntity te = Minecraft.getMinecraft().world.getTileEntity(message.pos);
         if(te instanceof TileBlockBoosterT1) {
             ((TileBlockBoosterT1) te).onTileUpdatePacket(message);
+        }
+        if(te instanceof TileBlockBoosterT2) {
+            ((TileBlockBoosterT2) te).onTileUpdatePacket(message);
         }
     }
 }

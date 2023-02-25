@@ -2,8 +2,11 @@ package igentuman.blockbooster.network;
 
 
 import igentuman.blockbooster.container.ContainerBlockBoosterT1;
+import igentuman.blockbooster.container.ContainerBlockBoosterT2;
 import igentuman.blockbooster.gui.GuiBlockBoosterT1;
+import igentuman.blockbooster.gui.GuiBlockBoosterT2;
 import igentuman.blockbooster.tile.TileBlockBoosterT1;
+import igentuman.blockbooster.tile.TileBlockBoosterT2;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -19,6 +22,9 @@ public class GuiProxy implements IGuiHandler {
         if (te instanceof TileBlockBoosterT1) {
             return new ContainerBlockBoosterT1((TileBlockBoosterT1) te);
         }
+        if (te instanceof TileBlockBoosterT2) {
+            return new ContainerBlockBoosterT2((TileBlockBoosterT2) te);
+        }
         return null;
     }
 
@@ -28,6 +34,9 @@ public class GuiProxy implements IGuiHandler {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileBlockBoosterT1) {
             return new GuiBlockBoosterT1(new ContainerBlockBoosterT1((TileBlockBoosterT1) te));
+        }
+        if (te instanceof TileBlockBoosterT2) {
+            return new GuiBlockBoosterT2(new ContainerBlockBoosterT2((TileBlockBoosterT2) te));
         }
         return null;
     }

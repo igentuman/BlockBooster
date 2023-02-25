@@ -1,5 +1,6 @@
 package igentuman.blockbooster;
 
+import igentuman.blockbooster.command.CommandHandler;
 import igentuman.blockbooster.network.GuiProxy;
 import igentuman.blockbooster.network.ModPacketHandler;
 import igentuman.blockbooster.proxy.ISidedProxy;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.LogManager;
@@ -58,5 +60,10 @@ public class BlockBooster {
     if(event.getModID().equals(MODID)) {
       ConfigManager.sync(MODID, Config.Type.INSTANCE);
     }
+  }
+
+  @EventHandler
+  public void serverStart(FMLServerStartingEvent serverStartEvent) {
+    CommandHandler.registerCommands(serverStartEvent);
   }
 }

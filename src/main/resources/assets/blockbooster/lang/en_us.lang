@@ -1,4 +1,6 @@
 tile.booster_t1.name=Booster Tier 1
-booster.container.title=Booster
+tile.booster_t2.name=Booster Tier 2
+booster_t1.container.title=Booster Tier 1
+booster_t2.container.title=Booster Tier 2
 booster.container.energy=Energy:
 gui.booster.checkbox=Boost

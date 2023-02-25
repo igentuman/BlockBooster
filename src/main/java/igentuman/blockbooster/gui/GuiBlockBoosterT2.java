@@ -1,7 +1,7 @@
 package igentuman.blockbooster.gui;
 
 import igentuman.blockbooster.ModInfo;
-import igentuman.blockbooster.container.ContainerBlockBoosterT1;
+import igentuman.blockbooster.container.ContainerBlockBoosterT2;
 import igentuman.blockbooster.gui.element.Checkbox;
 import igentuman.blockbooster.network.ModPacketHandler;
 import igentuman.blockbooster.network.SimpleCommandToServerPacket;
@@ -16,23 +16,24 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class GuiBlockBoosterT1 extends GuiContainer {
+public class GuiBlockBoosterT2 extends GuiContainer {
     private static final ResourceLocation background = new ResourceLocation(
-            ModInfo.MODID, "textures/gui/container/booster_t1.png"
+            ModInfo.MODID, "textures/gui/container/booster_t2.png"
     );
     private List<Checkbox> checkboxes = new ArrayList<>();
 
-    private final ContainerBlockBoosterT1 container;
+    private final ContainerBlockBoosterT2 container;
 
-    public GuiBlockBoosterT1(ContainerBlockBoosterT1 inventorySlotsIn) {
+    public GuiBlockBoosterT2(ContainerBlockBoosterT2 inventorySlotsIn) {
         super(inventorySlotsIn);
         this.container = inventorySlotsIn;
         xSize=180;
-        ySize=100;
+        ySize=152;
     }
 
     public void initGui()
@@ -41,6 +42,10 @@ public class GuiBlockBoosterT1 extends GuiContainer {
         checkboxes = new ArrayList<>();
         checkboxes.add(new Checkbox(0,guiLeft+28,guiTop+15,13, 13, 181, 0, 13, background));
         checkboxes.add(new Checkbox(1,guiLeft+28,guiTop+35,13, 13, 181, 0, 13, background));
+        checkboxes.add(new Checkbox(2,guiLeft+28,guiTop+55,13, 13, 181, 0, 13, background));
+        checkboxes.add(new Checkbox(3,guiLeft+28,guiTop+75,13, 13, 181, 0, 13, background));
+        checkboxes.add(new Checkbox(4,guiLeft+28,guiTop+95,13, 13, 181, 0, 13, background));
+        checkboxes.add(new Checkbox(5,guiLeft+28,guiTop+115,13, 13, 181, 0, 13, background));
         for (Checkbox btn: checkboxes) {
             buttonList.add(btn);
         }
@@ -80,7 +85,7 @@ public class GuiBlockBoosterT1 extends GuiContainer {
 
     public void drawEnergyBar()
     {
-        drawTexturedModalRect(guiLeft+4, guiTop+67, 0, 153, container.getEnergyScaled(171), 7);
+        drawTexturedModalRect(guiLeft+4, guiTop+140, 0, 153, container.getEnergyScaled(171), 7);
     }
 
     public ItemStack getItemStackFromTile(TileEntity te)
@@ -118,6 +123,6 @@ public class GuiBlockBoosterT1 extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        this.fontRenderer.drawString(I18n.format("booster_t1.container.title"), 8, 4, 4210752);
+        this.fontRenderer.drawString(I18n.format("booster_t2.container.title"), 8, 4, 4210752);
     }
 }

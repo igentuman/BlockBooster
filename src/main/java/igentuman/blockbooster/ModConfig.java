@@ -19,6 +19,7 @@ public class ModConfig {
         @Config.Name("black_list")
         @Config.Comment({
                 "Black list of tile entities",
+                "use command /block_id_for_booster to find out block id",
                 "format: some_mod:some_machine:1"
         })
 
@@ -29,6 +30,7 @@ public class ModConfig {
         @Config.Name("white_list")
         @Config.Comment({
                 "Same as black list, but allows boosting only machines in this list",
+                "use command /block_id_for_booster to find out block id",
                 "format: some_mod:some_machine:1"
         })
 

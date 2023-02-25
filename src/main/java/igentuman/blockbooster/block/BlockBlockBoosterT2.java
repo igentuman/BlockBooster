@@ -2,7 +2,7 @@ package igentuman.blockbooster.block;
 
 import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.ModInfo;
-import igentuman.blockbooster.tile.TileBlockBoosterT1;
+import igentuman.blockbooster.tile.TileBlockBoosterT2;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
@@ -11,14 +11,16 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-
 
 public class BlockBlockBoosterT2 extends BlockHorizontal {
     public BlockBlockBoosterT2() {
@@ -28,6 +30,13 @@ public class BlockBlockBoosterT2 extends BlockHorizontal {
         this.setTranslationKey("booster_t2");
         this.setRegistryName(ModInfo.MODID, "booster_t2");
         this.setCreativeTab(CreativeTabs.DECORATIONS);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public BlockRenderLayer getRenderLayer()
+    {
+        return BlockRenderLayer.TRANSLUCENT;
     }
 
 
@@ -60,14 +69,14 @@ public class BlockBlockBoosterT2 extends BlockHorizontal {
     @Nullable
     @Override
     public TileEntity createTileEntity(@NotNull World world, @NotNull IBlockState state) {
-        return new TileBlockBoosterT1();
+        return new TileBlockBoosterT2();
     }
 
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileEntity te = worldIn.getTileEntity(pos);
-        if(!(te instanceof TileBlockBoosterT1)) {
+        if(!(te instanceof TileBlockBoosterT2)) {
             return true;
         }
 
@@ -75,7 +84,7 @@ public class BlockBlockBoosterT2 extends BlockHorizontal {
             return true;
         }
 
-        playerIn.openGui(BlockBooster.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+        playerIn.openGui(BlockBooster.instance, 1, worldIn, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }
 }
