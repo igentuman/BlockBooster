@@ -1,0 +1,6 @@
+tile.booster_t1.name=Ускоритель Уровень 1
+tile.booster_t2.name=скоритель Уровень 2
+booster_t1.container.title=скоритель Уровень 1
+booster_t2.container.title=скоритель Уровень 2
+booster.container.energy=Энергия:
+gui.booster.checkbox=Ускорить
