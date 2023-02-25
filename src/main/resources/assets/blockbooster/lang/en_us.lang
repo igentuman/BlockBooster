@@ -1,3 +1,4 @@
-tile.booster_t1.name=Booster
+tile.booster_t1.name=Booster Tier 1
 booster.container.title=Booster
 booster.container.energy=Energy:
+gui.booster.checkbox=Boost

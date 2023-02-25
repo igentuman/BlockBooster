@@ -1,7 +1,7 @@
 package igentuman.blockbooster.tile;
 
 import igentuman.blockbooster.network.ModPacketHandler;
-import igentuman.blockbooster.network.TileProcessUpdatePacket;
+import igentuman.blockbooster.network.TileBoosterUpdatePacket;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -26,7 +26,7 @@ import java.util.HashMap;
 import static igentuman.blockbooster.ModConfig.boosterT1Config;
 import static igentuman.blockbooster.ModConfig.general;
 
-public class TileBlockBoosterT1 extends TileEntity implements ITickable, IEnergyStorage {
+public class TileBlockBoosterT1 extends TileEntity implements ITickable, IEnergyStorage, ITileBooster {
 
     private final EnergyStorage storage;
     private int updateCounter = 20;
@@ -154,7 +154,7 @@ public class TileBlockBoosterT1 extends TileEntity implements ITickable, IEnergy
         }
         if (getEnergyStored() < boosterT1Config.rf_per_tick) return;
         boolean wasWorking = isWorking;
-        boostBlocks();
+        isWorking = boostBlocks();
         if(isWorking || (isWorking != wasWorking)) {
             if( !world.isRemote) {
                 ModPacketHandler.instance.sendToAll(this.getTileUpdatePacket());
@@ -163,29 +163,32 @@ public class TileBlockBoosterT1 extends TileEntity implements ITickable, IEnergy
         }
     }
 
-    private void boostBlocks() {
+    private boolean boostBlocks() {
+        boolean boosted = false;
         for(Integer id: attachedBlocks.keySet()) {
             if(id > boostFlag.length-1) break;
             if(boostFlag[id] == 0) continue;
             TileEntity te = attachedBlocks.get(id);
-            if(te == null || getEnergyStored() < boosterT1Config.rf_per_tick) return;
+            if(te == null || getEnergyStored() < boosterT1Config.rf_per_tick) return boosted;
             try {
                 for (int i = 0; i < boosterT1Config.boost_rate; i++) {
                     ((ITickable)te).update();
                     consumeEnergy();
+                    boosted = true;
                 }
             } catch (NullPointerException ignored) {
 
             }
         }
+        return boosted;
     }
 
     private void consumeEnergy() {
         storage.extractEnergy(boosterT1Config.rf_per_tick, false);
     }
 
-    public TileProcessUpdatePacket getTileUpdatePacket() {
-        return new TileProcessUpdatePacket(
+    public TileBoosterUpdatePacket getTileUpdatePacket() {
+        return new TileBoosterUpdatePacket(
                 this.pos,
                 getEnergyStored(),
                 isWorking,
@@ -195,7 +198,7 @@ public class TileBlockBoosterT1 extends TileEntity implements ITickable, IEnergy
         );
     }
 
-    public void onTileUpdatePacket(TileProcessUpdatePacket message)
+    public void onTileUpdatePacket(TileBoosterUpdatePacket message)
     {
         setEnergyStored(message.energyStored);
         isWorking = message.isWorking;
@@ -257,11 +260,20 @@ public class TileBlockBoosterT1 extends TileEntity implements ITickable, IEnergy
         super.readFromNBT(compound);
         isWorking = compound.getBoolean("isWorking");
         isRedstonePowered = compound.getBoolean("isRedstonePowered");
-        boostFlag = compound.getByteArray("boostFlag");
+        if(compound.getByteArray("boostFlag").length == 2) {
+            boostFlag = compound.getByteArray("boostFlag");
+        }
         setEnergyStored(compound.getInteger("energyStored"));
     }
 
     public HashMap<Integer, TileEntity> getAttachedBlocks() {
         return attachedBlocks;
+    }
+
+    @Override
+    public void setBoostFlagValue(int id, byte val) {
+        boostFlag[id] = val;
+        markDirty();
+        ModPacketHandler.instance.sendToAll(this.getTileUpdatePacket());
     }
 }

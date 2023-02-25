@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 
-public class TileProcessUpdatePacket implements IMessage {
+public class TileBoosterUpdatePacket implements IMessage {
 
     public int energyStored;
     public boolean isWorking;
@@ -18,10 +18,10 @@ public class TileProcessUpdatePacket implements IMessage {
     public byte[] boostFLag;
     public int length;
 
-    public TileProcessUpdatePacket() {
+    public TileBoosterUpdatePacket() {
     }
 
-    public TileProcessUpdatePacket(BlockPos pos, int energyStored, boolean isWorking, boolean isRedstonePowered, byte[] boostFLag, int length) {
+    public TileBoosterUpdatePacket(BlockPos pos, int energyStored, boolean isWorking, boolean isRedstonePowered, byte[] boostFLag, int length) {
         this.pos = pos;
         this.energyStored = energyStored;
         this.isWorking = isWorking;
@@ -35,7 +35,24 @@ public class TileProcessUpdatePacket implements IMessage {
         this.energyStored = buf.readInt();
         this.isWorking = buf.readBoolean();
         this.isRedstonePowered = buf.readBoolean();
-        this.boostFLag = buf.readBytes(length).array();
+        this.length = buf.readByte();
+        this.boostFLag = readBytes(buf);
+    }
+
+    private byte[] readBytes(ByteBuf buf)
+    {
+        byte[] tmp = new byte[length];
+        for(int i=0;i<length;i++) {
+            tmp[i] = buf.readByte();
+        }
+        return tmp;
+    }
+
+    private void writeBytes(ByteBuf buf)
+    {
+        for(int i=0;i<length;i++) {
+            buf.writeByte(boostFLag[i]);
+        }
     }
 
     public void toBytes(ByteBuf buf) {
@@ -45,13 +62,14 @@ public class TileProcessUpdatePacket implements IMessage {
         buf.writeInt(this.energyStored);
         buf.writeBoolean(this.isWorking);
         buf.writeBoolean(this.isRedstonePowered);
-        buf.writeBytes(this.boostFLag);
+        buf.writeByte(this.length);
+        writeBytes(buf);
     }
 
-    public static class Handler implements IMessageHandler<TileProcessUpdatePacket, IMessage> {
+    public static class Handler implements IMessageHandler<TileBoosterUpdatePacket, IMessage> {
 
         @Override
-        public IMessage onMessage(TileProcessUpdatePacket message, MessageContext ctx) {
+        public IMessage onMessage(TileBoosterUpdatePacket message, MessageContext ctx) {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 BlockBooster.proxy.handleProcessUpdatePacket(message, ctx);
             });

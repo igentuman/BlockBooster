@@ -38,4 +38,13 @@ public class ContainerBlockBoosterT1 extends Container {
     {
         return (int) (scale*((float)booster.getEnergyStored()/(float)booster.getMaxEnergyStored()));
     }
+
+    public TileEntity getBooster() {
+        return booster;
+    }
+
+    public byte getCheckboxValue(int id) {
+        if(booster.getBoostFlag().length < id+1) return 0;
+        return booster.getBoostFlag()[id];
+    }
 }

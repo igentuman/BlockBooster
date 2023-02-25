@@ -1,6 +1,6 @@
 package igentuman.blockbooster.proxy;
 
-import igentuman.blockbooster.network.TileProcessUpdatePacket;
+import igentuman.blockbooster.network.TileBoosterUpdatePacket;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -14,6 +14,6 @@ public interface ISidedProxy {
        // EvTweaksRecipes.init();
     }
 
-    void handleProcessUpdatePacket(TileProcessUpdatePacket message, MessageContext context);
+    void handleProcessUpdatePacket(TileBoosterUpdatePacket message, MessageContext context);
 
 }

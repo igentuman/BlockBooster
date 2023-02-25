@@ -1,9 +1,7 @@
 package igentuman.blockbooster.proxy;
 
 import igentuman.blockbooster.BlockBooster;
-import igentuman.blockbooster.network.TileProcessUpdatePacket;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
+import igentuman.blockbooster.network.TileBoosterUpdatePacket;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -18,7 +16,7 @@ public class CommonProxy implements ISidedProxy {
   }
 
   @Override
-  public void handleProcessUpdatePacket(TileProcessUpdatePacket message, MessageContext ctx) {
+  public void handleProcessUpdatePacket(TileBoosterUpdatePacket message, MessageContext ctx) {
     BlockBooster.instance.logger.error("Got PacketUpdateItemStack on wrong side!");
   }
 }

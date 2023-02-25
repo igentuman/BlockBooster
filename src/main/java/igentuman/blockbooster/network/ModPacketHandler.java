@@ -11,10 +11,16 @@ public class ModPacketHandler {
     public static void registerMessages(String channelName) {
         instance = NetworkRegistry.INSTANCE.newSimpleChannel(channelName);
         instance.registerMessage(
-                TileProcessUpdatePacket.Handler.class,
-                TileProcessUpdatePacket.class,
+                TileBoosterUpdatePacket.Handler.class,
+                TileBoosterUpdatePacket.class,
                 packetId++,
                 Side.CLIENT
+        );
+        instance.registerMessage(
+                SimpleCommandToServerPacket.Handler.class,
+                SimpleCommandToServerPacket.class,
+                packetId++,
+                Side.SERVER
         );
     }
 }
