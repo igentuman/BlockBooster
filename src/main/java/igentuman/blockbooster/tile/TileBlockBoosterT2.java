@@ -1,5 +1,10 @@
 package igentuman.blockbooster.tile;
 
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergyEmitter;
+import ic2.api.energy.tile.IEnergySink;
+import ic2.api.energy.tile.IEnergyTile;
 import igentuman.blockbooster.network.ModPacketHandler;
 import igentuman.blockbooster.network.TileBoosterUpdatePacket;
 import igentuman.blockbooster.util.BlockUtil;
@@ -11,10 +16,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,10 +32,21 @@ import java.util.HashMap;
 import static igentuman.blockbooster.ModConfig.boosterT2Config;
 import static igentuman.blockbooster.ModConfig.general;
 
-public class TileBlockBoosterT2 extends TileEntity implements ITickable, IEnergyStorage, ITileBooster {
+@Optional.InterfaceList({
+        @Optional.Interface(
+                iface = "ic2.api.energy.tile.IEnergySink",
+                modid = "ic2"
+        ),
+        @Optional.Interface(
+                iface = "ic2.api.energy.tile.IEnergyTile",
+                modid = "ic2"
+        )
+})
+public class TileBlockBoosterT2 extends TileEntity implements ITickable, IEnergyStorage, ITileBooster, IEnergySink, IEnergyTile  {
 
     private final EnergyStorage storage;
     private int updateCounter = 20;
+    private boolean ic2reg = false;
 
     public boolean isRedstonePowered() {
         return isRedstonePowered;
@@ -106,6 +124,63 @@ public class TileBlockBoosterT2 extends TileEntity implements ITickable, IEnergy
             return super.getCapability(capability, side);
         }
     }
+
+    @Optional.Method(modid = "ic2")
+    public double getDemandedEnergy() {
+        return (getMaxEnergyStored()-getEnergyStored())/4;
+    }
+
+    @Optional.Method(modid = "ic2")
+    public int getSinkTier() {
+        return 7;
+    }
+
+    @Optional.Method(modid = "ic2")
+    public void addTileToENet() {
+        if (!world.isRemote && !ic2reg) {
+            MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent((IEnergyTile) this));
+            ic2reg = true;
+        }
+    }
+
+    @Optional.Method(modid = "ic2")
+    public void removeTileFromENet() {
+        if (!world.isRemote && ic2reg) {
+            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+            ic2reg = false;
+        }
+    }
+
+    @Optional.Method(modid = "ic2")
+    public double injectEnergy(EnumFacing enumFacing, double v, double v1) {
+        double consumed = Math.min(getMaxEnergyStored()-getEnergyStored(), v*4);
+        setEnergyStored((int) (getEnergyStored()+consumed));
+        return consumed/4-v;
+    }
+
+    @Optional.Method(modid = "ic2")
+    public boolean acceptsEnergyFrom(IEnergyEmitter iEnergyEmitter, EnumFacing enumFacing) {
+        return true;
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        addTileToENet();
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        removeTileFromENet();
+    }
+
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        removeTileFromENet();
+    }
+
 
     public void setEnergyStored(int amount)
     {
