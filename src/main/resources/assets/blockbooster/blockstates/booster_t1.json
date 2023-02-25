@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "blockbooster:booster"
+    "model": "blockbooster:booster_t1"
   },
   "variants":{
     "facing": {

@@ -1,9 +1,9 @@
 package igentuman.blockbooster.network;
 
 
-import igentuman.blockbooster.container.ContainerBlockBooster;
-import igentuman.blockbooster.gui.GuiBlockBooster;
-import igentuman.blockbooster.tile.TileBlockBooster;
+import igentuman.blockbooster.container.ContainerBlockBoosterT1;
+import igentuman.blockbooster.gui.GuiBlockBoosterT1;
+import igentuman.blockbooster.tile.TileBlockBoosterT1;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -16,8 +16,8 @@ public class GuiProxy implements IGuiHandler {
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileBlockBooster) {
-            return new ContainerBlockBooster((TileBlockBooster) te);
+        if (te instanceof TileBlockBoosterT1) {
+            return new ContainerBlockBoosterT1((TileBlockBoosterT1) te);
         }
         return null;
     }
@@ -26,8 +26,8 @@ public class GuiProxy implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileBlockBooster) {
-            return new GuiBlockBooster(new ContainerBlockBooster((TileBlockBooster) te));
+        if (te instanceof TileBlockBoosterT1) {
+            return new GuiBlockBoosterT1(new ContainerBlockBoosterT1((TileBlockBoosterT1) te));
         }
         return null;
     }

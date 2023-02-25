@@ -1,7 +1,7 @@
 package igentuman.blockbooster;
 
-import igentuman.blockbooster.block.BlockBlockBooster;
-import igentuman.blockbooster.tile.TileBlockBooster;
+import igentuman.blockbooster.block.BlockBlockBoosterT1;
+import igentuman.blockbooster.tile.TileBlockBoosterT1;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -21,28 +21,28 @@ import javax.annotation.Nonnull;
 @Mod.EventBusSubscriber
 public class RegistryHandler {
 
-    @ObjectHolder("blockbooster:booster")
-    public static Block BLOCK_BOOSTER = new BlockBlockBooster();
+    @ObjectHolder("blockbooster:booster_t1")
+    public static Block BLOCK_BOOSTER_T1 = new BlockBlockBoosterT1();
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event) {
-        event.getRegistry().register(BLOCK_BOOSTER);
+        event.getRegistry().register(BLOCK_BOOSTER_T1);
 
         GameRegistry.registerTileEntity(
-                TileBlockBooster.class,
-                BLOCK_BOOSTER.getRegistryName()
+                TileBlockBoosterT1.class,
+                BLOCK_BOOSTER_T1.getRegistryName()
         );
     }
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().register(new ItemBlock(BLOCK_BOOSTER).setRegistryName(BLOCK_BOOSTER.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(BLOCK_BOOSTER_T1).setRegistryName(BLOCK_BOOSTER_T1.getRegistryName()));
     }
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void registerModels(ModelRegistryEvent event) {
-        registerItemModel(Item.getItemFromBlock(BLOCK_BOOSTER), 0, "inventory");
+        registerItemModel(Item.getItemFromBlock(BLOCK_BOOSTER_T1), 0, "inventory");
     }
 
     @SideOnly(Side.CLIENT)

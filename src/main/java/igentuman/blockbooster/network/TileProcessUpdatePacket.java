@@ -15,15 +15,19 @@ public class TileProcessUpdatePacket implements IMessage {
     public boolean isWorking;
     public boolean isRedstonePowered;
     public BlockPos pos;
+    public byte[] boostFLag;
+    public int length;
 
     public TileProcessUpdatePacket() {
     }
 
-    public TileProcessUpdatePacket(BlockPos pos, int energyStored, boolean isWorking, boolean isRedstonePowered) {
+    public TileProcessUpdatePacket(BlockPos pos, int energyStored, boolean isWorking, boolean isRedstonePowered, byte[] boostFLag, int length) {
         this.pos = pos;
         this.energyStored = energyStored;
         this.isWorking = isWorking;
         this.isRedstonePowered = isRedstonePowered;
+        this.boostFLag = boostFLag;
+        this.length = length;
     }
 
     public void fromBytes(ByteBuf buf) {
@@ -31,6 +35,7 @@ public class TileProcessUpdatePacket implements IMessage {
         this.energyStored = buf.readInt();
         this.isWorking = buf.readBoolean();
         this.isRedstonePowered = buf.readBoolean();
+        this.boostFLag = buf.readBytes(length).array();
     }
 
     public void toBytes(ByteBuf buf) {
@@ -40,7 +45,7 @@ public class TileProcessUpdatePacket implements IMessage {
         buf.writeInt(this.energyStored);
         buf.writeBoolean(this.isWorking);
         buf.writeBoolean(this.isRedstonePowered);
-
+        buf.writeBytes(this.boostFLag);
     }
 
     public static class Handler implements IMessageHandler<TileProcessUpdatePacket, IMessage> {

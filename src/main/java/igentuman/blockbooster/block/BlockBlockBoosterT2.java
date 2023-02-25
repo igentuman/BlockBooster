@@ -2,7 +2,7 @@ package igentuman.blockbooster.block;
 
 import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.ModInfo;
-import igentuman.blockbooster.tile.TileBlockBooster;
+import igentuman.blockbooster.tile.TileBlockBoosterT1;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
@@ -15,19 +15,18 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
 
-public class BlockBlockBooster extends BlockHorizontal {
-    public BlockBlockBooster() {
+public class BlockBlockBoosterT2 extends BlockHorizontal {
+    public BlockBlockBoosterT2() {
         super(Material.IRON);
         this.setHardness(3.5f);
         this.setResistance(17.5f);
-        this.setTranslationKey("booster");
-        this.setRegistryName(ModInfo.MODID, "booster");
+        this.setTranslationKey("booster_t2");
+        this.setRegistryName(ModInfo.MODID, "booster_t2");
         this.setCreativeTab(CreativeTabs.DECORATIONS);
     }
 
@@ -61,14 +60,14 @@ public class BlockBlockBooster extends BlockHorizontal {
     @Nullable
     @Override
     public TileEntity createTileEntity(@NotNull World world, @NotNull IBlockState state) {
-        return new TileBlockBooster();
+        return new TileBlockBoosterT1();
     }
 
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileEntity te = worldIn.getTileEntity(pos);
-        if(!(te instanceof TileBlockBooster)) {
+        if(!(te instanceof TileBlockBoosterT1)) {
             return true;
         }
 
