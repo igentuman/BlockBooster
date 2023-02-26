@@ -5,6 +5,7 @@ import igentuman.blockbooster.container.ContainerBlockBoosterT2;
 import igentuman.blockbooster.gui.element.Checkbox;
 import igentuman.blockbooster.network.ModPacketHandler;
 import igentuman.blockbooster.network.SimpleCommandToServerPacket;
+import igentuman.blockbooster.util.BlockUtil;
 import igentuman.blockbooster.util.ClientUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -90,12 +91,7 @@ public class GuiBlockBoosterT2 extends GuiContainer {
 
     public ItemStack getItemStackFromTile(TileEntity te)
     {
-        IBlockState actualState = te.getWorld().getBlockState(te.getPos()).getActualState(te.getWorld(), te.getPos());
-        Block block = te.getBlockType().getBlockState().getBlock();
-
-        int id = Block.getIdFromBlock(block);
-        int meta = block.getMetaFromState(actualState);
-        return new ItemStack(block, 1, meta);
+        return BlockUtil.getStackForBlock(te);
     }
 
     private void drawAttachedBlocks() {

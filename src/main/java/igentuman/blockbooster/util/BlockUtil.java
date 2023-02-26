@@ -32,6 +32,7 @@ public class BlockUtil {
         }
 
         st.setTagCompound(te.getTileData());
+        st.setTagCompound(te.getUpdateTag());
         return st;
     }
 
