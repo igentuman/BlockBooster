@@ -9,18 +9,12 @@ public class ModConfig {
     public static BlockBoosterTier2Config boosterT2Config = new BlockBoosterTier2Config();
     public static GeneralConfig general = new GeneralConfig();
 
-    @Config.Name("debug info")
-    @Config.Comment({
-            "Show debug info, for development purposes only."
-    })
-    public static boolean DEBUG = false;
-
     public static class GeneralConfig {
         @Config.Name("black_list")
         @Config.Comment({
                 "Black list of tile entities",
-                "use command /block_id_for_booster to find out block id",
-                "format: some_mod:some_machine:1"
+                "use command /booster_show_block_id to find out block id",
+                "format: some_mod:some_machine:registry_id:meta"
         })
 
         public String[] black_list = new String[] {
@@ -30,8 +24,8 @@ public class ModConfig {
         @Config.Name("white_list")
         @Config.Comment({
                 "Same as black list, but allows boosting only machines in this list",
-                "use command /block_id_for_booster to find out block id",
-                "format: some_mod:some_machine:1"
+                "use command /booster_show_block_id to find out block id",
+                "format: some_mod:some_machine:registry_id:meta"
         })
 
         public String[] white_list = new String[] {

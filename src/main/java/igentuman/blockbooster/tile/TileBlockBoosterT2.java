@@ -5,16 +5,14 @@ import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergyEmitter;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergyTile;
+import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.network.ModPacketHandler;
 import igentuman.blockbooster.network.TileBoosterUpdatePacket;
 import igentuman.blockbooster.util.BlockUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -22,7 +20,6 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -166,19 +163,25 @@ public class TileBlockBoosterT2 extends TileEntity implements ITickable, IEnergy
     @Override
     public void onLoad() {
         super.onLoad();
-        addTileToENet();
+        if(BlockBooster.hooks.IC2Loaded) {
+            addTileToENet();
+        }
     }
 
     @Override
     public void invalidate() {
         super.invalidate();
-        removeTileFromENet();
+        if(BlockBooster.hooks.IC2Loaded) {
+            removeTileFromENet();
+        }
     }
 
     @Override
     public void onChunkUnload() {
         super.onChunkUnload();
-        removeTileFromENet();
+        if(BlockBooster.hooks.IC2Loaded) {
+            removeTileFromENet();
+        }
     }
 
 
@@ -191,7 +194,7 @@ public class TileBlockBoosterT2 extends TileEntity implements ITickable, IEnergy
     private boolean isAllowedToBoost(TileEntity te) {
         boolean goodTE = te instanceof ITickable && !(te instanceof ITileBooster);
         if(!goodTE) return false;
-        String blockName = BlockUtil.getBlockDataInfo(world, te.getPos());
+        String blockName = BlockUtil.getBlockIdLine(world, te.getPos());
         if(general.white_list.length > 0) {
             return Arrays.stream(general.white_list).anyMatch(str -> blockName.equals(str));
         }
@@ -243,13 +246,14 @@ public class TileBlockBoosterT2 extends TileEntity implements ITickable, IEnergy
             if(te == null || getEnergyStored() < boosterT2Config.rf_per_tick) return boosted;
             try {
                 for (int i = 0; i < boosterT2Config.boost_rate; i++) {
-                    ((ITickable)te).update();
-                    consumeEnergy();
+                        ((ITickable) te).update();
                     boosted = true;
                 }
             } catch (NullPointerException ignored) {
-
             }
+        }
+        if(boosted) {
+            consumeEnergy();
         }
         return boosted;
     }

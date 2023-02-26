@@ -5,6 +5,7 @@ import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergyEmitter;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergyTile;
+import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.network.ModPacketHandler;
 import igentuman.blockbooster.network.TileBoosterUpdatePacket;
 
@@ -145,19 +146,25 @@ public class TileBlockBoosterT1 extends TileEntity implements ITickable, IEnergy
     @Override
     public void onLoad() {
         super.onLoad();
-        addTileToENet();
+        if(BlockBooster.hooks.IC2Loaded) {
+            addTileToENet();
+        }
     }
 
     @Override
     public void invalidate() {
         super.invalidate();
-        removeTileFromENet();
+        if(BlockBooster.hooks.IC2Loaded) {
+            removeTileFromENet();
+        }
     }
 
     @Override
     public void onChunkUnload() {
         super.onChunkUnload();
-        removeTileFromENet();
+        if(BlockBooster.hooks.IC2Loaded) {
+            removeTileFromENet();
+        }
     }
 
 
@@ -190,7 +197,7 @@ public class TileBlockBoosterT1 extends TileEntity implements ITickable, IEnergy
     private boolean isAllowedToBoost(TileEntity te) {
         boolean goodTE = te instanceof ITickable && !(te instanceof ITileBooster);
         if(!goodTE) return false;
-        String blockName = BlockUtil.getBlockDataInfo(world, te.getPos());
+        String blockName = BlockUtil.getBlockIdLine(world, te.getPos());
         if(general.white_list.length > 0) {
             return Arrays.stream(general.white_list).anyMatch(str -> blockName.equals(str));
         }
@@ -243,12 +250,14 @@ public class TileBlockBoosterT1 extends TileEntity implements ITickable, IEnergy
             try {
                 for (int i = 0; i < boosterT1Config.boost_rate; i++) {
                     ((ITickable)te).update();
-                    consumeEnergy();
                     boosted = true;
                 }
             } catch (NullPointerException ignored) {
 
             }
+        }
+        if(boosted) {
+            consumeEnergy();
         }
         return boosted;
     }

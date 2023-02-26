@@ -4,6 +4,7 @@ import igentuman.blockbooster.command.CommandHandler;
 import igentuman.blockbooster.network.GuiProxy;
 import igentuman.blockbooster.network.ModPacketHandler;
 import igentuman.blockbooster.proxy.ISidedProxy;
+import igentuman.blockbooster.util.BoosterHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -38,9 +39,12 @@ public class BlockBooster {
 
   public static final Logger logger = LogManager.getLogger(MODID);
 
+  public static BoosterHooks hooks = new BoosterHooks();
+
   @EventHandler
   public void preInit(FMLPreInitializationEvent event) {
     logger.info("Starting PreInitialization.");
+    hooks.hookPreInit();
     proxy.preInit(event);
 
     MinecraftForge.EVENT_BUS.register(new RegistryHandler());

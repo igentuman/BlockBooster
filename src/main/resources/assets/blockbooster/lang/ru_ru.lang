@@ -1,6 +1,14 @@
 tile.booster_t1.name=Ускоритель Уровень 1
-tile.booster_t2.name=скоритель Уровень 2
+tile.booster_t2.name=Ускоритель Уровень 2
 booster_t1.container.title=скоритель Уровень 1
-booster_t2.container.title=скоритель Уровень 2
+booster_t2.container.title=Ускоритель Уровень 2
 booster.container.energy=Энергия:
 gui.booster.checkbox=Ускорить
+
+booster_t1.descr=Ускоряет только верхний и нижний блоки
+booster_t1.power=Требует %s RF/тик за каждый блок
+booster_t1.rate=Ускорение: x%s
+
+booster_t2.descr=Ускоряет до 6 блоков
+booster_t2.power=Требует %s RF/тик за каждый блок
+booster_t2.rate=Ускорение: x%s

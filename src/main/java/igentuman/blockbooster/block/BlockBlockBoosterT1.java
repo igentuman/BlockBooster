@@ -1,15 +1,20 @@
 package igentuman.blockbooster.block;
 
 import igentuman.blockbooster.BlockBooster;
+import igentuman.blockbooster.ModConfig;
 import igentuman.blockbooster.ModInfo;
 import igentuman.blockbooster.tile.TileBlockBoosterT1;
+import nc.multiblock.qComputer.QuantumGate;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -22,6 +27,7 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 
 public class BlockBlockBoosterT1 extends BlockHorizontal {
@@ -32,6 +38,16 @@ public class BlockBlockBoosterT1 extends BlockHorizontal {
         this.setTranslationKey("booster_t1");
         this.setRegistryName(ModInfo.MODID, "booster_t1");
         this.setCreativeTab(CreativeTabs.DECORATIONS);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag)
+    {
+        super.addInformation(stack, world, tooltip, flag);
+        tooltip.add("§b\u00a7o"+I18n.format("booster_t1.descr"));
+        tooltip.add("§b\u00a7o"+I18n.format("booster_t1.power", ModConfig.boosterT1Config.rf_per_tick));
+        tooltip.add("§b\u00a7o"+I18n.format("booster_t1.rate", ModConfig.boosterT1Config.boost_rate));
     }
 
     @Override

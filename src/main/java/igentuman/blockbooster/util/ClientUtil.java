@@ -30,7 +30,12 @@ public class ClientUtil {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(1F, 1F, 1F, 1F);
-        IBakedModel model = MC.getRenderItem().getItemModelWithOverrides(stack, null, null);
+        IBakedModel model;
+        try {
+            model = MC.getRenderItem().getItemModelWithOverrides(stack, null, null);
+        } catch (NullPointerException exception) {
+            return;
+        }
         GlStateManager.translate(x, y, 100F + MC.getRenderItem().zLevel);
         GlStateManager.translate(8F, 8F, 0F);
         GlStateManager.scale(1F, -1F, 1F);

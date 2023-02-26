@@ -4,3 +4,11 @@ booster_t1.container.title=Booster Tier 1
 booster_t2.container.title=Booster Tier 2
 booster.container.energy=Energy:
 gui.booster.checkbox=Boost
+
+booster_t1.descr=Boosts only top/bottom blocks
+booster_t1.power=Requires %s RF/tick per boosted block
+booster_t1.rate=Boost rate: x%s
+
+booster_t2.descr=Boosts up to 6 blocks
+booster_t2.power=Requires %s RF/tick per boosted block
+booster_t2.rate=Boost rate: x%s

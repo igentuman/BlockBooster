@@ -99,7 +99,7 @@ public class GuiBlockBoosterT2 extends GuiContainer {
     }
 
     private void drawAttachedBlocks() {
-        int y = 13;
+        int y = 14;
         if(getAttachedBlocks().size() < 1) return;
         for(Integer i: getAttachedBlocks().keySet()) {
             ClientUtil.renderItem(guiLeft+9, guiTop+i*20+y, getItemStackFromTile(getAttachedBlocks().get(i))
