@@ -3,7 +3,7 @@
   "group": "blockbooster",
   "key": {
     "#": {
-      "tag": "forge:ingots/gold"
+      "tag": "forge:ingots/netherite"
     },
     "m": {
       "tag": "forge:gems/emerald"
@@ -18,6 +18,6 @@
     "#x#"
   ],
   "result": {
-    "item": "blockbooster:booster_t2"
+    "item": "blockbooster:booster_mana"
   }
 }

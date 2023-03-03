@@ -42,6 +42,10 @@ public class BoosterT2Container extends AbstractContainerMenu {
         return blockEntity.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
     }
 
+    public int getMaxEnergy() {
+        return blockEntity.getMaxEnergy();
+    }
+
     @Override
     public ItemStack quickMoveStack(Player p_38941_, int p_38942_) {
         return null;

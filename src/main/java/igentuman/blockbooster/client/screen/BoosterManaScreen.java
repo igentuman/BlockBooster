@@ -1,10 +1,10 @@
 package igentuman.blockbooster.client.screen;
 
-import igentuman.blockbooster.BlockBooster;
-import igentuman.blockbooster.client.screen.element.CheckBox;
-import igentuman.blockbooster.container.BoosterT1Container;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import igentuman.blockbooster.BlockBooster;
+import igentuman.blockbooster.client.screen.element.CheckBox;
+import igentuman.blockbooster.container.BoosterManaContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Button;
@@ -13,23 +13,25 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.ai.goal.InteractGoal;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
-public class BoosterT1Screen extends AbstractContainerScreen<BoosterT1Container> {
+public class BoosterManaScreen extends AbstractContainerScreen<BoosterManaContainer> {
 
-    private final ResourceLocation GUI = new ResourceLocation(BlockBooster.MODID, "textures/gui/blockbooster_gui.png");
+    private final ResourceLocation GUI = new ResourceLocation(BlockBooster.MODID, "textures/gui/blockbooster_mana_gui.png");
 
     private List<CheckBox> checkboxes = new ArrayList<>();
 
 
-    public BoosterT1Screen(BoosterT1Container container, Inventory inv, Component name) {
+    public BoosterManaScreen(BoosterManaContainer container, Inventory inv, Component name) {
         super(container, inv, name);
         imageWidth = 180;
         imageHeight = 152;
@@ -40,7 +42,7 @@ public class BoosterT1Screen extends AbstractContainerScreen<BoosterT1Container>
         this.renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         this.renderTooltip(matrixStack, mouseX, mouseY);
-        drawEnergyBar(matrixStack);
+        drawManaBar(matrixStack);
     }
 
     protected void init() {
@@ -48,6 +50,10 @@ public class BoosterT1Screen extends AbstractContainerScreen<BoosterT1Container>
         this.checkboxes.clear();
         this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+15, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 0)));
         this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+35, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 1)));
+        this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+55, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 2)));
+        this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+75, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 3)));
+        this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+95, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 4)));
+        this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+115, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 5)));
         for (Button btn: checkboxes) {
             addRenderableWidget(btn);
         }
@@ -80,9 +86,9 @@ public class BoosterT1Screen extends AbstractContainerScreen<BoosterT1Container>
         return  menu.getAttachedBlocks();
     }
 
-    public void drawEnergyBar(PoseStack matrixStack)
+    public void drawManaBar(PoseStack matrixStack)
     {
-        this.blit(matrixStack, getGuiLeft()+4, getGuiTop()+67, 0, 153, menu.getEnergyScaled(171), 7);
+        this.blit(matrixStack, getGuiLeft()+4, getGuiTop()+140, 0, 153, menu.getManaScaled(171), 7);
     }
 
     @Override
@@ -96,8 +102,8 @@ public class BoosterT1Screen extends AbstractContainerScreen<BoosterT1Container>
 
     @Override
     public void renderTooltip(PoseStack poseStack, int x, int y) {
-        if(x > getGuiLeft()+4 && x < getGuiLeft()+175 && y > getGuiTop()+65 && y < getGuiTop()+78) {
-            Component textComponent = Component.literal(I18n.get("gui.energy.info", menu.getEnergy(), menu.getMaxEnergy()));
+        if(x > getGuiLeft()+4 && x < getGuiLeft()+175 && y > getGuiTop()+138 && y < getGuiTop()+148) {
+            Component textComponent = Component.literal(I18n.get("gui.mana.info", menu.getMana(), menu.getMaxMana()));
             super.renderTooltip(poseStack, textComponent,  x, y);
         }
     }
@@ -108,7 +114,7 @@ public class BoosterT1Screen extends AbstractContainerScreen<BoosterT1Container>
         int relX = (this.width - this.imageWidth) / 2;
         int relY = (this.height - this.imageHeight) / 2;
         this.blit(matrixStack, relX, relY, 0, 0, this.imageWidth, this.imageHeight);
-        drawEnergyBar(matrixStack);
+        drawManaBar(matrixStack);
         drawAttachedBlocks(matrixStack);
     }
 

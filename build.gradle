@@ -14,22 +14,21 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0.3'
+version = '1.0.4'
 group = 'igentuman.blockbooster'
 archivesBaseName = 'BlockBooster-1.19.2'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
 minecraft {
 
-    mappings channel: 'parchment', version: "2022.10.16-1.19.2"
+    mappings channel: 'parchment', version: "2022.11.27-1.19.2"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-
+            property 'mixin.env.disableRefMap', 'true'
             mods {
                 blockbooster {
                     source sourceSets.main
@@ -41,7 +40,7 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-
+            property 'mixin.env.disableRefMap', 'true'
             mods {
                 blockbooster {
                     source sourceSets.main
@@ -53,7 +52,8 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            args '--mod', 'blockbooster', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            property 'mixin.env.disableRefMap', 'true'
+            args '--mod', 'blockbooster', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/'),
             mods {
                 blockbooster {
                     source sourceSets.main
@@ -72,6 +72,10 @@ repositories {
     maven { // TOP
         url "https://cursemaven.com"
     }
+    maven { url 'https://maven.blamejared.com' }
+    maven {
+        url = "https://maven.theillusivec4.top/"
+    }
     maven {
         name 'Modmaven'
         url 'https://modmaven.dev/'
@@ -83,11 +87,17 @@ repositories {
 
 dependencies {
 
-    minecraft 'net.minecraftforge:forge:1.19.2-43.1.43'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.1.65'
     runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
-   // compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-    //implementation fg.deobf("mezz.jei:jei-${jei_version}")
-
+    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}:api")
+    implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
+    compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}"))
+    compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}"))
+    runtimeOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}"))
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
+    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
     //implementation fg.deobf("curse.maven:the-one-probe-245211:3550084")
 }
 

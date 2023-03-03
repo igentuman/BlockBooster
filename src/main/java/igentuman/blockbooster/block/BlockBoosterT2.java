@@ -41,9 +41,6 @@ import java.util.List;
 
 public class BlockBoosterT2 extends Block implements EntityBlock {
 
-    public static final String MESSAGE_BLOCKBOOSTER = "message.blockbooster";
-    public static final String SCREEN_BLOCKBOOSTER = "screen.igentuman.blockbooster";
-
     private static final VoxelShape RENDER_SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
     public BlockBoosterT2() {

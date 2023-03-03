@@ -65,12 +65,6 @@ public class TileBoosterT1 extends BlockEntity implements BlockEntityTicker, ITi
     public int fePerTick = CommonConfig.GENERAL.t1_fe_per_tick.get();
     private long tick = 0;
 
-    protected String getRegistryLineForBE(BlockEntity be)
-    {
-        return BlockEntityType.getKey(be.getType()).toString();
-    }
-
-
     private void updateRedstoneControl()
     {
         if(level.hasNeighborSignal(worldPosition) && CommonConfig.GENERAL.deactivate_with_redstone.get()) {

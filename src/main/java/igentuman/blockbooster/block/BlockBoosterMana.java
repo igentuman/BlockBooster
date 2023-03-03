@@ -1,8 +1,8 @@
 package igentuman.blockbooster.block;
 
 import igentuman.blockbooster.config.CommonConfig;
-import igentuman.blockbooster.container.BoosterT1Container;
-import igentuman.blockbooster.tile.TileBoosterT1;
+import igentuman.blockbooster.container.BoosterManaContainer;
+import igentuman.blockbooster.tile.TileBoosterMana;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
@@ -34,16 +34,17 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockBoosterT1 extends Block implements EntityBlock {
+public class BlockBoosterMana extends Block implements EntityBlock {
 
     private static final VoxelShape RENDER_SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
-    public BlockBoosterT1() {
+    public BlockBoosterMana() {
         super(Properties.of(Material.METAL)
                 .sound(SoundType.METAL)
                 .strength(2.0f)
@@ -61,27 +62,30 @@ public class BlockBoosterT1 extends Block implements EntityBlock {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter reader, List<Component> list, TooltipFlag flags) {
-        list.add(Component.literal(I18n.get("hint.booster_t1", CommonConfig.GENERAL.t1_boost_rate.get())).withStyle(ChatFormatting.BLUE));
+        list.add(Component.literal(I18n.get("hint.booster_mana", CommonConfig.GENERAL.mana_booster_rate.get())).withStyle(ChatFormatting.BLUE));
+
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return new TileBoosterT1(blockPos, blockState);
+        if(!ModList.get().isLoaded("botania")) return null;
+        return new TileBoosterMana(blockPos, blockState);
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if(!ModList.get().isLoaded("botania")) return null;
         if (level.isClientSide()) {
             return (lvl, pos, blockState, t) -> {
-                if (t instanceof TileBoosterT1 tile) {
+                if (t instanceof TileBoosterMana tile) {
                     tile.tickClient();
                 }
             };
         }
-        return (lvl, pos, blockState, t)-> {
-            if (t instanceof TileBoosterT1 tile) {
+        return (lvl, pos, blockState, t) -> {
+            if (t instanceof TileBoosterMana tile) {
                 tile.tickServer();
             }
         };
@@ -102,9 +106,10 @@ public class BlockBoosterT1 extends Block implements EntityBlock {
     @SuppressWarnings("deprecation")
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult trace) {
+        if(!ModList.get().isLoaded("botania")) return InteractionResult.SUCCESS;
         if (!level.isClientSide) {
             BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof TileBoosterT1) {
+            if (be instanceof TileBoosterMana) {
                 MenuProvider containerProvider = new MenuProvider() {
                     @Override
                     public Component getDisplayName() {
@@ -113,7 +118,7 @@ public class BlockBoosterT1 extends Block implements EntityBlock {
 
                     @Override
                     public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
-                        return new BoosterT1Container(windowId, pos, playerInventory, playerEntity);
+                        return new BoosterManaContainer(windowId, pos, playerInventory, playerEntity);
                     }
                 };
                 NetworkHooks.openScreen((ServerPlayer) player, containerProvider, be.getBlockPos());

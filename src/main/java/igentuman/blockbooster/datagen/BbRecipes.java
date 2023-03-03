@@ -39,5 +39,16 @@ public class BbRecipes extends RecipeProvider {
                 .group("blockbooster")
                 .unlockedBy("mysterious", InventoryChangeTrigger.TriggerInstance.hasItems(Items.EMERALD))
                 .save(consumer);
+
+        ShapedRecipeBuilder.shaped(Registration.BLOCKBOOSTER_MANA.get())
+                .pattern("mmm")
+                .pattern("x#x")
+                .pattern("#x#")
+                .define('x', Tags.Items.DUSTS_REDSTONE)
+                .define('#', Tags.Items.INGOTS_NETHERITE)
+                .define('m', Tags.Items.GEMS_EMERALD)
+                .group("blockbooster")
+                .unlockedBy("mysterious", InventoryChangeTrigger.TriggerInstance.hasItems(Items.EMERALD))
+                .save(consumer);
     }
 }

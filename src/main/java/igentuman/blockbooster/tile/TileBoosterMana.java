@@ -2,13 +2,13 @@ package igentuman.blockbooster.tile;
 
 import igentuman.blockbooster.config.CommonConfig;
 import igentuman.blockbooster.setup.Registration;
-import igentuman.blockbooster.util.CustomEnergyStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -19,22 +19,29 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import vazkii.botania.api.BotaniaAPI;
+import vazkii.botania.api.BotaniaForgeCapabilities;
+import vazkii.botania.api.mana.ManaBlockType;
+import vazkii.botania.api.mana.ManaNetworkAction;
+import vazkii.botania.api.mana.ManaPool;
+import vazkii.botania.common.handler.ManaNetworkHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
-public class TileBoosterT2 extends BlockEntity implements BlockEntityTicker, ITileBooster {
+public class TileBoosterMana extends BlockEntity implements BlockEntityTicker, ITileBooster, ManaPool {
 
-    private final CustomEnergyStorage energy = createEnergyStorage();
-    private final LazyOptional<IEnergyStorage> energyHandler = LazyOptional.of(() -> energy);
 
     private ArrayList<String> whiteList = CommonConfig.GENERAL.white_list.get();
     private ArrayList<String> blackList = CommonConfig.GENERAL.black_list.get();
 
     private HashMap<Integer, BlockEntity> attachedBlocks = new HashMap<>();
+    private int mana;
+
+    private boolean addedToManaNetwork = false;
 
     public byte[] getBoostFlag() {
         return boostFlag;
@@ -42,27 +49,19 @@ public class TileBoosterT2 extends BlockEntity implements BlockEntityTicker, ITi
 
     private byte[] boostFlag = new byte[] {0,0,0,0,0,0};
 
-    public TileBoosterT2(BlockPos pos, BlockState state) {
-        super(Registration.BLOCKBOOSTER_T2_BE.get(), pos, state);
+    public TileBoosterMana(BlockPos pos, BlockState state) {
+        super(Registration.BLOCKBOOSTER_MANA_BE.get(), pos, state);
     }
 
     @Override
     public void setRemoved() {
         super.setRemoved();
-    }
-
-    public int getEnergy()
-    {
-        return energy.getEnergyStored();
-    }
-
-    public void consumeEnergy(int amount)
-    {
-        energy.consumeEnergy(amount);
+        BotaniaAPI.instance().getManaNetworkInstance().fireManaNetworkEvent(this, ManaBlockType.POOL, ManaNetworkAction.REMOVE);
+        addedToManaNetwork = false;
     }
 
     public boolean isDisabled = false;
-    public int fePerTick = CommonConfig.GENERAL.t2_fe_per_tick.get();
+    public int manaPerTick = CommonConfig.GENERAL.mana_per_tick.get();
     private long tick = 0;
 
     private void updateRedstoneControl()
@@ -119,6 +118,7 @@ public class TileBoosterT2 extends BlockEntity implements BlockEntityTicker, ITi
 
     public void tickServer() {
         if(level == null) return;
+        addToManaNetwork();
         tick++;
         if(tick % 10 == 0) {
             if(!level.isClientSide()) {
@@ -138,32 +138,29 @@ public class TileBoosterT2 extends BlockEntity implements BlockEntityTicker, ITi
             if(id > boostFlag.length-1) break;
             if(boostFlag[id] == 0) continue;
             BlockEntity be = attachedBlocks.get(id);
-            if(be == null || getEnergy() < fePerTick) return;
+            if(be == null || mana < manaPerTick) return;
             BlockEntityTicker<BlockEntity> ticker = be.getBlockState()
                     .getTicker(level, (BlockEntityType<BlockEntity>) be.getType());
             if (ticker != null) {
-                for (int i = 0; i < CommonConfig.GENERAL.t2_boost_rate.get(); i++) {
+                for (int i = 0; i < CommonConfig.GENERAL.mana_booster_rate.get(); i++) {
                     ticker.tick(level, be.getBlockPos(), be.getBlockState(), be);
                 }
-                consumeEnergy(fePerTick);
+                consumeMana();
             }
         }
     }
 
-    private CustomEnergyStorage createEnergyStorage() {
-        return new CustomEnergyStorage (
-                getMaxEnergy(),
-                        CommonConfig.GENERAL.t2_fe_per_tick.get()*10
-        ) {
-            @Override
-            public int receiveEnergy(int maxReceive, boolean simulate) {
-                int rc = super.receiveEnergy(maxReceive, simulate);
-                if (rc > 0 && !simulate) {
-                    setChanged();
-                }
-                return rc;
-            }
-        };
+    private void addToManaNetwork() {
+        //if(addedToManaNetwork) return;
+        if (!ManaNetworkHandler.instance.isPoolIn(level, this) && !isRemoved()) {
+            BotaniaAPI.instance().getManaNetworkInstance().fireManaNetworkEvent(this, ManaBlockType.POOL, ManaNetworkAction.ADD);
+            addedToManaNetwork = true;
+        }
+    }
+
+    private void consumeMana() {
+        mana-=manaPerTick;
+        setChanged(level, getBlockPos(), getBlockState());
     }
 
     @Override
@@ -193,15 +190,13 @@ public class TileBoosterT2 extends BlockEntity implements BlockEntityTicker, ITi
     }
 
     private void saveClientData(CompoundTag tag) {
-        tag.put("Energy", energy.serializeNBT());
+        tag.putInt("mana", mana);
         tag.putBoolean("isDisabled", isDisabled);
         tag.putByteArray("boostFlag", boostFlag);
     }
 
     private void loadClientData(CompoundTag tag) {
-        if (tag.contains("Energy")) {
-            energy.deserializeNBT(tag.get("Energy"));
-        }
+        mana = tag.getInt("mana");
         isDisabled = tag.getBoolean("isDisabled");
         if(tag.getByteArray("boostFlag").length == 6) {
             boostFlag = tag.getByteArray("boostFlag");
@@ -210,9 +205,7 @@ public class TileBoosterT2 extends BlockEntity implements BlockEntityTicker, ITi
 
     @Override
     public void load(CompoundTag tag) {
-        if (tag.contains("Energy")) {
-            energy.deserializeNBT(tag.get("Energy"));
-        }
+        mana = tag.getInt("mana");
         isDisabled = tag.getBoolean("isDisabled");
         if(tag.getByteArray("boostFlag").length == 6) {
             boostFlag = tag.getByteArray("boostFlag");
@@ -222,18 +215,9 @@ public class TileBoosterT2 extends BlockEntity implements BlockEntityTicker, ITi
 
     @Override
     public void saveAdditional(CompoundTag tag) {
-       tag.put("Energy", energy.serializeNBT());
+        tag.putInt("mana", mana);
         tag.putBoolean("isDisabled", isDisabled);
         tag.putByteArray("boostFlag", boostFlag);
-    }
-
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ENERGY) {
-            return energyHandler.cast();
-        }
-        return super.getCapability(cap, side);
     }
 
     @Override
@@ -244,8 +228,23 @@ public class TileBoosterT2 extends BlockEntity implements BlockEntityTicker, ITi
         return attachedBlocks;
     }
 
-    public int getMaxEnergy() {
-        return CommonConfig.GENERAL.t2_fe_per_tick.get()*100;
+    @Override
+    public boolean isOutputtingPower() {
+        return false;
+    }
+
+    public int getMaxMana() {
+        return CommonConfig.GENERAL.mana_per_tick.get()*100;
+    }
+
+    @Override
+    public Optional<DyeColor> getColor() {
+        return Optional.empty();
+    }
+
+    @Override
+    public void setColor(Optional<DyeColor> color) {
+
     }
 
     public boolean isIndexEnabled(int i) {
@@ -259,7 +258,51 @@ public class TileBoosterT2 extends BlockEntity implements BlockEntityTicker, ITi
                 Block.UPDATE_ALL);
     }
 
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if (cap == BotaniaForgeCapabilities.MANA_RECEIVER) {
+            return (LazyOptional<T>) LazyOptional.of(() -> this);
+        }
+        return super.getCapability(cap, side);
+    }
+    
     public void tickClient() {
         updateAttachedBlocks();
+    }
+
+    @Override
+    public Level getManaReceiverLevel() {
+        return getLevel();
+    }
+
+    @Override
+    public BlockPos getManaReceiverPos() {
+        return getBlockPos();
+    }
+
+    @Override
+    public int getCurrentMana() {
+        return mana;
+    }
+
+    @Override
+    public boolean isFull() {
+        return mana>=getMaxMana();
+    }
+
+    @Override
+    public void receiveMana(int mana) {
+        this.mana+=mana;
+        setChanged(level, getBlockPos(), getBlockState());
+    }
+
+    @Override
+    public boolean canReceiveManaFromBursts() {
+        return true;
+    }
+
+    public int getMana() {
+        return mana;
     }
 }

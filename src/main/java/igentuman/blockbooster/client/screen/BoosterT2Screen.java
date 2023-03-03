@@ -42,6 +42,14 @@ public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container>
         drawEnergyBar(matrixStack);
     }
 
+    @Override
+    public void renderTooltip(PoseStack poseStack, int x, int y) {
+        if(x > getGuiLeft()+4 && x < getGuiLeft()+175 && y > getGuiTop()+138 && y < getGuiTop()+148) {
+            Component textComponent = Component.literal(I18n.get("gui.energy.info", menu.getEnergy(), menu.getMaxEnergy()));
+            super.renderTooltip(poseStack, textComponent,  x, y);
+        }
+    }
+
     protected void init() {
         super.init();
         this.checkboxes.clear();
@@ -94,13 +102,6 @@ public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container>
 
         if(menu.isDisabled()) {
             drawString(matrixStack, Minecraft.getInstance().font, I18n.get("gui.block_booster.disabled"), 10, 65, 0xffffff);
-        }
-
-        if(Minecraft.getInstance().player.isCreative()) {
-            drawCenteredString(matrixStack, Minecraft.getInstance().font, I18n.get("gui.creative"), imageWidth/2, -10, 0xffffff);
-            for(Integer id: getAttachedBlocks().keySet()) {
-                drawString(matrixStack, Minecraft.getInstance().font, Registry.BLOCK.getKey(getAttachedBlocks().get(id).getBlockState().getBlock()).toString(), 90, 20*id+17, 0xffffff);
-            }
         }
     }
 

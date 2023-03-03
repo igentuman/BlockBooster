@@ -1,10 +1,13 @@
 package igentuman.blockbooster;
 
+import igentuman.blockbooster.command.CommandBoosterShowBlockId;
 import igentuman.blockbooster.config.CommonConfig;
 import igentuman.blockbooster.setup.ModSetup;
 import igentuman.blockbooster.setup.ClientSetup;
 import igentuman.blockbooster.setup.Registration;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -27,6 +30,7 @@ public class BlockBooster {
         ModSetup.setup();
         Registration.init();
         IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
+        MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
         modbus.addListener(ModSetup::init);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> modbus.addListener(ClientSetup::init));
     }
@@ -35,5 +39,9 @@ public class BlockBooster {
     public static void onModConfigEvent(final ModConfigEvent event) {
         if (event.getConfig().getType() == ModConfig.Type.COMMON)
             CommonConfig.setLoaded();
+    }
+
+    private void registerCommands(RegisterCommandsEvent event) {
+        event.getDispatcher().register(CommandBoosterShowBlockId.register());
     }
 }
