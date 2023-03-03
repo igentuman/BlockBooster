@@ -2,7 +2,7 @@ package igentuman.blockbooster.block;
 
 import igentuman.blockbooster.config.CommonConfig;
 import igentuman.blockbooster.container.BoosterManaContainer;
-import igentuman.blockbooster.tile.TileBoosterMana;
+import igentuman.blockbooster.tile.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
@@ -38,6 +38,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class BlockBoosterMana extends Block implements EntityBlock {
@@ -62,33 +63,41 @@ public class BlockBoosterMana extends Block implements EntityBlock {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter reader, List<Component> list, TooltipFlag flags) {
-        list.add(Component.literal(I18n.get("hint.booster_mana", CommonConfig.GENERAL.mana_booster_rate.get())).withStyle(ChatFormatting.BLUE));
+        list.add(Component.literal(I18n.get("hint.booster_mana", CommonConfig.GENERAL.mana_per_tick.get(), CommonConfig.GENERAL.mana_booster_rate.get())).withStyle(ChatFormatting.BLUE));
 
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        if(!ModList.get().isLoaded("botania")) return null;
-        return new TileBoosterMana(blockPos, blockState);
+        if(ModList.get().isLoaded("botania")) {
+            try {
+                return (BlockEntity) Class.forName("igentuman.blockbooster.tile.TileBoosterMana").getConstructor(BlockPos.class, BlockState.class).newInstance(blockPos, blockState);
+            } catch (InstantiationException|IllegalAccessException|ClassNotFoundException|InvocationTargetException|NoSuchMethodException e) {
+
+            }
+        }
+        return null;
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if(!ModList.get().isLoaded("botania")) return null;
-        if (level.isClientSide()) {
+        if(ModList.get().isLoaded("botania")) {
+            if (level.isClientSide()) {
+                return (lvl, pos, blockState, t) -> {
+                    if (t instanceof ITileBooster) {
+                        ((ITileBooster)t).tickClient();
+                    }
+                };
+            }
             return (lvl, pos, blockState, t) -> {
-                if (t instanceof TileBoosterMana tile) {
-                    tile.tickClient();
+                if (t instanceof ITileBooster) {
+                    ((ITileBooster)t).tickServer();
                 }
             };
         }
-        return (lvl, pos, blockState, t) -> {
-            if (t instanceof TileBoosterMana tile) {
-                tile.tickServer();
-            }
-        };
+        return null;
     }
 
     @Override
@@ -109,7 +118,7 @@ public class BlockBoosterMana extends Block implements EntityBlock {
         if(!ModList.get().isLoaded("botania")) return InteractionResult.SUCCESS;
         if (!level.isClientSide) {
             BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof TileBoosterMana) {
+            if (be instanceof ITileBooster) {
                 MenuProvider containerProvider = new MenuProvider() {
                     @Override
                     public Component getDisplayName() {

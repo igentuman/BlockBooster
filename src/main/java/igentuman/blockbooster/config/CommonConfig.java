@@ -62,7 +62,7 @@ public class CommonConfig {
                     .define("t2_boost_rate", 5);
             mana_per_tick = builder
                     .comment("Mana Booster mana per tick to operate")
-                    .define("mana_per_tick", 1000);
+                    .define("mana_per_tick", 100);
             mana_booster_rate = builder
                     .comment("Mana Booster boost rate")
                     .define("mana_booster_rate", 5);

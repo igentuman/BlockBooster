@@ -5,8 +5,8 @@
   "itemGroup.blockbooster": "Ускоритель блоков",
   "gui.checkbox.boost": "Ускорить",
   "gui.block_booster": "Ускоритель блоков",
-  "hint.booster_t1": "Ускоряет только блоки сверху и снизу. Ускорение: x%s",
-  "hint.booster_t2": "Ускорение: x%s",
+  "hint.booster_t1": "Ускоряет только блоки сверху и снизу. Использует %s FE за операцию. Ускорение: x%s",
+  "hint.booster_t2": "Использует %s FE за операцию. Ускорение: x%s",
   "hint.booster_mana": "Использует %s маны за операцию. Ускорение: x%s",
   "gui.mana.info": "%s маны из %s max",
   "gui.energy.info": "%s FE из %s FE max"

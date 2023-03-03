@@ -10,11 +10,14 @@
     },
     "x": {
       "tag": "forge:dusts/redstone"
+    },
+    "c": {
+      "item": "minecraft:clock"
     }
   },
   "pattern": [
-    "mmm",
-    "x#x",
+    "m#m",
+    "xcx",
     "#x#"
   ],
   "result": {

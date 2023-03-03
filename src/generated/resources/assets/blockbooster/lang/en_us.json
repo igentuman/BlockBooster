@@ -7,8 +7,8 @@
   "screen.igentuman.blockbooster": "Block Booster",
   "gui.checkbox.boost": "Boost",
   "gui.block_booster": "Block Booster",
-  "hint.booster_t1": "Boosts only Top/Bottom blocks. Boost rate: x%s",
-  "hint.booster_t2": "Boost rate: x%s",
+  "hint.booster_t1": "Boosts only Top/Bottom blocks. %s FE per operation. Boost rate: x%s",
+  "hint.booster_t2": "Uses %s FE per operation. Boost rate: x%s",
   "hint.booster_mana": "Uses %s mana per operation. Boost rate: x%s",
   "gui.mana.info": "%s mana of %s max",
   "gui.energy.info": "%s FE of %s FE max"

@@ -1,10 +1,10 @@
 {
   "variants": {
     "powered=false": {
-      "model": "blockbooster:block/booster_t2"
+      "model": "blockbooster:block/booster_mana"
     },
     "powered=true": {
-      "model": "blockbooster:block/booster_t2"
+      "model": "blockbooster:block/booster_mana"
     }
   }
 }
