@@ -5,14 +5,14 @@
     "#": {
       "tag": "forge:ingots/gold"
     },
+    "c": {
+      "item": "minecraft:clock"
+    },
     "m": {
       "tag": "forge:gems/emerald"
     },
     "x": {
       "tag": "forge:dusts/redstone"
-    },
-    "c": {
-      "item": "minecraft:clock"
     }
   },
   "pattern": [

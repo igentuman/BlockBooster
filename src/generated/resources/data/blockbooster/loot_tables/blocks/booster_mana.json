@@ -1,0 +1,43 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_name",
+              "source": "block_entity"
+            },
+            {
+              "function": "minecraft:copy_nbt",
+              "ops": [
+                {
+                  "op": "replace",
+                  "source": "Info",
+                  "target": "BlockEntityTag.Info"
+                },
+                {
+                  "op": "replace",
+                  "source": "Inventory",
+                  "target": "BlockEntityTag.Inventory"
+                },
+                {
+                  "op": "replace",
+                  "source": "Energy",
+                  "target": "BlockEntityTag.Energy"
+                }
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "blockbooster:booster_mana"
+        }
+      ],
+      "name": "booster_mana",
+      "rolls": 1.0
+    }
+  ]
+}

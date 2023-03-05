@@ -1,15 +1,12 @@
 {
+  "block.blockbooster.booster_mana": "Mana Block Booster",
   "block.blockbooster.booster_t1": "Block Booster Tier 1",
   "block.blockbooster.booster_t2": "Block Booster Tier 2",
-  "block.blockbooster.booster_mana": "Mana Block Booster",
-  "itemGroup.blockbooster": "Block Booster",
-  "message.blockbooster": "Icreases tick rate for the block entity on the top of it. Requires energy",
-  "screen.igentuman.blockbooster": "Block Booster",
-  "gui.checkbox.boost": "Boost",
   "gui.block_booster": "Block Booster",
-  "hint.booster_t1": "Boosts only Top/Bottom blocks. %s FE per operation. Boost rate: x%s",
-  "hint.booster_t2": "Uses %s FE per operation. Boost rate: x%s",
-  "hint.booster_mana": "Uses %s mana per operation. Boost rate: x%s",
-  "gui.mana.info": "%s mana of %s max",
-  "gui.energy.info": "%s FE of %s FE max"
+  "gui.checkbox.boost": "Boost",
+  "gui.creative": "Creative Player can see block ids",
+  "hint.booster_mana": "Uses mana to work. Boost rate: x%s",
+  "hint.booster_t1": "Boosts only Top/Bottom blocks. Boost rate: x%s",
+  "hint.booster_t2": "Boost rate: x%s",
+  "itemGroup.blockbooster": "Block Booster"
 }

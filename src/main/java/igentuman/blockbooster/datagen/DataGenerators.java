@@ -14,6 +14,7 @@ public class DataGenerators {
         DataGenerator generator = event.getGenerator();
         if (event.includeServer()) {
             generator.addProvider(true, new BbRecipes(generator));
+            generator.addProvider(true, new BoosterLootTable(generator));
             BlockTags blockTags = new BlockTags(generator, event.getExistingFileHelper());
             generator.addProvider(true, blockTags);
         }
