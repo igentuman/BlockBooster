@@ -6,38 +6,12 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:copy_name",
-              "source": "block_entity"
-            },
-            {
-              "function": "minecraft:copy_nbt",
-              "ops": [
-                {
-                  "op": "replace",
-                  "source": "Info",
-                  "target": "BlockEntityTag.Info"
-                },
-                {
-                  "op": "replace",
-                  "source": "Inventory",
-                  "target": "BlockEntityTag.Inventory"
-                },
-                {
-                  "op": "replace",
-                  "source": "Energy",
-                  "target": "BlockEntityTag.Energy"
-                }
-              ],
-              "source": "block_entity"
-            }
-          ],
           "name": "blockbooster:booster_t2"
         }
       ],
       "name": "booster_t2",
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "blockbooster:booster_t2"
 }

@@ -4,6 +4,7 @@ import igentuman.blockbooster.setup.Registration;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
@@ -14,12 +15,12 @@ import java.util.function.Consumer;
 public class BbRecipes extends RecipeProvider {
 
     public BbRecipes(DataGenerator generatorIn) {
-        super(generatorIn);
+        super(generatorIn.getPackOutput());
     }
 
     @Override
-    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
-        ShapedRecipeBuilder.shaped(Registration.BLOCKBOOSTER_T1.get())
+    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Registration.BLOCKBOOSTER_T1.get())
                 .pattern("m#m")
                 .pattern("xcx")
                 .pattern("#x#")
@@ -30,7 +31,7 @@ public class BbRecipes extends RecipeProvider {
                 .group("blockbooster")
                 .unlockedBy("mysterious", InventoryChangeTrigger.TriggerInstance.hasItems(Items.EMERALD))
                 .save(consumer);
-        ShapedRecipeBuilder.shaped(Registration.BLOCKBOOSTER_T2.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Registration.BLOCKBOOSTER_T2.get())
                 .pattern("m#m")
                 .pattern("xcx")
                 .pattern("#x#")
@@ -42,7 +43,7 @@ public class BbRecipes extends RecipeProvider {
                 .unlockedBy("mysterious", InventoryChangeTrigger.TriggerInstance.hasItems(Items.EMERALD))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Registration.BLOCKBOOSTER_MANA.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Registration.BLOCKBOOSTER_MANA.get())
                 .pattern("m#m")
                 .pattern("xcx")
                 .pattern("#x#")

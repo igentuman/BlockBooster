@@ -40,7 +40,7 @@ public class BoosterPacket {
         context.enqueueWork(() -> {
 
             ServerPlayer player = context.getSender();
-            BlockEntity be = player.level.getBlockEntity(pos);
+            BlockEntity be = player.level().getBlockEntity(pos);
             if(be instanceof ITileBooster) {
                 ((ITileBooster) be).setIndexStatus(id, val);
             }

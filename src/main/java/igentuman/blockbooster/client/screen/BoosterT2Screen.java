@@ -6,6 +6,7 @@ import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.client.screen.element.CheckBox;
 import igentuman.blockbooster.container.BoosterT2Container;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -35,18 +36,21 @@ public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container>
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(matrixStack);
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.renderTooltip(matrixStack, mouseX, mouseY);
-        drawEnergyBar(matrixStack);
+    public void renderBg(GuiGraphics graphics, float pPartialTick, int pMouseX, int pMouseY) {
+        this.renderBackground(graphics);
+        int relX = (this.width - this.imageWidth) / 2;
+        int relY = (this.height - this.imageHeight) / 2;
+        graphics.blit(GUI, relX, relY, 0, 0, this.imageWidth, this.imageHeight);
+        this.renderTooltip(graphics, pMouseX, pMouseY);
+        drawEnergyBar(graphics);
+        drawAttachedBlocks(graphics);
     }
 
     @Override
-    public void renderTooltip(PoseStack poseStack, int x, int y) {
-        if(x > getGuiLeft()+4 && x < getGuiLeft()+175 && y > getGuiTop()+138 && y < getGuiTop()+148) {
-            Component textComponent = Component.literal(I18n.get("gui.energy.info", menu.getEnergy(), menu.getMaxEnergy()));
-            super.renderTooltip(poseStack, textComponent,  x, y);
+    public void renderTooltip(GuiGraphics graphics, int x, int y) {
+        if(x > getGuiLeft()+4 && x < getGuiLeft()+175 && y > getGuiTop()+139 && y < getGuiTop()+149) {
+            Component textComponent = Component.translatable("gui.energy.info", menu.getEnergy(), menu.getMaxEnergy());
+            graphics.renderTooltip(Minecraft.getInstance().font, textComponent, x, y);
         }
     }
 
@@ -91,35 +95,25 @@ public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container>
         return  menu.getAttachedBlocks();
     }
 
-    public void drawEnergyBar(PoseStack matrixStack)
+    public void drawEnergyBar(GuiGraphics graphics)
     {
-        this.blit(matrixStack, getGuiLeft()+4, getGuiTop()+140, 0, 153, menu.getEnergyScaled(171), 7);
+        graphics.blit(GUI, getGuiLeft()+4, getGuiTop()+140, 0, 153, menu.getEnergyScaled(171), 7);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-        drawCenteredString(matrixStack,Minecraft.getInstance().font, I18n.get("gui.block_booster"), imageWidth/2, 4, 0xffffff );
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+        graphics.drawCenteredString(Minecraft.getInstance().font, I18n.get("gui.block_booster"), imageWidth/2, 4, 0xffffff );
 
         if(menu.isDisabled()) {
-            drawString(matrixStack, Minecraft.getInstance().font, I18n.get("gui.block_booster.disabled"), 10, 65, 0xffffff);
+            graphics.drawString(Minecraft.getInstance().font, Component.translatable("gui.block_booster.disabled"), 10, 65, 0xffffff);
         }
     }
 
-    @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        RenderSystem.setShaderTexture(0, GUI);
-        int relX = (this.width - this.imageWidth) / 2;
-        int relY = (this.height - this.imageHeight) / 2;
-        this.blit(matrixStack, relX, relY, 0, 0, this.imageWidth, this.imageHeight);
-        drawEnergyBar(matrixStack);
-        drawAttachedBlocks(matrixStack);
-    }
 
-
-    private void drawAttachedBlocks(PoseStack matrixStack) {
+    private void drawAttachedBlocks(GuiGraphics graphics) {
         int y = 14;
         for(Integer i: menu.getAttachedBlocks().keySet()) {
-            itemRenderer.renderGuiItem(
+            graphics.renderItem(
                     new ItemStack(menu.getAttachedBlocks().get(i).getBlockState().getBlock().asItem()), getGuiLeft()+9, getGuiTop()+i*20+y);
         }
     }

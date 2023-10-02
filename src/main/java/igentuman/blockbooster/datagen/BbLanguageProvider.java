@@ -9,7 +9,7 @@ import net.minecraftforge.common.data.LanguageProvider;
 public class BbLanguageProvider extends LanguageProvider {
 
     public BbLanguageProvider(DataGenerator gen, String locale) {
-        super(gen, igentuman.blockbooster.BlockBooster.MODID, locale);
+        super(gen.getPackOutput(), igentuman.blockbooster.BlockBooster.MODID, locale);
     }
 
     @Override
@@ -18,6 +18,9 @@ public class BbLanguageProvider extends LanguageProvider {
         add("gui.block_booster", "Block Booster");
         add("gui.creative", "Creative Player can see block ids");
         add("gui.checkbox.boost", "Boost");
+        add("gui.energy.info", "Energy: %s/%s FE");
+        add("gui.mana.info", "Mana: %s/%s");
+        add("gui.block_booster.disabled", "Disabled");
         add("hint.booster_t1", "Boosts only Top/Bottom blocks. Boost rate: x%s");
         add("hint.booster_t2", "Boost rate: x%s");
         add("hint.booster_mana", "Uses mana to work. Boost rate: x%s");

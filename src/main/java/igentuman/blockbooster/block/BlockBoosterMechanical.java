@@ -30,7 +30,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -46,10 +45,11 @@ public class BlockBoosterMechanical extends Block implements EntityBlock {
     private static final VoxelShape RENDER_SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
     public BlockBoosterMechanical() {
-        super(Properties.of(Material.METAL)
+        super(Properties.of()
                 .sound(SoundType.METAL)
                 .strength(2.0f)
                 .lightLevel(state -> state.getValue(BlockStateProperties.POWERED) ? 14 : 0)
+                .noOcclusion()
                 .requiresCorrectToolForDrops()
         );
     }
@@ -63,7 +63,7 @@ public class BlockBoosterMechanical extends Block implements EntityBlock {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter reader, List<Component> list, TooltipFlag flags) {
-        list.add(Component.literal(I18n.get("hint.booster_mana", CommonConfig.GENERAL.mana_per_tick.get(), CommonConfig.GENERAL.mana_booster_rate.get())).withStyle(ChatFormatting.BLUE));
+        list.add(Component.translatable("hint.booster_mana", CommonConfig.GENERAL.mana_per_tick.get(), CommonConfig.GENERAL.mana_booster_rate.get()).withStyle(ChatFormatting.BLUE));
 
     }
 

@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.registries.ForgeRegistries;
 import vazkii.botania.api.BotaniaAPI;
 import vazkii.botania.api.BotaniaForgeCapabilities;
 import vazkii.botania.api.mana.ManaBlockType;
@@ -79,7 +80,7 @@ public class TileBoosterMana extends BlockEntity implements BlockEntityTicker, I
 
     public String getBlockName(BlockEntity be)
     {
-        return Registry.BLOCK.getKey(be.getBlockState().getBlock()).toString();
+        return ForgeRegistries.BLOCKS.getKey(be.getBlockState().getBlock()).toString();
     }
 
     public void updateAttachedBlocks()

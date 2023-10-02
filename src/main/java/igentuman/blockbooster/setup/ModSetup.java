@@ -14,13 +14,6 @@ public class ModSetup {
 
     public static final String TAB_NAME = "blockbooster";
 
-    public static final CreativeModeTab ITEM_GROUP = new CreativeModeTab(TAB_NAME) {
-        @Override
-        public ItemStack makeIcon() {
-            return new ItemStack(Items.DIAMOND);
-        }
-    };
-
     public static void setup() {
         IEventBus bus = MinecraftForge.EVENT_BUS;
     }

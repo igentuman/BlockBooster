@@ -20,6 +20,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -81,7 +82,7 @@ public class TileBoosterTime extends BlockEntity implements BlockEntityTicker, I
 
     public String getBlockName(BlockEntity be)
     {
-        return Registry.BLOCK.getKey(be.getBlockState().getBlock()).toString();
+        return ForgeRegistries.BLOCKS.getKey(be.getBlockState().getBlock()).toString();
     }
 
     public void updateAttachedBlocks()

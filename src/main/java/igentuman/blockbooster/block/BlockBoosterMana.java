@@ -5,6 +5,7 @@ import igentuman.blockbooster.container.BoosterManaContainer;
 import igentuman.blockbooster.tile.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
@@ -30,7 +31,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -46,10 +46,11 @@ public class BlockBoosterMana extends Block implements EntityBlock {
     private static final VoxelShape RENDER_SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
     public BlockBoosterMana() {
-        super(Properties.of(Material.METAL)
+        super(Properties.of()
                 .sound(SoundType.METAL)
                 .strength(2.0f)
                 .lightLevel(state -> state.getValue(BlockStateProperties.POWERED) ? 14 : 0)
+                .noOcclusion()
                 .requiresCorrectToolForDrops()
         );
     }
@@ -63,7 +64,7 @@ public class BlockBoosterMana extends Block implements EntityBlock {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter reader, List<Component> list, TooltipFlag flags) {
-        list.add(Component.literal(I18n.get("hint.booster_mana", CommonConfig.GENERAL.mana_per_tick.get(), CommonConfig.GENERAL.mana_booster_rate.get())).withStyle(ChatFormatting.BLUE));
+        list.add(Component.translatable("hint.booster_mana", CommonConfig.GENERAL.mana_per_tick.get(), CommonConfig.GENERAL.mana_booster_rate.get()).withStyle(ChatFormatting.BLUE));
 
     }
 

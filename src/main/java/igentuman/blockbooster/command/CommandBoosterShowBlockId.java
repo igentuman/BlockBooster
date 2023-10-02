@@ -14,6 +14,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class CommandBoosterShowBlockId {
 
@@ -31,7 +32,7 @@ public class CommandBoosterShowBlockId {
         ServerPlayer pl = ctx.getPlayer();
         HitResult hitResult = rayTrace(pl, 5);
         if(hitResult.getType().equals(HitResult.Type.BLOCK)) {
-            BlockEntity be = pl.getLevel().getBlockEntity(((BlockHitResult) hitResult).getBlockPos());
+            BlockEntity be = pl.level().getBlockEntity(((BlockHitResult) hitResult).getBlockPos());
             if(be == null) return 0;
             pl.sendSystemMessage(Component.literal(getBlockName(be)));
         }
@@ -40,7 +41,7 @@ public class CommandBoosterShowBlockId {
 
     public static String getBlockName(BlockEntity be)
     {
-        return Registry.BLOCK.getKey(be.getBlockState().getBlock()).toString();
+        return ForgeRegistries.BLOCKS.getKey(be.getBlockState().getBlock()).toString();
     }
 
     public static BlockHitResult rayTrace(Player player, double reach) {

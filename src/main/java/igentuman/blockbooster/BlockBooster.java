@@ -27,9 +27,10 @@ public class BlockBooster {
 
     public BlockBooster() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.spec);
+        IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
         ModSetup.setup();
         Registration.init();
-        IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
+        ClientSetup.TABS.register(modbus);
         MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
         modbus.addListener(ModSetup::init);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> modbus.addListener(ClientSetup::init));
