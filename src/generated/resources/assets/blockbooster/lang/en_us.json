@@ -2,14 +2,15 @@
   "block.blockbooster.booster_mana": "Mana Block Booster",
   "block.blockbooster.booster_t1": "Block Booster Tier 1",
   "block.blockbooster.booster_t2": "Block Booster Tier 2",
+  "booster.limit_message": "Boosters per chunk limit reached. Only %s per chunk.",
   "gui.block_booster": "Block Booster",
   "gui.block_booster.disabled": "Disabled",
   "gui.checkbox.boost": "Boost",
   "gui.creative": "Creative Player can see block ids",
   "gui.energy.info": "Energy: %s/%s FE",
   "gui.mana.info": "Mana: %s/%s",
-  "hint.booster_mana": "Uses mana to work. Boost rate: x%s",
-  "hint.booster_t1": "Boosts only Top/Bottom blocks. Boost rate: x%s",
-  "hint.booster_t2": "Boost rate: x%s",
+  "hint.booster_mana": "Uses mana to work. Mana per boost: %s. Boost rate: x%s",
+  "hint.booster_t1": "Boosts only Top/Bottom blocks. FE per boost: %s. Boost rate: x%s",
+  "hint.booster_t2": "FE per boost: %s. Boost rate: x%s",
   "itemGroup.blockbooster": "Block Booster"
 }

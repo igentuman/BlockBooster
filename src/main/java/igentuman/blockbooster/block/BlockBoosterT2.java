@@ -38,7 +38,7 @@ import net.minecraftforge.network.NetworkHooks;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockBoosterT2 extends Block implements EntityBlock {
+public class BlockBoosterT2 extends Block implements EntityBlock, IBoosterBlock {
 
     private static final VoxelShape RENDER_SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 

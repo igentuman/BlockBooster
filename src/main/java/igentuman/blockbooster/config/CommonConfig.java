@@ -31,6 +31,8 @@ public class CommonConfig {
     }
 
     public static class General {
+        public final ForgeConfigSpec.ConfigValue<Integer> boosters_per_chunk;
+
         public final ForgeConfigSpec.ConfigValue<Integer> t1_fe_per_tick;
         public final ForgeConfigSpec.ConfigValue<Integer> t1_boost_rate;
 
@@ -48,6 +50,9 @@ public class CommonConfig {
 
         public General(ForgeConfigSpec.Builder builder) {
             builder.push("General");
+            boosters_per_chunk = builder
+                    .comment("Limit boosters per chunk. Boosters might affect server performance negatively. Consider limiting boosters per chunk")
+                    .defineInRange("boosters_per_chunk", 5, 1, 20);
             t1_fe_per_tick = builder
                     .comment("Booster Tier 1 FE per tick to operate")
                     .define("t1_fe_per_tick", 5000);

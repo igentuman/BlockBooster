@@ -11,6 +11,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -45,7 +46,9 @@ public class ClientSetup {
         event.enqueueWork(() -> {
             MenuScreens.register(Registration.BLOCKBOOSTER_T1_CONTAINER.get(), BoosterT1Screen::new);
             MenuScreens.register(Registration.BLOCKBOOSTER_T2_CONTAINER.get(), BoosterT2Screen::new);
-            MenuScreens.register(Registration.BLOCKBOOSTER_MANA_CONTAINER.get(), BoosterManaScreen::new);
+            if(ModList.get().isLoaded("botania")) {
+                MenuScreens.register(Registration.BLOCKBOOSTER_MANA_CONTAINER.get(), BoosterManaScreen::new);
+            }
         });
        
     }

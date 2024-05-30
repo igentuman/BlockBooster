@@ -1,6 +1,7 @@
 package igentuman.blockbooster.setup;
 
 import igentuman.blockbooster.BlockBooster;
+import igentuman.blockbooster.event.WorldEvents;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -16,6 +17,7 @@ public class ModSetup {
 
     public static void setup() {
         IEventBus bus = MinecraftForge.EVENT_BUS;
+        bus.register(new WorldEvents());
     }
 
     public static void init(FMLCommonSetupEvent event) {

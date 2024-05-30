@@ -7,9 +7,9 @@ version="${file.jarVersion}" #mandatory
 displayName="Block Booster" #mandatory
 logoFile="logo.png" #optional
 credits="Boosting machines with energy" #optional
-authors="Love, Cheese and small house plants" #optional
+authors="igentuman" #optional
 description='''
-Increase tick rate for machines on top of block booster. Requires energy
+Increase tick rate for machines on top of block booster. Requires energy or mana
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.blockbooster]] #optional

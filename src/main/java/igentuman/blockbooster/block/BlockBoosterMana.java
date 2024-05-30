@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-public class BlockBoosterMana extends Block implements EntityBlock {
+public class BlockBoosterMana extends Block implements EntityBlock, IBoosterBlock {
 
     private static final VoxelShape RENDER_SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
