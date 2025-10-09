@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "blockbooster:booster_mana"
+        "recipe": "blockbooster:booster_t3"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -12,7 +12,7 @@
         "items": [
           {
             "items": [
-              "blockbooster:booster_t1"
+              "blockbooster:booster_t2"
             ]
           }
         ]
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "blockbooster:booster_mana"
+      "blockbooster:booster_t3"
     ]
   },
   "sends_telemetry_event": false

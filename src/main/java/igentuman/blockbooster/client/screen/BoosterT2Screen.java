@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container> {
 
@@ -44,6 +45,7 @@ public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container>
         this.renderTooltip(graphics, pMouseX, pMouseY);
         drawEnergyBar(graphics);
         drawAttachedBlocks(graphics);
+        drawTPSIndicator(graphics);
     }
 
     @Override
@@ -51,6 +53,47 @@ public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container>
         if(x > getGuiLeft()+4 && x < getGuiLeft()+175 && y > getGuiTop()+139 && y < getGuiTop()+149) {
             Component textComponent = Component.translatable("gui.energy.info", menu.getEnergy(), menu.getMaxEnergy());
             graphics.renderTooltip(Minecraft.getInstance().font, textComponent, x, y);
+            return;
+        }
+        
+        // TPS indicator tooltip
+        int tpsX = getGuiLeft() + 165;
+        int tpsY = getGuiTop() + 4;
+        if(x >= tpsX && x < tpsX + 8 && y >= tpsY && y < tpsY + 8) {
+            List<Component> tooltip = new ArrayList<>();
+            if(menu.isLagging()) {
+                tooltip.add(Component.translatable("gui.tps.lagging"));
+                tooltip.add(Component.translatable("gui.tps.current", String.format("%.1f", menu.getCurrentTPS())));
+                tooltip.add(Component.translatable("gui.tps.boosting_paused"));
+            } else {
+                tooltip.add(Component.translatable("gui.tps.ok"));
+                tooltip.add(Component.translatable("gui.tps.current", String.format("%.1f", menu.getCurrentTPS())));
+            }
+            graphics.renderTooltip(Minecraft.getInstance().font, tooltip, Optional.empty(), x, y);
+            return;
+        }
+        
+        // Check for attached block tooltips
+        HashMap<Integer, BlockEntity> attachedBlocks = menu.getAttachedBlocks();
+        int blockIconX = getGuiLeft() + 9;
+        int blockIconSize = 16;
+        int blockSpacing = 20;
+        int startY = getGuiTop() + 14;
+        
+        for(Integer i: attachedBlocks.keySet()) {
+            BlockEntity be = attachedBlocks.get(i);
+            if(be != null && !be.isRemoved()) {
+                int blockY = startY + i * blockSpacing;
+                if(x >= blockIconX && x < blockIconX + blockIconSize && 
+                   y >= blockY && y < blockY + blockIconSize) {
+                    ItemStack blockStack = new ItemStack(be.getBlockState().getBlock().asItem());
+                    List<Component> tooltip = new ArrayList<>();
+                    tooltip.add(Component.translatable(blockStack.getDescriptionId()));
+                    tooltip.add(Component.literal(be.getBlockPos().toShortString()));
+                    graphics.renderTooltip(Minecraft.getInstance().font, tooltip, Optional.empty(), x, y);
+                    return;
+                }
+            }
         }
     }
 
@@ -116,5 +159,21 @@ public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container>
             graphics.renderItem(
                     new ItemStack(menu.getAttachedBlocks().get(i).getBlockState().getBlock().asItem()), getGuiLeft()+9, getGuiTop()+i*20+y);
         }
+    }
+
+    private void drawTPSIndicator(GuiGraphics graphics) {
+        int x = getGuiLeft() + 165;
+        int y = getGuiTop() + 4;
+        int size = 8;
+        
+        // Draw indicator background (small square)
+        int color = menu.isLagging() ? 0xFFFF0000 : 0xFF00FF00; // Red if lagging, green if OK
+        graphics.fill(x, y, x + size, y + size, color);
+        
+        // Draw border
+        graphics.fill(x, y, x + size, y + 1, 0xFF000000); // Top
+        graphics.fill(x, y + size - 1, x + size, y + size, 0xFF000000); // Bottom
+        graphics.fill(x, y, x + 1, y + size, 0xFF000000); // Left
+        graphics.fill(x + size - 1, y, x + size, y + size, 0xFF000000); // Right
     }
 }

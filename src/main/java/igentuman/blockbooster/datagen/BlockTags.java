@@ -1,6 +1,5 @@
 package igentuman.blockbooster.datagen;
 
-import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.setup.Registration;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -23,6 +22,7 @@ public class BlockTags extends BlockTagsProvider {
                 .add(
                         Registration.BLOCKBOOSTER_T1.get(),
                         Registration.BLOCKBOOSTER_T2.get(),
+                        Registration.BLOCKBOOSTER_T3.get(),
                         Registration.BLOCKBOOSTER_MANA.get()
                         );
 
@@ -30,6 +30,7 @@ public class BlockTags extends BlockTagsProvider {
                 .add(
                         Registration.BLOCKBOOSTER_T1.get(),
                         Registration.BLOCKBOOSTER_T2.get(),
+                        Registration.BLOCKBOOSTER_T3.get(),
                         Registration.BLOCKBOOSTER_MANA.get()
                 );
     }

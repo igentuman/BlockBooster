@@ -9,5 +9,11 @@
   "hint.booster_t2": "Использует %s FE за операцию. Ускорение: x%s",
   "hint.booster_mana": "Использует %s маны за операцию. Ускорение: x%s",
   "gui.mana.info": "%s маны из %s max",
-  "gui.energy.info": "%s FE из %s FE max"
+  "gui.energy.info": "%s FE из %s FE max",
+  "gui.tps.ok": "§aTPS сервера: OK",
+  "gui.tps.lagging": "§cTPS сервера: Низкий",
+  "gui.tps.current": "Текущий TPS: %s",
+  "gui.tps.boosting_paused": "§7Ускорение приостановлено из-за лагов",
+  "gui.boost.time": "§7Время ускорения: %s мс",
+  "gui.boost.slow_block": "§cМедленный блок - может быть пропущен"
 }

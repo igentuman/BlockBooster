@@ -38,9 +38,21 @@ public class BbRecipes extends RecipeProvider {
                 .define('x', Tags.Items.DUSTS_REDSTONE)
                 .define('#', Tags.Items.INGOTS_GOLD)
                 .define('m', Tags.Items.GEMS_EMERALD)
-                .define('c', Items.CLOCK)
+                .define('c', Registration.BLOCKBOOSTER_T1.get())
                 .group("blockbooster")
-                .unlockedBy("mysterious", InventoryChangeTrigger.TriggerInstance.hasItems(Items.EMERALD))
+                .unlockedBy("mysterious", InventoryChangeTrigger.TriggerInstance.hasItems(Registration.BLOCKBOOSTER_T1.get()))
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Registration.BLOCKBOOSTER_T3.get())
+                .pattern("m#m")
+                .pattern("xcx")
+                .pattern("#x#")
+                .define('x', Tags.Items.DUSTS_REDSTONE)
+                .define('#', Tags.Items.GEMS_DIAMOND)
+                .define('m', Tags.Items.GEMS_EMERALD)
+                .define('c', Registration.BLOCKBOOSTER_T2.get())
+                .group("blockbooster")
+                .unlockedBy("mysterious", InventoryChangeTrigger.TriggerInstance.hasItems(Registration.BLOCKBOOSTER_T2.get()))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Registration.BLOCKBOOSTER_MANA.get())
@@ -50,9 +62,9 @@ public class BbRecipes extends RecipeProvider {
                 .define('x', Tags.Items.DUSTS_REDSTONE)
                 .define('#', Tags.Items.INGOTS_NETHERITE)
                 .define('m', Tags.Items.GEMS_EMERALD)
-                .define('c', Items.CLOCK)
+                .define('c', Registration.BLOCKBOOSTER_T1.get())
                 .group("blockbooster")
-                .unlockedBy("mysterious", InventoryChangeTrigger.TriggerInstance.hasItems(Items.EMERALD))
+                .unlockedBy("mysterious", InventoryChangeTrigger.TriggerInstance.hasItems(Registration.BLOCKBOOSTER_T1.get()))
                 .save(consumer);
     }
 }

@@ -38,6 +38,16 @@ public class BoosterManaContainer extends AbstractContainerMenu {
         return blockEntity.isDisabled;
     }
 
+    public boolean isLagging()
+    {
+        return blockEntity.isLagging();
+    }
+
+    public double getCurrentTPS()
+    {
+        return blockEntity.getCurrentTPS();
+    }
+
     @Override
     public ItemStack quickMoveStack(Player p_38941_, int p_38942_) {
         return null;

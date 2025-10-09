@@ -14,7 +14,7 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0.7'
+version = '1.0.8'
 group = 'igentuman.blockbooster'
 archivesBaseName = 'BlockBooster-1.20.1'
 

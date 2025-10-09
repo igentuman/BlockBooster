@@ -39,14 +39,23 @@ public class CommonConfig {
         public final ForgeConfigSpec.ConfigValue<Integer> t2_fe_per_tick;
         public final ForgeConfigSpec.ConfigValue<Integer> t2_boost_rate;
 
+        public final ForgeConfigSpec.ConfigValue<Integer> t3_fe_per_tick;
+        public final ForgeConfigSpec.ConfigValue<Integer> t3_boost_rate;
+        public final ForgeConfigSpec.ConfigValue<Integer> t3_scan_radius;
+
         public final ForgeConfigSpec.ConfigValue<Integer> mana_per_tick;
         public final ForgeConfigSpec.ConfigValue<Integer> mana_booster_rate;
 
         public final ForgeConfigSpec.ConfigValue<Boolean> deactivate_with_redstone;
 
-        public final ForgeConfigSpec.ConfigValue<ArrayList> white_list;
-        public final ForgeConfigSpec.ConfigValue<ArrayList> black_list;
+        public final ForgeConfigSpec.ConfigValue<List<String>> white_list;
+        public final ForgeConfigSpec.ConfigValue<List<String>> black_list;
 
+        public final ForgeConfigSpec.ConfigValue<Boolean> enable_tps_protection;
+        public final ForgeConfigSpec.ConfigValue<Double> min_tps_threshold;
+
+        public final ForgeConfigSpec.ConfigValue<Boolean> prevent_slow_blocks;
+        public final ForgeConfigSpec.ConfigValue<Long> slow_block_threshold_ns;
 
         public General(ForgeConfigSpec.Builder builder) {
             builder.push("General");
@@ -65,6 +74,15 @@ public class CommonConfig {
             t2_boost_rate = builder
                     .comment("Booster Tier 2 boost rate")
                     .define("t2_boost_rate", 5);
+            t3_fe_per_tick = builder
+                    .comment("Booster Tier 3 FE per tick to operate")
+                    .define("t3_fe_per_tick", 20000);
+            t3_boost_rate = builder
+                    .comment("Booster Tier 3 boost rate")
+                    .define("t3_boost_rate", 10);
+            t3_scan_radius = builder
+                    .comment("Booster Tier 3 scan radius (scans a cube area)")
+                    .defineInRange("t3_scan_radius", 3, 1, 10);
             mana_per_tick = builder
                     .comment("Mana Booster mana per tick to operate")
                     .define("mana_per_tick", 100);
@@ -76,10 +94,22 @@ public class CommonConfig {
                     .define("deactivate_with_redstone", true);
             black_list = builder
                     .comment("Blacklist of block entities (example: \"minecraft:furnace\",\"somemod:machine\")")
-                    .define("black_list", new ArrayList());
+                    .define("black_list", new ArrayList<>(List.of("mekanism:bounding_block")));
             white_list = builder
                     .comment("Whitelist of block entities (example: \"minecraft:furnace\",\"somemod:machine\") has higher priority")
-                    .define("white_list", new ArrayList());
+                    .define("white_list", new ArrayList<>());
+            enable_tps_protection = builder
+                    .comment("Enable TPS-based lag protection. Boosters will stop working when server TPS drops below threshold")
+                    .define("enable_tps_protection", true);
+            min_tps_threshold = builder
+                    .comment("Minimum TPS threshold for boosters to operate. If server TPS drops below this value, boosters will pause")
+                    .defineInRange("min_tps_threshold", 15.0, 1.0, 20.0);
+            prevent_slow_blocks = builder
+                    .comment("Prevent boosting of slow blocks that take longer than the threshold to process")
+                    .define("prevent_slow_blocks", true);
+            slow_block_threshold_ns = builder
+                    .comment("Threshold in nanoseconds for considering a block as 'slow'. Blocks taking longer will be marked as slow (1ms = 1000000ns)")
+                    .defineInRange("slow_block_threshold_ns", 5000000L, 100000L, 100000000L);
             builder.pop();
         }
     }

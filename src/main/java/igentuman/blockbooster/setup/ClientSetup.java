@@ -4,6 +4,7 @@ import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.client.screen.BoosterManaScreen;
 import igentuman.blockbooster.client.screen.BoosterT1Screen;
 import igentuman.blockbooster.client.screen.BoosterT2Screen;
+import igentuman.blockbooster.client.screen.BoosterT3Screen;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -46,6 +47,7 @@ public class ClientSetup {
         event.enqueueWork(() -> {
             MenuScreens.register(Registration.BLOCKBOOSTER_T1_CONTAINER.get(), BoosterT1Screen::new);
             MenuScreens.register(Registration.BLOCKBOOSTER_T2_CONTAINER.get(), BoosterT2Screen::new);
+            MenuScreens.register(Registration.BLOCKBOOSTER_T3_CONTAINER.get(), BoosterT3Screen::new);
             if(ModList.get().isLoaded("botania")) {
                 MenuScreens.register(Registration.BLOCKBOOSTER_MANA_CONTAINER.get(), BoosterManaScreen::new);
             }

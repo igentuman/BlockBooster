@@ -37,6 +37,15 @@ public class BoosterT2Container extends AbstractContainerMenu {
         return blockEntity.isDisabled;
     }
 
+    public boolean isLagging()
+    {
+        return blockEntity.isLagging();
+    }
+
+    public double getCurrentTPS()
+    {
+        return blockEntity.getCurrentTPS();
+    }
 
     public int getEnergy() {
         return blockEntity.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);

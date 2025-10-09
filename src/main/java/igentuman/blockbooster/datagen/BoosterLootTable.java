@@ -20,6 +20,9 @@ public class BoosterLootTable implements LootTableSubProvider {
         builder.accept(BLOCKBOOSTER_T2.getId(),
                 BaseLootTableProvider.createSimpleTable("booster_t2", BLOCKBOOSTER_T2.get()));
 
+        builder.accept(BLOCKBOOSTER_T3.getId(),
+                BaseLootTableProvider.createSimpleTable("booster_t3", BLOCKBOOSTER_T3.get()));
+
         builder.accept(BLOCKBOOSTER_MANA.getId(),
                 BaseLootTableProvider.createSimpleTable("booster_mana", BLOCKBOOSTER_MANA.get()));
 

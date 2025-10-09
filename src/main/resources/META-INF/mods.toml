@@ -3,13 +3,13 @@ loaderVersion="[47,)" #mandatory This is typically bumped every Minecraft versio
 license="MIT"
 [[mods]] #mandatory
 modId="blockbooster" #mandatory
-version="${file.jarVersion}" #mandatory
+version="1.0.8" #mandatory
 displayName="Block Booster" #mandatory
 logoFile="logo.png" #optional
 credits="Boosting machines with energy" #optional
 authors="igentuman" #optional
 description='''
-Increase tick rate for machines on top of block booster. Requires energy or mana
+Increase tick rate of blocks. Requires energy or mana
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.blockbooster]] #optional
