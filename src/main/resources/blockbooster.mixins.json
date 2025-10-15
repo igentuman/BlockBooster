@@ -6,7 +6,10 @@
   "refmap": "blockbooster.refmap.json",
   "mixins": [
     "mm.MachineControllerBlockEntityInvoker",
-    "mekanism.TileEntityMekanismInvoker"
+    "mekanism.TileEntityMekanismInvoker",
+    "TickingBlockEntityMixin",
+    "RebindableTickingBlockEntityAccessor",
+    "BoundTickingBlockEntityAccessor"
   ],
   "client": [
   ],

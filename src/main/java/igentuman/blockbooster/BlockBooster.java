@@ -2,6 +2,7 @@ package igentuman.blockbooster;
 
 import igentuman.blockbooster.command.CommandBoosterShowBlockId;
 import igentuman.blockbooster.config.CommonConfig;
+import igentuman.blockbooster.event.PlayerTickHandler;
 import igentuman.blockbooster.setup.ModSetup;
 import igentuman.blockbooster.setup.ClientSetup;
 import igentuman.blockbooster.setup.Registration;
@@ -30,6 +31,7 @@ public class BlockBooster {
         IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
         ModSetup.setup();
         Registration.init();
+        MinecraftForge.EVENT_BUS.register(PlayerTickHandler.class);
         ClientSetup.TABS.register(modbus);
         MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
         modbus.addListener(ModSetup::init);

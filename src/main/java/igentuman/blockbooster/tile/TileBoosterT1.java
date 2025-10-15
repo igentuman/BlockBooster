@@ -31,7 +31,6 @@ public class TileBoosterT1 extends AbstractBooster {
         return direction.ordinal() > 1;
     }
 
-/*  for testing to simulate lags
     @Override
     public void tickServer() {
         for(int x = 0; x < 20; x++) {
@@ -42,7 +41,7 @@ public class TileBoosterT1 extends AbstractBooster {
                 }
             }
         }
-    }*/
+    }
 
     @Override
     protected boolean canBoost() {
