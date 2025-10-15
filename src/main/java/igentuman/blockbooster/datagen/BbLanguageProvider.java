@@ -28,9 +28,13 @@ public class BbLanguageProvider extends LanguageProvider {
         add("gui.tps.boosting_paused", "§7Boosting paused due to lag");
         add("gui.boost.time", "§7Boost time: %s ms");
         add("gui.boost.slow_block", "§cSlow block - not boosting");
-        add("hint.booster_t1", "Boosts only Top/Bottom blocks. \nFE per block: %s. \nBoost rate: x%s");
-        add("hint.booster_t2", "Boosts up to 6 blocks around. \nFE per block: %s. Boost rate: x%s");
-        add("hint.booster_t3", "Boosts blocks around in radius of %s blocks. \nFE per block: %s. \nBoost rate: x%s");
+        add("hint.booster_boost_rate", "Boost rate: x%s");
+        add("hint.booster_fe_tick", "FE per boost: %s");
+        add("hint.booster_mana_tick", "Mana per boost: %s");
+        add("hint.booster_t1_descr", "Boosts only Top/Bottom blocks");
+        add("hint.booster_t2_descr", "Boosts up to 6 blocks around");
+        add("hint.booster_t3_descr", "Boosts blocks around in radius of %s blocks");
+        add("hint.booster_mana_descr", "Boosts up to 6 blocks around");
         add("hint.booster_mana", "Uses mana to work. \nMana per block: %s. \nBoost rate: x%s");
         add("booster.limit_message", "Boosters per chunk limit reached. Only %s per chunk.");
 

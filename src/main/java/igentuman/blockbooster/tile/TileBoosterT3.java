@@ -4,11 +4,13 @@ import igentuman.blockbooster.config.CommonConfig;
 import igentuman.blockbooster.setup.Registration;
 import igentuman.blockbooster.util.BoosterUtil;
 import igentuman.blockbooster.util.CustomEnergyStorage;
+import igentuman.blockbooster.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,9 +36,8 @@ public class TileBoosterT3 extends AbstractBooster {
     @Override
     public void updateAttachedBlocks() {
         boolean changed = false;
-        HashMap<Integer, BlockEntity> newAttachedBlocks = new HashMap<>();
+        HashMap<Long, BlockEntity> newAttachedBlocks = new HashMap<>();
         int radius = CommonConfig.GENERAL.t3_scan_radius.get();
-        int index = 0;
 
         // Scan in a cube area around the booster
         for (int x = -radius; x <= radius; x++) {
@@ -46,27 +47,26 @@ public class TileBoosterT3 extends AbstractBooster {
                     if (x == 0 && y == 0 && z == 0) continue;
 
                     BlockPos checkPos = getBlockPos().offset(x, y, z);
-                    BlockEntity be = level.getBlockEntity(checkPos);
+                    BlockEntity be = WorldUtil.getBlockEntity(checkPos, (ServerLevel) level);
 
                     if (be == null) continue;
 
                     // Check whitelist/blacklist
-                    if (whiteList.size() > 0) {
-                        if (!whiteList.contains(getBlockName(be))) {
+                    if (!getWhiteList().isEmpty()) {
+                        if (!getWhiteList().contains(getBlockName(be))) {
                             continue;
                         }
-                    } else if (blackList.contains(getBlockName(be))) {
+                    } else if (getBlackList().contains(getBlockName(be))) {
                         continue;
                     }
 
-                    newAttachedBlocks.put(index, be);
+                    long posKey = checkPos.asLong();
+                    newAttachedBlocks.put(posKey, be);
 
                     // Preserve boost flag if this block was already tracked
-                    if (!boostFlags.containsKey(index)) {
-                        boostFlags.put(index, false);
+                    if (!boostFlags.containsKey(posKey)) {
+                        boostFlags.put(posKey, false);
                     }
-
-                    index++;
                 }
             }
         }
@@ -75,7 +75,7 @@ public class TileBoosterT3 extends AbstractBooster {
         if (newAttachedBlocks.size() != attachedBlocks.size()) {
             changed = true;
         } else {
-            for (Integer key : newAttachedBlocks.keySet()) {
+            for (Long key : newAttachedBlocks.keySet()) {
                 if (!attachedBlocks.containsKey(key) || !attachedBlocks.get(key).equals(newAttachedBlocks.get(key))) {
                     changed = true;
                     break;
@@ -85,33 +85,19 @@ public class TileBoosterT3 extends AbstractBooster {
 
         if (changed) {
             attachedBlocks = newAttachedBlocks;
-            boostFlags.clear();
-            boostTimes.clear();
-            setChanged();
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-        }
-    }
-
-    @Override
-    protected void processBoostingLogic() {
-        for (Integer id : attachedBlocks.keySet()) {
-            if (!boostFlags.getOrDefault(id, false)) continue;
-            BlockEntity be = attachedBlocks.get(id);
-            if (be == null || be.isRemoved() || !canBoost()) continue;
-
-            // Check if slow block prevention is enabled and this block is slow
-            if (CommonConfig.GENERAL.prevent_slow_blocks.get()) {
-                Long lastBoostTime = boostTimes.get(id);
-                if (lastBoostTime != null && lastBoostTime > CommonConfig.GENERAL.slow_block_threshold_ns.get()) {
-                    continue; // Skip boosting this slow block
+            for(Long key : attachedBlocks.keySet()) {
+                if(!boostFlags.containsKey(key)) {
+                    boostFlags.put(key, false);
+                }
+                if(!boostTimes.containsKey(key)) {
+                    boostTimes.put(key, 0L);
                 }
             }
-
-            BoosterUtil.BoostResult result = BoosterUtil.BoostBlockEntityWithTiming(level, be.getBlockPos(), be, getBoostRate());
-            if (result.success) {
-                boostTimes.put(id, result.timeNanos);
-                consumeResource();
-            }
+            //clear out flags for removed blocks
+            boostFlags.keySet().removeIf(key -> !attachedBlocks.containsKey(key));
+            boostTimes.keySet().removeIf(key -> !attachedBlocks.containsKey(key));
+            setChanged();
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
     }
 
@@ -136,9 +122,9 @@ public class TileBoosterT3 extends AbstractBooster {
 
         // Save boost flags
         ListTag flagsList = new ListTag();
-        for (Integer key : boostFlags.keySet()) {
+        for (Long key : boostFlags.keySet()) {
             CompoundTag flagTag = new CompoundTag();
-            flagTag.putInt("index", key);
+            flagTag.putLong("posKey", key);
             flagTag.putBoolean("enabled", boostFlags.get(key));
             flagsList.add(flagTag);
         }
@@ -146,9 +132,9 @@ public class TileBoosterT3 extends AbstractBooster {
 
         // Save boost times
         ListTag timesList = new ListTag();
-        for (Integer key : boostTimes.keySet()) {
+        for (Long key : boostTimes.keySet()) {
             CompoundTag timeTag = new CompoundTag();
-            timeTag.putInt("index", key);
+            timeTag.putLong("posKey", key);
             timeTag.putLong("time", boostTimes.get(key));
             timesList.add(timeTag);
         }
@@ -167,7 +153,8 @@ public class TileBoosterT3 extends AbstractBooster {
             ListTag flagsList = tag.getList("boostFlags", Tag.TAG_COMPOUND);
             for (int i = 0; i < flagsList.size(); i++) {
                 CompoundTag flagTag = flagsList.getCompound(i);
-                boostFlags.put(flagTag.getInt("index"), flagTag.getBoolean("enabled"));
+                long key = flagTag.contains("posKey") ? flagTag.getLong("posKey") : flagTag.getInt("index");
+                boostFlags.put(key, flagTag.getBoolean("enabled"));
             }
         }
 
@@ -177,7 +164,8 @@ public class TileBoosterT3 extends AbstractBooster {
             ListTag timesList = tag.getList("boostTimes", Tag.TAG_COMPOUND);
             for (int i = 0; i < timesList.size(); i++) {
                 CompoundTag timeTag = timesList.getCompound(i);
-                boostTimes.put(timeTag.getInt("index"), timeTag.getLong("time"));
+                long key = timeTag.contains("posKey") ? timeTag.getLong("posKey") : timeTag.getInt("index");
+                boostTimes.put(key, timeTag.getLong("time"));
             }
         }
     }
@@ -210,15 +198,13 @@ public class TileBoosterT3 extends AbstractBooster {
         };
     }
 
-    @Override
-    public boolean isIndexEnabled(int i) {
-        return boostFlags.getOrDefault(i, false);
+    public boolean isIndexEnabled(long posKey) {
+        return boostFlags.getOrDefault(posKey, false);
     }
 
-    @Override
-    public void setIndexStatus(int i, byte status) {
-        boostFlags.put(i, status == 1);
-        setChanged(level, getBlockPos(), getBlockState());
+    public void setIndexStatus(long posKey, boolean status) {
+        boostFlags.put(posKey, status);
+        setChanged();
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
 
@@ -231,16 +217,12 @@ public class TileBoosterT3 extends AbstractBooster {
         return super.getCapability(cap, side);
     }
 
-    public HashMap<Integer, Boolean> getBoostFlags() {
-        return boostFlags;
-    }
-
-    public HashMap<Integer, Long> getBoostTimes() {
+    public HashMap<Long, Long> getBoostTimes() {
         return boostTimes;
     }
 
-    public boolean isSlowBlock(int index) {
-        Long boostTime = boostTimes.get(index);
+    public boolean isSlowBlock(long posKey) {
+        Long boostTime = boostTimes.get(posKey);
         if (boostTime == null) return false;
         return boostTime > CommonConfig.GENERAL.slow_block_threshold_ns.get();
     }

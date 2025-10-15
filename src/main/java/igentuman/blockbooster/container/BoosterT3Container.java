@@ -65,27 +65,27 @@ public class BoosterT3Container extends AbstractContainerMenu {
         return stillValid(ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()), playerEntity, Registration.BLOCKBOOSTER_T3.get());
     }
 
-    public HashMap<Integer, BlockEntity> getAttachedBlocks() {
+    public HashMap<Long, BlockEntity> getAttachedBlocks() {
         return blockEntity.getAttachedBlocks();
     }
 
-    public boolean isChecked(int i) {
-        return blockEntity.isIndexEnabled(i);
+    public boolean isChecked(long posKey) {
+        return blockEntity.isIndexEnabled(posKey);
     }
 
-    public void checkboxClicked(int id, int val) {
-        Messages.sendToServer(new BoosterPacket(blockEntity.getBlockPos(), id, (byte) val));
+    public void checkboxClicked(long posKey, boolean val) {
+        Messages.sendToServer(new BoosterPacket(blockEntity.getBlockPos(), posKey, val));
     }
 
-    public HashMap<Integer, Boolean> getBoostFlags() {
+    public HashMap<Long, Boolean> getBoostFlags() {
         return blockEntity.getBoostFlags();
     }
 
-    public HashMap<Integer, Long> getBoostTimes() {
+    public HashMap<Long, Long> getBoostTimes() {
         return blockEntity.getBoostTimes();
     }
 
-    public boolean isSlowBlock(int index) {
-        return blockEntity.isSlowBlock(index);
+    public boolean isSlowBlock(long posKey) {
+        return blockEntity.isSlowBlock(posKey);
     }
 }

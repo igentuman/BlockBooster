@@ -13,26 +13,26 @@ import java.util.function.Supplier;
 public class BoosterPacket {
 
     private BlockPos pos;
-    private int id;
-    private byte val;
+    private long posKey;
+    private boolean val;
 
-    public BoosterPacket(BlockPos pos, int id, byte val)
+    public BoosterPacket(BlockPos pos, long posKey, boolean val)
     {
         this.pos = pos;
-        this.id = id;
+        this.posKey = posKey;
         this.val = val;
     }
 
     public BoosterPacket(FriendlyByteBuf buf) {
         this.pos = buf.readBlockPos();
-        this.id = buf.readInt();
-        this.val = buf.readByte();
+        this.posKey = buf.readLong();
+        this.val = buf.readBoolean();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeBlockPos(pos);
-        buf.writeInt(id);
-        buf.writeByte(val);
+        buf.writeLong(posKey);
+        buf.writeBoolean(val);
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {
@@ -42,7 +42,9 @@ public class BoosterPacket {
             ServerPlayer player = context.getSender();
             BlockEntity be = player.level().getBlockEntity(pos);
             if(be instanceof ITileBooster) {
-                ((ITileBooster) be).setIndexStatus(id, val);
+                // For T3 boosters, use the posKey directly
+                // For T1/T2 boosters, the posKey will be a small value (direction ordinal)
+                ((ITileBooster) be).setIndexStatus(posKey, val);
             }
         });
         return true;

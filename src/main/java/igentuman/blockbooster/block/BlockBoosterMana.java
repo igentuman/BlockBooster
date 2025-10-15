@@ -64,8 +64,9 @@ public class BlockBoosterMana extends Block implements EntityBlock, IBoosterBloc
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter reader, List<Component> list, TooltipFlag flags) {
-        list.add(Component.translatable("hint.booster_mana", CommonConfig.GENERAL.mana_per_tick.get(), CommonConfig.GENERAL.mana_booster_rate.get()).withStyle(ChatFormatting.BLUE));
-
+        list.add(Component.translatable("hint.booster_mana_descr").withStyle(ChatFormatting.BLUE));
+        list.add(Component.translatable("hint.booster_boost_rate", CommonConfig.GENERAL.mana_booster_rate.get()).withStyle(ChatFormatting.BLUE));
+        list.add(Component.translatable("hint.booster_mana_tick", CommonConfig.GENERAL.mana_per_tick.get()).withStyle(ChatFormatting.BLUE));
     }
 
     @Nullable

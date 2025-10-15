@@ -60,11 +60,9 @@ public class BlockBoosterT3 extends Block implements EntityBlock, IBoosterBlock 
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter reader, List<Component> list, TooltipFlag flags) {
-        list.add(Component.translatable("hint.booster_t3",
-                CommonConfig.GENERAL.t3_scan_radius.get(),
-                CommonConfig.GENERAL.t3_fe_per_tick.get(),
-                CommonConfig.GENERAL.t3_boost_rate.get()
-            ).withStyle(ChatFormatting.BLUE));
+        list.add(Component.translatable("hint.booster_t3_descr", CommonConfig.GENERAL.t3_scan_radius.get()).withStyle(ChatFormatting.BLUE));
+        list.add(Component.translatable("hint.booster_boost_rate", CommonConfig.GENERAL.t3_boost_rate.get()).withStyle(ChatFormatting.BLUE));
+        list.add(Component.translatable("hint.booster_fe_tick", CommonConfig.GENERAL.t3_fe_per_tick.get()).withStyle(ChatFormatting.BLUE));
     }
 
     @Nullable

@@ -1,7 +1,5 @@
 package igentuman.blockbooster.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.client.screen.element.CheckBox;
 import igentuman.blockbooster.container.BoosterT2Container;
@@ -11,7 +9,6 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -25,10 +22,8 @@ import java.util.Optional;
 
 public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container> {
 
-    private final ResourceLocation GUI = new ResourceLocation(BlockBooster.MODID, "textures/gui/blockbooster_t2_gui.png");
-
-    private List<CheckBox> checkboxes = new ArrayList<>();
-
+    private final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(BlockBooster.MODID, "textures/gui/blockbooster_t2_gui.png");
+    private final HashMap<Long, CheckBox> checkboxes = new HashMap<>();
 
     public BoosterT2Screen(BoosterT2Container container, Inventory inv, Component name) {
         super(container, inv, name);
@@ -74,16 +69,17 @@ public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container>
         }
         
         // Check for attached block tooltips
-        HashMap<Integer, BlockEntity> attachedBlocks = menu.getAttachedBlocks();
+        HashMap<Long, BlockEntity> attachedBlocks = menu.getAttachedBlocks();
         int blockIconX = getGuiLeft() + 9;
         int blockIconSize = 16;
         int blockSpacing = 20;
         int startY = getGuiTop() + 14;
         
-        for(Integer i: attachedBlocks.keySet()) {
-            BlockEntity be = attachedBlocks.get(i);
+        int index = 0;
+        for(Long posKey: attachedBlocks.keySet()) {
+            BlockEntity be = attachedBlocks.get(posKey);
             if(be != null && !be.isRemoved()) {
-                int blockY = startY + i * blockSpacing;
+                int blockY = startY + index * blockSpacing;
                 if(x >= blockIconX && x < blockIconX + blockIconSize && 
                    y >= blockY && y < blockY + blockIconSize) {
                     ItemStack blockStack = new ItemStack(be.getBlockState().getBlock().asItem());
@@ -93,6 +89,7 @@ public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container>
                     graphics.renderTooltip(Minecraft.getInstance().font, tooltip, Optional.empty(), x, y);
                     return;
                 }
+                index++;
             }
         }
     }
@@ -100,24 +97,24 @@ public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container>
     protected void init() {
         super.init();
         this.checkboxes.clear();
-        this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+15, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 0)));
-        this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+35, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 1)));
-        this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+55, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 2)));
-        this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+75, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 3)));
-        this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+95, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 4)));
-        this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+115, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 5)));
-        for (Button btn: checkboxes) {
+        int index = 0;
+        for(long id: menu.getBoostFlags().keySet()) {
+            checkboxes.put(id, new CheckBox(getGuiLeft()+28, getGuiTop()+15 + index*20, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, id)));
+            checkboxes.get(id).setChecked(menu.getBoostFlags().get(id));
+            index++;
+        }
+        for (Button btn: checkboxes.values()) {
             addRenderableWidget(btn);
         }
     }
 
-    public Button.OnPress checkboxClicked(Button btn, int id)
+    public Button.OnPress checkboxClicked(Button btn, long id)
     {
         if(checkboxes == null) return AbstractButton::onPress;
         CheckBox checkBox = checkboxes.get(id);
-        byte val = 0;
+        boolean val = false;
         if(!checkBox.isChecked()) {
-            val = 1;
+            val = true;
         }
         menu.checkboxClicked(id, val);
         return checkBox::onPress;
@@ -125,15 +122,13 @@ public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container>
 
     public void containerTick() {
         super.containerTick();
-        byte[] boostFlags = menu.getBoostFlags();
-        int i = 0;
-        for(byte flag: boostFlags) {
-            checkboxes.get(i).setChecked(flag == 1);
-            i++;
+        for(long id: menu.getBoostFlags().keySet()) {
+            if(!checkboxes.containsKey(id)) continue;
+            checkboxes.get(id).setChecked(menu.getBoostFlags().get(id));
         }
     }
 
-    protected HashMap<Integer, BlockEntity> getAttachedBlocks()
+    protected HashMap<Long, BlockEntity> getAttachedBlocks()
     {
         return  menu.getAttachedBlocks();
     }
@@ -155,9 +150,11 @@ public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container>
 
     private void drawAttachedBlocks(GuiGraphics graphics) {
         int y = 14;
-        for(Integer i: menu.getAttachedBlocks().keySet()) {
+        int index = 0;
+        for(Long posKey: menu.getAttachedBlocks().keySet()) {
             graphics.renderItem(
-                    new ItemStack(menu.getAttachedBlocks().get(i).getBlockState().getBlock().asItem()), getGuiLeft()+9, getGuiTop()+i*20+y);
+                    new ItemStack(menu.getAttachedBlocks().get(posKey).getBlockState().getBlock().asItem()), getGuiLeft()+9, getGuiTop()+index*20+y);
+            index++;
         }
     }
 

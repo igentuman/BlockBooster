@@ -22,9 +22,8 @@ import java.util.Optional;
 
 public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container> {
 
-    private final ResourceLocation GUI = new ResourceLocation(BlockBooster.MODID, "textures/gui/blockbooster_t2_gui.png");
-
-    private List<CheckBox> checkboxes = new ArrayList<>();
+    private final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(BlockBooster.MODID, "textures/gui/blockbooster_t2_gui.png");
+    private final HashMap<Long, CheckBox> checkboxes = new HashMap<>();
     private int scrollOffset = 0;
     private int maxVisibleItems = 6;
     private int totalItems = 0;
@@ -74,10 +73,10 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
         }
         
         // Check for attached block tooltips
-        HashMap<Integer, BlockEntity> attachedBlocks = menu.getAttachedBlocks();
-        HashMap<Integer, Long> boostTimes = menu.getBoostTimes();
-        List<Integer> sortedKeys = new ArrayList<>(attachedBlocks.keySet());
-        sortedKeys.sort(Integer::compareTo);
+        HashMap<Long, BlockEntity> attachedBlocks = menu.getAttachedBlocks();
+        HashMap<Long, Long> boostTimes = menu.getBoostTimes();
+        List<Long> sortedKeys = new ArrayList<>(attachedBlocks.keySet());
+        sortedKeys.sort(Long::compareTo);
         
         int blockIconX = getGuiLeft() + 9;
         int blockIconSize = 16;
@@ -86,7 +85,7 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
         
         int displayIndex = 0;
         for(int i = scrollOffset; i < Math.min(scrollOffset + maxVisibleItems, sortedKeys.size()); i++) {
-            Integer key = sortedKeys.get(i);
+            Long key = sortedKeys.get(i);
             BlockEntity be = attachedBlocks.get(key);
             if(be != null && !be.isRemoved()) {
                 int blockY = startY + displayIndex * blockSpacing;
@@ -123,39 +122,44 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
 
     private void updateCheckboxes() {
         // Clear existing checkboxes
-        for(CheckBox checkbox : checkboxes) {
+        for(CheckBox checkbox : checkboxes.values()) {
             removeWidget(checkbox);
         }
         this.checkboxes.clear();
 
-        totalItems = menu.getAttachedBlocks().size();
+        HashMap<Long, BlockEntity> attachedBlocks = menu.getAttachedBlocks();
+        List<Long> sortedKeys = new ArrayList<>(attachedBlocks.keySet());
+        sortedKeys.sort(Long::compareTo);
+        
+        totalItems = sortedKeys.size();
         
         // Create checkboxes for visible items
         for(int i = 0; i < Math.min(maxVisibleItems, totalItems - scrollOffset); i++) {
             int actualIndex = i + scrollOffset;
-            CheckBox checkbox = new CheckBox(
-                getGuiLeft()+28, 
-                getGuiTop()+15 + i*20, 
-                13, 13, 181, 0, 13, GUI, 
-                (Button btn) -> this.checkboxClicked(btn, actualIndex)
-            );
-            this.checkboxes.add(checkbox);
-            addRenderableWidget(checkbox);
+            if(actualIndex < sortedKeys.size()) {
+                long posKey = sortedKeys.get(actualIndex);
+                CheckBox checkbox = new CheckBox(
+                    getGuiLeft()+28, 
+                    getGuiTop()+15 + i*20, 
+                    13, 13, 181, 0, 13, GUI, 
+                    (Button btn) -> this.checkboxClicked(btn, posKey)
+                );
+                this.checkboxes.put(posKey, checkbox);
+                addRenderableWidget(checkbox);
+            }
         }
     }
 
-    public Button.OnPress checkboxClicked(Button btn, int id)
+    public Button.OnPress checkboxClicked(Button btn, long posKey)
     {
         if(checkboxes == null) return AbstractButton::onPress;
-        int localIndex = id - scrollOffset;
-        if(localIndex < 0 || localIndex >= checkboxes.size()) return AbstractButton::onPress;
         
-        CheckBox checkBox = checkboxes.get(localIndex);
-        byte val = 0;
+        CheckBox checkBox = (CheckBox) btn;
+        boolean val = false;
         if(!checkBox.isChecked()) {
-            val = 1;
+            val = true;
         }
-        menu.checkboxClicked(id, val);
+        menu.checkboxClicked(posKey, val);
         return checkBox::onPress;
     }
 
@@ -174,14 +178,18 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
         }
         
         // Update checkbox states
-        HashMap<Integer, Boolean> boostFlags = menu.getBoostFlags();
-        for(int i = 0; i < checkboxes.size(); i++) {
-            int actualIndex = i + scrollOffset;
-            checkboxes.get(i).setChecked(boostFlags.getOrDefault(actualIndex, false));
+        HashMap<Long, Boolean> boostFlags = menu.getBoostFlags();
+        HashMap<Long, BlockEntity> attachedBlocks = menu.getAttachedBlocks();
+        List<Long> sortedKeys = new ArrayList<>(attachedBlocks.keySet());
+        sortedKeys.sort(Long::compareTo);
+        
+        for(long id: checkboxes.keySet()) {
+            if(!checkboxes.containsKey(id)) continue;
+            checkboxes.get(id).setChecked(boostFlags.getOrDefault(id, false));
         }
     }
 
-    protected HashMap<Integer, BlockEntity> getAttachedBlocks()
+    protected HashMap<Long, BlockEntity> getAttachedBlocks()
     {
         return menu.getAttachedBlocks();
     }
@@ -201,13 +209,13 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
     }
 
     private void drawAttachedBlocks(GuiGraphics graphics) {
-        HashMap<Integer, BlockEntity> attachedBlocks = menu.getAttachedBlocks();
-        List<Integer> sortedKeys = new ArrayList<>(attachedBlocks.keySet());
-        sortedKeys.sort(Integer::compareTo);
+        HashMap<Long, BlockEntity> attachedBlocks = menu.getAttachedBlocks();
+        List<Long> sortedKeys = new ArrayList<>(attachedBlocks.keySet());
+        sortedKeys.sort(Long::compareTo);
         
         int displayIndex = 0;
         for(int i = scrollOffset; i < Math.min(scrollOffset + maxVisibleItems, sortedKeys.size()); i++) {
-            Integer key = sortedKeys.get(i);
+            Long key = sortedKeys.get(i);
             BlockEntity be = attachedBlocks.get(key);
             if(be != null && !be.isRemoved()) {
                 int blockX = getGuiLeft()+9;

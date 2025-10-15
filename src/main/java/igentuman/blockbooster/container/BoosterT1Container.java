@@ -62,7 +62,7 @@ public class BoosterT1Container extends AbstractContainerMenu {
         return stillValid(ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()), playerEntity, Registration.BLOCKBOOSTER_T1.get());
     }
 
-    public HashMap<Integer, BlockEntity> getAttachedBlocks() {
+    public HashMap<Long, BlockEntity> getAttachedBlocks() {
         return blockEntity.getAttachedBlocks();
     }
 
@@ -70,12 +70,12 @@ public class BoosterT1Container extends AbstractContainerMenu {
         return blockEntity.isIndexEnabled(i);
     }
 
-    public void checkboxClicked(int id, int val) {
-        Messages.sendToServer(new BoosterPacket(blockEntity.getBlockPos(), id, (byte) val));
+    public void checkboxClicked(long id, boolean val) {
+        Messages.sendToServer(new BoosterPacket(blockEntity.getBlockPos(), id, val));
     }
 
-    public byte[] getBoostFlags() {
-        return blockEntity.getBoostFlag();
+    public HashMap<Long, Boolean> getBoostFlags() {
+        return blockEntity.getBoostFlags();
     }
 
     public int getMaxEnergy() {

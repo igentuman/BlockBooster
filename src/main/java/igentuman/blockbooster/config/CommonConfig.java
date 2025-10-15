@@ -93,10 +93,10 @@ public class CommonConfig {
                     .comment("Deactivate booster with redstone signal")
                     .define("deactivate_with_redstone", true);
             black_list = builder
-                    .comment("Blacklist of block entities (example: \"minecraft:furnace\",\"somemod:machine\")")
-                    .define("black_list", new ArrayList<>(List.of("mekanism:bounding_block")));
+                    .comment("Blacklist of block entities by block id or block tags (example: \"minecraft:furnace\",\"#somemod:some_tag\")")
+                    .define("black_list", new ArrayList<>(List.of("#mekanism:cardboard_blacklist")));
             white_list = builder
-                    .comment("Whitelist of block entities (example: \"minecraft:furnace\",\"somemod:machine\") has higher priority")
+                    .comment("Whitelist of block entities by id or block tags (example: \"minecraft:furnace\",\"#somemod:some_tag\") has higher priority")
                     .define("white_list", new ArrayList<>());
             enable_tps_protection = builder
                     .comment("Enable TPS-based lag protection. Boosters will stop working when server TPS drops below threshold")

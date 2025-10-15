@@ -26,10 +26,8 @@ import java.util.Optional;
 
 public class BoosterT1Screen extends AbstractContainerScreen<BoosterT1Container> {
 
-    private final ResourceLocation GUI = new ResourceLocation(BlockBooster.MODID, "textures/gui/blockbooster_gui.png");
-
-    private List<CheckBox> checkboxes = new ArrayList<>();
-
+    private final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(BlockBooster.MODID, "textures/gui/blockbooster_gui.png");
+    private final HashMap<Long, CheckBox> checkboxes = new HashMap<>();
 
     public BoosterT1Screen(BoosterT1Container container, Inventory inv, Component name) {
         super(container, inv, name);
@@ -53,20 +51,24 @@ public class BoosterT1Screen extends AbstractContainerScreen<BoosterT1Container>
     protected void init() {
         super.init();
         this.checkboxes.clear();
-        this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+15, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 0)));
-        this.checkboxes.add(new CheckBox(getGuiLeft()+28, getGuiTop()+35, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, 1)));
-        for (Button btn: checkboxes) {
+        int index = 0;
+        for(long id: menu.getBoostFlags().keySet()) {
+            checkboxes.put(id, new CheckBox(getGuiLeft()+28, getGuiTop()+15 + index*20, 13, 13, 181, 0, 13, GUI, (Button btn) -> this.checkboxClicked(btn, id)));
+            checkboxes.get(id).setChecked(menu.getBoostFlags().get(id));
+            index++;
+        }
+        for (Button btn: checkboxes.values()) {
             addRenderableWidget(btn);
         }
     }
 
-    public Button.OnPress checkboxClicked(Button btn, int id)
+    public Button.OnPress checkboxClicked(Button btn, long id)
     {
         if(checkboxes == null) return AbstractButton::onPress;
         CheckBox checkBox = checkboxes.get(id);
-        byte val = 0;
+        boolean val = false;
         if(!checkBox.isChecked()) {
-            val = 1;
+            val = true;
         }
         menu.checkboxClicked(id, val);
         return checkBox::onPress;
@@ -74,15 +76,13 @@ public class BoosterT1Screen extends AbstractContainerScreen<BoosterT1Container>
 
     public void containerTick() {
         super.containerTick();
-        byte[] boostFlags = menu.getBoostFlags();
-        int i = 0;
-        for(byte flag: boostFlags) {
-            checkboxes.get(i).setChecked(flag == 1);
-            i++;
+        for(long id: menu.getBoostFlags().keySet()) {
+            if(!checkboxes.containsKey(id)) continue;
+            checkboxes.get(id).setChecked(menu.getBoostFlags().get(id));
         }
     }
 
-    protected HashMap<Integer, BlockEntity> getAttachedBlocks()
+    protected HashMap<Long, BlockEntity> getAttachedBlocks()
     {
         return  menu.getAttachedBlocks();
     }
@@ -127,16 +127,17 @@ public class BoosterT1Screen extends AbstractContainerScreen<BoosterT1Container>
         }
         
         // Check for attached block tooltips
-        HashMap<Integer, BlockEntity> attachedBlocks = menu.getAttachedBlocks();
+        HashMap<Long, BlockEntity> attachedBlocks = menu.getAttachedBlocks();
         int blockIconX = getGuiLeft() + 9;
         int blockIconSize = 16;
         int blockSpacing = 20;
         int startY = getGuiTop() + 14;
         
-        for(Integer i: attachedBlocks.keySet()) {
-            BlockEntity be = attachedBlocks.get(i);
+        int index = 0;
+        for(Long posKey: attachedBlocks.keySet()) {
+            BlockEntity be = attachedBlocks.get(posKey);
             if(be != null && !be.isRemoved()) {
-                int blockY = startY + i * blockSpacing;
+                int blockY = startY + index * blockSpacing;
                 if(x >= blockIconX && x < blockIconX + blockIconSize && 
                    y >= blockY && y < blockY + blockIconSize) {
                     ItemStack blockStack = new ItemStack(be.getBlockState().getBlock().asItem());
@@ -146,6 +147,7 @@ public class BoosterT1Screen extends AbstractContainerScreen<BoosterT1Container>
                     graphics.renderTooltip(Minecraft.getInstance().font, tooltip, Optional.empty(), x, y);
                     return;
                 }
+                index++;
             }
         }
     }
@@ -154,9 +156,11 @@ public class BoosterT1Screen extends AbstractContainerScreen<BoosterT1Container>
 
     private void drawAttachedBlocks(GuiGraphics graphics) {
         int y = 14;
-        for(Integer i: menu.getAttachedBlocks().keySet()) {
+        int index = 0;
+        for(Long posKey: menu.getAttachedBlocks().keySet()) {
             graphics.renderItem(
-                    new ItemStack(menu.getAttachedBlocks().get(i).getBlockState().getBlock().asItem()), getGuiLeft()+9, getGuiTop()+i*20+y);
+                    new ItemStack(menu.getAttachedBlocks().get(posKey).getBlockState().getBlock().asItem()), getGuiLeft()+9, getGuiTop()+index*20+y);
+            index++;
         }
     }
 

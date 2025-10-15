@@ -3,11 +3,13 @@ package igentuman.blockbooster.tile;
 import igentuman.blockbooster.config.CommonConfig;
 import igentuman.blockbooster.util.BoosterUtil;
 import igentuman.blockbooster.util.TPSTracker;
+import igentuman.blockbooster.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -19,36 +21,75 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+
+import static igentuman.blockbooster.util.BoosterUtil.getBlocksByTagKey;
 
 public abstract class AbstractBooster extends BlockEntity implements BlockEntityTicker, ITileBooster {
 
-    protected LinkedList<String> whiteList = loadWhiteList();
-    protected LinkedList<String> blackList = loadBlackList();
-    protected HashMap<Integer, BlockEntity> attachedBlocks = new HashMap<>();
-    protected HashMap<Integer, Long> boostTimes = new HashMap<>();
-    protected HashMap<Integer, Boolean> boostFlags = new HashMap<>();
-    protected byte[] boostFlag = new byte[]{0, 0, 0, 0, 0, 0};
+    protected LinkedList<String> whiteList;
+    protected LinkedList<String> blackList;
+    protected HashMap<Long, BlockEntity> attachedBlocks = new HashMap<>();
+    protected HashMap<Long, Long> boostTimes = new HashMap<>();
+    protected HashMap<Long, Boolean> boostFlags = new HashMap<>();
     public boolean isDisabled = false;
     public boolean isLagging = false;
     protected long tick = 0;
+    public boolean preventSlowBlocks = CommonConfig.GENERAL.prevent_slow_blocks.get();
+    public long slowBlockThreshold = CommonConfig.GENERAL.slow_block_threshold_ns.get();
 
     public AbstractBooster(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
         super(pType, pPos, pBlockState);
     }
 
-    private LinkedList<String> loadBlackList() {
-        LinkedList<String> list = new LinkedList<>();
-        for (var s : CommonConfig.GENERAL.black_list.get()) {
-            list.add((String) s);
+    /**
+     * Lazy initialization of whitelist - loads from config on first access
+     */
+    protected LinkedList<String> getWhiteList() {
+        if (whiteList == null) {
+            whiteList = loadList(CommonConfig.GENERAL.white_list.get());
         }
-        return list;
+        return whiteList;
     }
 
-    private LinkedList<String> loadWhiteList() {
+    /**
+     * Lazy initialization of blacklist - loads from config on first access
+     */
+    protected LinkedList<String> getBlackList() {
+        if (blackList == null) {
+            blackList = loadList(CommonConfig.GENERAL.black_list.get());
+        }
+        return blackList;
+    }
+
+    /**
+     * Load a list of block IDs from config, expanding tags to individual block IDs
+     * @param configList The list from config containing block IDs and/or tags (prefixed with #)
+     * @return A LinkedList of expanded block IDs
+     */
+    private LinkedList<String> loadList(List<? extends String> configList) {
         LinkedList<String> list = new LinkedList<>();
-        for (var s : CommonConfig.GENERAL.white_list.get()) {
-            list.add((String) s);
+        for (String entry : configList) {
+            if (entry.contains("#")) {
+                // This is a tag reference, expand it to individual blocks
+                try {
+                    String tagKey = entry.replace("#", "");
+                    HashSet<Block> blocks = getBlocksByTagKey(tagKey);
+                    if (blocks != null && !blocks.isEmpty()) {
+                        list.addAll(blocks.stream()
+                                .map(b -> ForgeRegistries.BLOCKS.getKey(b).toString())
+                                .toList());
+                    }
+                } catch (Exception e) {
+                    // Log error but continue processing other entries
+                    System.err.println("BlockBooster: Failed to load tag '" + entry + "': " + e.getMessage());
+                }
+            } else {
+                // Direct block ID reference
+                list.add(entry);
+            }
         }
         return list;
     }
@@ -85,37 +126,57 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
         for (Direction direction : Direction.values()) {
             if (shouldSkipDirection(direction)) continue;
             
-            BlockEntity be = level.getBlockEntity(new BlockPos(getBlockPos().relative(direction, 1)));
-            boolean contains = attachedBlocks.containsKey(direction.ordinal());
+            BlockPos checkPos = getBlockPos().relative(direction, 1);
+            long posKey = checkPos.asLong();
+            BlockEntity be = WorldUtil.getBlockEntity(checkPos, (ServerLevel) level);
+            boolean contains = attachedBlocks.containsKey(posKey);
             
             if (be == null) {
                 if (contains) {
                     changed = true;
-                    attachedBlocks.remove(direction.ordinal());
+                    attachedBlocks.remove(posKey);
                 }
                 continue;
             }
             
-            if (contains && attachedBlocks.get(direction.ordinal()).equals(be)) continue;
+            // Skip if the block entity is another booster
+            if (be instanceof AbstractBooster) {
+                if (contains) {
+                    changed = true;
+                    attachedBlocks.remove(posKey);
+                }
+                continue;
+            }
             
-            if (!whiteList.isEmpty()) {
-                if (!whiteList.contains(getBlockName(be))) {
+            if (contains && attachedBlocks.get(posKey).equals(be)) continue;
+            
+            if (!getWhiteList().isEmpty()) {
+                if (!getWhiteList().contains(getBlockName(be))) {
                     continue;
                 }
-            } else if (blackList.contains(getBlockName(be))) {
+            } else if (getBlackList().contains(getBlockName(be))) {
                 continue;
             }
             
             if (contains) {
-                attachedBlocks.remove(direction.ordinal());
+                attachedBlocks.remove(posKey);
             }
             changed = true;
-            attachedBlocks.put(direction.ordinal(), be);
+            attachedBlocks.put(posKey, be);
         }
         
         if (changed) {
-            boostFlags.clear();
-            boostTimes.clear();
+            for(Long key : attachedBlocks.keySet()) {
+                if(!boostFlags.containsKey(key)) {
+                    boostFlags.put(key, false);
+                }
+                if(!boostTimes.containsKey(key)) {
+                    boostTimes.put(key, 0L);
+                }
+            }
+            //clear out flags for removed blocks
+            boostFlags.keySet().removeIf(key -> !attachedBlocks.containsKey(key));
+            boostTimes.keySet().removeIf(key -> !attachedBlocks.containsKey(key));
             setChanged();
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
@@ -179,19 +240,26 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
      * Override this for custom boosting logic
      */
     protected void processBoostingLogic() {
-        for (Integer id : attachedBlocks.keySet()) {
-            if (id > boostFlag.length - 1) break;
-            if (boostFlag[id] == 0) continue;
-            
-            BlockEntity be = attachedBlocks.get(id);
-            if (be == null || !canBoost()) return;
-            
-            if (BoosterUtil.BoostBlockEntity(level, be.getBlockPos(), be, getBoostRate())) {
+        for (Long posKey : attachedBlocks.keySet()) {
+            if (!boostFlags.getOrDefault(posKey, false)) continue;
+            BlockEntity be = attachedBlocks.get(posKey);
+            if (be == null || be.isRemoved() || !canBoost()) continue;
+
+            // Check if slow block prevention is enabled and this block is slow
+            if (preventSlowBlocks) {
+                Long lastBoostTime = boostTimes.get(posKey);
+                if (lastBoostTime != null && lastBoostTime > slowBlockThreshold) {
+                    continue; // Skip boosting this slow block
+                }
+            }
+
+            BoosterUtil.BoostResult result = BoosterUtil.BoostBlockEntityWithTiming(level, be.getBlockPos(), be, getBoostRate());
+            if (result.success) {
+                boostTimes.put(posKey, result.timeNanos);
                 consumeResource();
             }
         }
     }
-
     /**
      * Check if the booster has enough resources to boost
      */
@@ -219,8 +287,11 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
 
     @Override
     public void tickClient() {
-        if(tick % 10 == 0) {
-            updateAttachedBlocks();
+        for (Long key : attachedBlocks.keySet()) {
+            BlockEntity be = attachedBlocks.get(key);
+            if (be == null) {
+                attachedBlocks.put(key, level.getBlockEntity(BlockPos.of(key)));
+            }
         }
     }
 
@@ -228,21 +299,21 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
     public void tick(Level world, BlockPos pos, BlockState state, BlockEntity be) {
     }
 
-    public HashMap<Integer, BlockEntity> getAttachedBlocks() {
+    public HashMap<Long, BlockEntity> getAttachedBlocks() {
         return attachedBlocks;
     }
 
-    public byte[] getBoostFlag() {
-        return boostFlag;
+    public HashMap<Long, Boolean> getBoostFlags() {
+        return boostFlags;
     }
 
-    public boolean isIndexEnabled(int i) {
-        return boostFlag[i] == 1;
+    public boolean isIndexEnabled(long i) {
+        return boostFlags.getOrDefault(i, false);
     }
 
     @Override
-    public void setIndexStatus(int i, byte status) {
-        boostFlag[i] = status;
+    public void setIndexStatus(long posKey, boolean status) {
+        boostFlags.put(posKey, status);
         setChanged();
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
@@ -277,26 +348,25 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
     protected void saveClientData(CompoundTag tag) {
         tag.putBoolean("isDisabled", isDisabled);
         tag.putBoolean("isLagging", isLagging);
-        tag.putByteArray("boostFlag", boostFlag);
         saveBoosterData(tag);
     }
 
     protected void loadClientData(CompoundTag tag) {
         isDisabled = tag.getBoolean("isDisabled");
         isLagging = tag.getBoolean("isLagging");
-        if (tag.getByteArray("boostFlag").length == boostFlag.length) {
-            boostFlag = tag.getByteArray("boostFlag");
-        }
         loadBoosterData(tag);
+        if(attachedBlocks.size() != boostFlags.size()) {
+            attachedBlocks.clear();
+            for(Long key: boostFlags.keySet()) {
+                attachedBlocks.put(key, level.getBlockEntity(BlockPos.of(key)));
+            }
+        }
     }
 
     @Override
     public void load(CompoundTag tag) {
         isDisabled = tag.getBoolean("isDisabled");
         isLagging = tag.getBoolean("isLagging");
-        if (tag.getByteArray("boostFlag").length == boostFlag.length) {
-            boostFlag = tag.getByteArray("boostFlag");
-        }
         loadBoosterData(tag);
         super.load(tag);
     }
@@ -305,7 +375,6 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
     public void saveAdditional(CompoundTag tag) {
         tag.putBoolean("isDisabled", isDisabled);
         tag.putBoolean("isLagging", isLagging);
-        tag.putByteArray("boostFlag", boostFlag);
         saveBoosterData(tag);
     }
 

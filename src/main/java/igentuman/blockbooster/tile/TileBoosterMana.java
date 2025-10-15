@@ -62,11 +62,27 @@ public class TileBoosterMana extends AbstractBooster implements ManaPool {
     @Override
     protected void saveBoosterData(CompoundTag tag) {
         tag.putInt("mana", mana);
+        
+        // Save boost flags for direction-based indexing
+        CompoundTag flagsTag = new CompoundTag();
+        for (Long key : boostFlags.keySet()) {
+            flagsTag.putBoolean(String.valueOf(key), boostFlags.get(key));
+        }
+        tag.put("boostFlags", flagsTag);
     }
 
     @Override
     protected void loadBoosterData(CompoundTag tag) {
         mana = tag.getInt("mana");
+        
+        // Load boost flags
+        if (tag.contains("boostFlags")) {
+            boostFlags.clear();
+            CompoundTag flagsTag = tag.getCompound("boostFlags");
+            for (String key : flagsTag.getAllKeys()) {
+                boostFlags.put(Long.parseLong(key), flagsTag.getBoolean(key));
+            }
+        }
     }
 
     private void addToManaNetwork() {

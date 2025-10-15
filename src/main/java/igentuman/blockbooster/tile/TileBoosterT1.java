@@ -23,7 +23,6 @@ public class TileBoosterT1 extends AbstractBooster {
 
     public TileBoosterT1(BlockPos pos, BlockState state) {
         super(Registration.BLOCKBOOSTER_T1_BE.get(), pos, state);
-        this.boostFlag = new byte[]{0, 0}; // T1 only has 2 directions (up/down)
     }
 
     @Override
@@ -63,12 +62,28 @@ public class TileBoosterT1 extends AbstractBooster {
     @Override
     protected void saveBoosterData(CompoundTag tag) {
         tag.put("Energy", energy.serializeNBT());
+        
+        // Save boost flags for direction-based indexing
+        CompoundTag flagsTag = new CompoundTag();
+        for (Long key : boostFlags.keySet()) {
+            flagsTag.putBoolean(String.valueOf(key), boostFlags.get(key));
+        }
+        tag.put("boostFlags", flagsTag);
     }
 
     @Override
     protected void loadBoosterData(CompoundTag tag) {
         if (tag.contains("Energy")) {
             energy.deserializeNBT(tag.get("Energy"));
+        }
+        
+        // Load boost flags
+        if (tag.contains("boostFlags")) {
+            boostFlags.clear();
+            CompoundTag flagsTag = tag.getCompound("boostFlags");
+            for (String key : flagsTag.getAllKeys()) {
+                boostFlags.put(Long.parseLong(key), flagsTag.getBoolean(key));
+            }
         }
     }
 

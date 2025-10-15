@@ -41,7 +41,6 @@ public class Registration {
     }
 
     // Some common properties for our blocks and items
-    public static final BlockBehaviour.Properties BLOCK_PROPERTIES = BlockBehaviour.Properties.of().strength(2f).requiresCorrectToolForDrops();
     public static final Item.Properties ITEM_PROPERTIES = new Item.Properties();
 
        

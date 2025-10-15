@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "igentuman.blockbooster.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "blockbooster.refmap.json",
+  "mixins": [
+    "mm.MachineControllerBlockEntityInvoker",
+    "mekanism.TileEntityMekanismInvoker"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
