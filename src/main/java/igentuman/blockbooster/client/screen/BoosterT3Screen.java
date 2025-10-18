@@ -22,10 +22,11 @@ import java.util.Optional;
 
 public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container> {
 
-    private final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(BlockBooster.MODID, "textures/gui/blockbooster_t2_gui.png");
+    private final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(BlockBooster.MODID, "textures/gui/blockbooster_t3_gui.png");
     private final HashMap<Long, CheckBox> checkboxes = new HashMap<>();
     private int scrollOffset = 0;
-    private int maxVisibleItems = 6;
+    private int maxVisibleRows = 6;  // 6 rows with 2 columns = 12 items visible
+    private int itemsPerRow = 2;
     private int totalItems = 0;
 
     public BoosterT3Screen(BoosterT3Container container, Inventory inv, Component name) {
@@ -78,18 +79,24 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
         List<Long> sortedKeys = new ArrayList<>(attachedBlocks.keySet());
         sortedKeys.sort(Long::compareTo);
         
-        int blockIconX = getGuiLeft() + 9;
         int blockIconSize = 16;
         int blockSpacing = 20;
+        int columnSpacing = 85;  // Distance between columns
+        int startX = getGuiLeft() + 9;
         int startY = getGuiTop() + 14;
         
         int displayIndex = 0;
-        for(int i = scrollOffset; i < Math.min(scrollOffset + maxVisibleItems, sortedKeys.size()); i++) {
+        int maxItemsVisible = maxVisibleRows * itemsPerRow;
+        for(int i = scrollOffset; i < Math.min(scrollOffset + maxItemsVisible, sortedKeys.size()); i++) {
             Long key = sortedKeys.get(i);
             BlockEntity be = attachedBlocks.get(key);
             if(be != null && !be.isRemoved()) {
-                int blockY = startY + displayIndex * blockSpacing;
-                if(x >= blockIconX && x < blockIconX + blockIconSize && 
+                int rowIndex = displayIndex / itemsPerRow;
+                int colIndex = displayIndex % itemsPerRow;
+                int blockX = startX + colIndex * columnSpacing;
+                int blockY = startY + rowIndex * blockSpacing;
+                
+                if(x >= blockX && x < blockX + blockIconSize && 
                    y >= blockY && y < blockY + blockIconSize) {
                     ItemStack blockStack = new ItemStack(be.getBlockState().getBlock().asItem());
                     List<Component> tooltip = new ArrayList<>();
@@ -133,14 +140,21 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
         
         totalItems = sortedKeys.size();
         
-        // Create checkboxes for visible items
-        for(int i = 0; i < Math.min(maxVisibleItems, totalItems - scrollOffset); i++) {
+        int columnSpacing = 85;
+        int blockSpacing = 20;
+        int maxItemsVisible = maxVisibleRows * itemsPerRow;
+        
+        // Create checkboxes for visible items (2 columns)
+        for(int i = 0; i < Math.min(maxItemsVisible, totalItems - scrollOffset); i++) {
             int actualIndex = i + scrollOffset;
             if(actualIndex < sortedKeys.size()) {
                 long posKey = sortedKeys.get(actualIndex);
+                int rowIndex = i / itemsPerRow;
+                int colIndex = i % itemsPerRow;
+                
                 CheckBox checkbox = new CheckBox(
-                    getGuiLeft()+28, 
-                    getGuiTop()+15 + i*20, 
+                    getGuiLeft() + 28 + colIndex * columnSpacing, 
+                    getGuiTop() + 15 + rowIndex * blockSpacing, 
                     13, 13, 181, 0, 13, GUI, 
                     (Button btn) -> this.checkboxClicked(btn, posKey)
                 );
@@ -171,8 +185,9 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
         if(newTotalItems != totalItems) {
             totalItems = newTotalItems;
             // Adjust scroll offset if needed
-            if(scrollOffset > Math.max(0, totalItems - maxVisibleItems)) {
-                scrollOffset = Math.max(0, totalItems - maxVisibleItems);
+            int maxItemsVisible = maxVisibleRows * itemsPerRow;
+            if(scrollOffset > Math.max(0, totalItems - maxItemsVisible)) {
+                scrollOffset = Math.max(0, totalItems - maxItemsVisible);
             }
             updateCheckboxes();
         }
@@ -213,13 +228,21 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
         List<Long> sortedKeys = new ArrayList<>(attachedBlocks.keySet());
         sortedKeys.sort(Long::compareTo);
         
+        int columnSpacing = 85;
+        int blockSpacing = 20;
+        int startX = getGuiLeft() + 9;
+        int startY = getGuiTop() + 14;
+        int maxItemsVisible = maxVisibleRows * itemsPerRow;
+        
         int displayIndex = 0;
-        for(int i = scrollOffset; i < Math.min(scrollOffset + maxVisibleItems, sortedKeys.size()); i++) {
+        for(int i = scrollOffset; i < Math.min(scrollOffset + maxItemsVisible, sortedKeys.size()); i++) {
             Long key = sortedKeys.get(i);
             BlockEntity be = attachedBlocks.get(key);
             if(be != null && !be.isRemoved()) {
-                int blockX = getGuiLeft()+9;
-                int blockY = getGuiTop()+14 + displayIndex*20;
+                int rowIndex = displayIndex / itemsPerRow;
+                int colIndex = displayIndex % itemsPerRow;
+                int blockX = startX + colIndex * columnSpacing;
+                int blockY = startY + rowIndex * blockSpacing;
                 
                 // Draw red frame if this is a slow block
                 if(menu.isSlowBlock(key)) {
@@ -248,19 +271,20 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
     }
 
     private void drawScrollBar(GuiGraphics graphics) {
-        if(totalItems <= maxVisibleItems) return;
+        int maxItemsVisible = maxVisibleRows * itemsPerRow;
+        if(totalItems <= maxItemsVisible) return;
         
         int scrollBarX = getGuiLeft() + 165;
         int scrollBarY = getGuiTop() + 14;
-        int scrollBarHeight = maxVisibleItems * 20;
+        int scrollBarHeight = maxVisibleRows * 20;
         int scrollBarWidth = 6;
         
         // Draw scroll track
         graphics.fill(scrollBarX, scrollBarY, scrollBarX + scrollBarWidth, scrollBarY + scrollBarHeight, 0xFF8B8B8B);
         
         // Calculate scroll thumb position and size
-        int maxScroll = totalItems - maxVisibleItems;
-        int thumbHeight = Math.max(20, scrollBarHeight * maxVisibleItems / totalItems);
+        int maxScroll = totalItems - maxItemsVisible;
+        int thumbHeight = Math.max(20, scrollBarHeight * maxItemsVisible / totalItems);
         int thumbY = scrollBarY + (int)((scrollBarHeight - thumbHeight) * ((float)scrollOffset / maxScroll));
         
         // Draw scroll thumb
@@ -269,9 +293,10 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        if(totalItems > maxVisibleItems) {
+        int maxItemsVisible = maxVisibleRows * itemsPerRow;
+        if(totalItems > maxItemsVisible) {
             int oldOffset = scrollOffset;
-            scrollOffset = Math.max(0, Math.min(totalItems - maxVisibleItems, scrollOffset - (int)delta));
+            scrollOffset = Math.max(0, Math.min(totalItems - maxItemsVisible, scrollOffset - (int)(delta * itemsPerRow)));
             
             if(oldOffset != scrollOffset) {
                 updateCheckboxes();
@@ -283,17 +308,18 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if(totalItems > maxVisibleItems && button == 0) {
+        int maxItemsVisible = maxVisibleRows * itemsPerRow;
+        if(totalItems > maxItemsVisible && button == 0) {
             int scrollBarX = getGuiLeft() + 165;
             int scrollBarY = getGuiTop() + 14;
-            int scrollBarHeight = maxVisibleItems * 20;
+            int scrollBarHeight = maxVisibleRows * 20;
             int scrollBarWidth = 6;
             
             if(mouseX >= scrollBarX && mouseX <= scrollBarX + scrollBarWidth &&
                mouseY >= scrollBarY && mouseY <= scrollBarY + scrollBarHeight) {
                 
-                int maxScroll = totalItems - maxVisibleItems;
-                int thumbHeight = Math.max(20, scrollBarHeight * maxVisibleItems / totalItems);
+                int maxScroll = totalItems - maxItemsVisible;
+                int thumbHeight = Math.max(20, scrollBarHeight * maxItemsVisible / totalItems);
                 float scrollPercentage = (float)(mouseY - scrollBarY - thumbHeight/2) / (scrollBarHeight - thumbHeight);
                 
                 int oldOffset = scrollOffset;

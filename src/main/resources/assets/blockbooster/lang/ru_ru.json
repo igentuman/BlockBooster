@@ -1,10 +1,10 @@
 {
-  "block.blockbooster.booster_t1": "Ускоритель Блоков Ур. 1",
-  "block.blockbooster.booster_t2": "Ускоритель Блоков Ур. 2",
-  "block.blockbooster.booster_mana": "Ускоритель Блоков на мане",
-  "itemGroup.blockbooster": "Ускоритель блоков",
-  "gui.checkbox.boost": "Ускорить",
-  "gui.block_booster": "Ускоритель блоков",
+  "block.blockbooster.booster_t1": "Бустер Блоков Ур. 1",
+  "block.blockbooster.booster_t2": "Бустер Блоков Ур. 2",
+  "block.blockbooster.booster_mana": "Бустер Блоков на мане",
+  "itemGroup.blockbooster": "Бустер блоков",
+  "gui.checkbox.boost": "Буст",
+  "gui.block_booster": "Бустер блоков",
   "hint.booster_t1": "Ускоряет только блоки сверху и снизу. Использует %s FE за операцию. Ускорение: x%s",
   "hint.booster_t2": "Использует %s FE за операцию. Ускорение: x%s",
   "hint.booster_mana": "Использует %s маны за операцию. Ускорение: x%s",
@@ -15,5 +15,5 @@
   "gui.tps.current": "Текущий TPS: %s",
   "gui.tps.boosting_paused": "§7Ускорение приостановлено из-за лагов",
   "gui.boost.time": "§7Время ускорения: %s мс",
-  "gui.boost.slow_block": "§cМедленный блок - может быть пропущен"
+  "gui.boost.slow_block": "§cМедленный блок - не бустится"
 }

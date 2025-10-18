@@ -6,7 +6,7 @@ plugins {
     id 'idea'
 }
 
-version = '1.0.12'
+version = '1.0.13'
 group = 'igentuman.blockbooster'
 archivesBaseName = 'BlockBooster-1.20.1'
 
