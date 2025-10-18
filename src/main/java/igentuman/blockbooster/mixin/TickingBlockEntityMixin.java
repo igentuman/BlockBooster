@@ -29,7 +29,7 @@ public abstract class TickingBlockEntityMixin implements BlockEntityTickDataAcce
     private long world_balance$tickCount = 0L;
 
 
-    @Inject(method = "tick", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "tick", at = @At("HEAD"))
     private void beforeTick(CallbackInfo ci) {
         if (blockEntity == null) {
             return;
@@ -43,7 +43,7 @@ public abstract class TickingBlockEntityMixin implements BlockEntityTickDataAcce
         world_balance$tickStartTime = System.nanoTime();
     }
     
-    @Inject(method = "tick", at = @At("RETURN"), remap = false)
+    @Inject(method = "tick", at = @At("RETURN"))
     private void afterTick(CallbackInfo ci) {
         if (blockEntity != null && world_balance$tickStartTime > 0) {
             Level level = blockEntity.getLevel();

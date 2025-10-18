@@ -32,18 +32,6 @@ public class TileBoosterT1 extends AbstractBooster {
     }
 
     @Override
-    public void tickServer() {
-        for(int x = 0; x < 20; x++) {
-            for(int z = 0; z < 50; z++) {
-                for(int y = 0; y < 20; y++) {
-                    level.getBlockEntity(worldPosition.offset(x,y,z));
-                    level.getBlockState(worldPosition.offset(x,y,z));
-                }
-            }
-        }
-    }
-
-    @Override
     protected boolean canBoost() {
         return getEnergy() >= fePerTick;
     }
