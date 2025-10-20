@@ -6,40 +6,51 @@ import igentuman.blockbooster.event.PlayerTickHandler;
 import igentuman.blockbooster.setup.ModSetup;
 import igentuman.blockbooster.setup.ClientSetup;
 import igentuman.blockbooster.setup.Registration;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import org.slf4j.Logger;
+import com.mojang.logging.LogUtils;
 
 @Mod(BlockBooster.MODID)
 public class BlockBooster {
 
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
     public static final String MODID = "blockbooster";
 
-    public BlockBooster() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.spec);
-        IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
+    public BlockBooster(IEventBus modEventBus, ModContainer modContainer) {
+        // Register config
+        modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.spec);
+        
+        // Setup
         ModSetup.setup();
         Registration.init();
-        MinecraftForge.EVENT_BUS.register(PlayerTickHandler.class);
-        ClientSetup.TABS.register(modbus);
-        MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
-        modbus.addListener(ModSetup::init);
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> modbus.addListener(ClientSetup::init));
+        
+        // Register event handlers
+        NeoForge.EVENT_BUS.register(PlayerTickHandler.class);
+        ClientSetup.TABS.register(modEventBus);
+        NeoForge.EVENT_BUS.addListener(this::registerCommands);
+        
+        // Add listeners
+        modEventBus.addListener(ModSetup::init);
+        
+        // Client-only setup
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            modEventBus.addListener(ClientSetup::init);
+        }
+        
+        // Config listener
+        modEventBus.addListener(this::onModConfigEvent);
     }
 
-    @SubscribeEvent
-    public static void onModConfigEvent(final ModConfigEvent event) {
+    private void onModConfigEvent(final ModConfigEvent event) {
         if (event.getConfig().getType() == ModConfig.Type.COMMON)
             CommonConfig.setLoaded();
     }

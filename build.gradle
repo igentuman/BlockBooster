@@ -1,63 +1,50 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
-    id 'org.spongepowered.mixin' version '0.7.+'
-    id 'com.github.johnrengelman.shadow' version '7.0.0'
-    id 'idea'
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.gradle.userdev' version '7.0.192'
 }
 
-version = '1.0.13'
+// Update version and archivesBaseName
+version = '1.0.14' // Increment version
 group = 'igentuman.blockbooster'
-archivesBaseName = 'BlockBooster-1.20.1'
+base {
+    archivesName = 'BlockBooster-1.21.10'
+}
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-minecraft {
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-    mappings channel: 'parchment', version: "2023.09.03-1.20.1"
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-    runs {
-        client {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.disableRefMap', 'true'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            mods {
-                blockbooster {
-                    source sourceSets.main
-                }
-            }
-        }
+// Update runs configuration
+runs {
+    configureEach {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+        modSource project.sourceSets.main
+    }
 
-        server {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.disableRefMap', 'true'
-            mods {
-                blockbooster {
-                    source sourceSets.main
-                }
-            }
-        }
+    client {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
 
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.disableRefMap', 'true'
-            args '--mod', 'blockbooster', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/'),
-            mods {
-                blockbooster {
-                    source sourceSets.main
-                }
-            }
-        }
+    server {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        argument '--nogui'
+    }
+
+    gameTestServer {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    datagen {
+        arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+// Update configurations
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
 
 repositories {
     maven { // JEI
@@ -87,36 +74,52 @@ repositories {
     maven { url "https://maven.architectury.dev" }
 }
 
+// Update dependencies
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.20.1-47.4.6'
+    // Replace Forge with NeoForge
+    implementation "net.neoforged:neoforge:${neo_version}"
+    
+    // Update annotation processor for Mixin
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     implementation 'org.spongepowered:mixin:0.8.5'
-    runtimeOnly fg.deobf("curse.maven:nbtedit-reborn-678133:5984630")
-    implementation fg.deobf("mekanism:Mekanism:${mekanism_version}")
-    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}:api")
-    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
-    //runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-    //compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
-    implementation fg.deobf("curse.maven:masterful-machinery-423476:5818581")
-    //runtimeOnly fg.deobf("curse.maven:the-one-probe-245211:3550084")
-    implementation fg.deobf("dev.architectury:architectury-forge:${architectury_version}")
-    implementation fg.deobf("dev.latvian.mods:kubejs-forge:${kubejs_version}"){
-        transitive = false
+    
+    // Update dependencies with NeoForge versions
+    // JEI
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    
+    // Mekanism - update when NeoForge version is available
+    if (project.hasProperty('mekanism_version')) {
+        implementation "mekanism:Mekanism:${mekanism_version}"
+    }
+    
+    // Botania - update when NeoForge version is available
+    if (project.hasProperty('botania_version')) {
+        compileOnly "vazkii.botania:Botania:${botania_version}:api"
+        compileOnly "vazkii.botania:Botania:${botania_version}"
+    }
+    
+    // Patchouli - update when NeoForge version is available
+    if (project.hasProperty('patchouli_version')) {
+        compileOnly "vazkii.patchouli:Patchouli:${patchouli_version}:api"
+        compileOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
     }
 
-    implementation fg.deobf("dev.latvian.mods:rhino-forge:${rhino_version}"){
-        transitive = false
+    implementation "curse.maven:architectury-api-419699:5786327"
+    
+    // KubeJS - update when NeoForge version is available
+    if (project.hasProperty('kubejs_version')) {
+        implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
     }
-}
-
-mixin {
-    add sourceSets.main, "blockbooster.refmap.json"
-    config "blockbooster.mixins.json"
+    
+    // Rhino - update when NeoForge version is available
+    if (project.hasProperty('rhino_version')) {
+        implementation "dev.latvian.mods:rhino-neoforge:${rhino_version}"
+    }
+    
+    // Masterful Machinery - update when NeoForge version is available
+    // implementation "curse.maven:masterful-machinery-423476:NEOFORGE_VERSION"
 }
 
 jar {
@@ -139,37 +142,30 @@ configurations {
     }
 }
 
-shadowJar {
-    dependsOn jar
-    finalizedBy 'reobfShadowJar'
 
-    from sourceSets.main.output.classesDirs
-    from sourceSets.main.output.resourcesDir
+// Add ProcessResources task for variable substitution
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+        minecraft_version      : minecraft_version,
+        minecraft_version_range: minecraft_version_range,
+        neo_version            : neo_version,
+        mod_id                 : mod_id,
+        mod_name               : mod_name,
+        mod_license            : mod_license,
+        mod_version            : mod_version,
+        mod_authors            : mod_authors,
+        mod_description        : mod_description
+    ]
+    inputs.properties replaceProperties
 
-    manifest {
-        attributes([
-                "Specification-Title"   : "blockbooster",
-                "Specification-Vendor"  : "igentuman",
-                "Specification-Version" : "${project.version}",
-                "Implementation-Title"  : "${project.name}",
-                "Implementation-Version": "${version}",
-                "Implementation-Vendor" : "igentuman",
-                "MixinConfigs"          : "blockbooster.mixins.json"
-        ])
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties
     }
-
-    configurations = [project.configurations.shaded]
-    archiveClassifier = null
 }
 
-
-
-reobf {
-    shadowJar {}
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
 }
-
-afterEvaluate {
-    tasks.reobfJar.enabled = false
-}
-
-tasks.assemble.dependsOn reobfShadowJar

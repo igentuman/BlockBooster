@@ -1,6 +1,9 @@
 package igentuman.blockbooster.setup;
 
-import igentuman.blockbooster.block.*;
+import igentuman.blockbooster.block.BlockBoosterMana;
+import igentuman.blockbooster.block.BlockBoosterT1;
+import igentuman.blockbooster.block.BlockBoosterT2;
+import igentuman.blockbooster.block.BlockBoosterT3;
 import igentuman.blockbooster.container.BoosterManaContainer;
 import igentuman.blockbooster.container.BoosterT1Container;
 import igentuman.blockbooster.container.BoosterT2Container;
@@ -9,31 +12,29 @@ import igentuman.blockbooster.tile.TileBoosterMana;
 import igentuman.blockbooster.tile.TileBoosterT1;
 import igentuman.blockbooster.tile.TileBoosterT2;
 import igentuman.blockbooster.tile.TileBoosterT3;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.SimpleMenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static igentuman.blockbooster.setup.ClientSetup.BOOSTER_TAB_ITEMS;
 
 public class Registration {
 
-    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, igentuman.blockbooster.BlockBooster.MODID);
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, igentuman.blockbooster.BlockBooster.MODID);
-    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, igentuman.blockbooster.BlockBooster.MODID);
-    private static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, igentuman.blockbooster.BlockBooster.MODID);
+    // New NeoForge 1.21 style
+    private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(igentuman.blockbooster.BlockBooster.MODID);
+    private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(igentuman.blockbooster.BlockBooster.MODID);
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, igentuman.blockbooster.BlockBooster.MODID);
+    private static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(Registries.MENU, igentuman.blockbooster.BlockBooster.MODID);
 
     public static void init() {
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus bus = net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus();
         BLOCKS.register(bus);
         ITEMS.register(bus);
         BLOCK_ENTITIES.register(bus);
@@ -73,11 +74,11 @@ public class Registration {
     }
 
     public static final RegistryObject<MenuType<BoosterT1Container>> BLOCKBOOSTER_T1_CONTAINER = CONTAINERS.register("booster_t1",
-            () -> IForgeMenuType.create((windowId, inv, data) -> new BoosterT1Container(windowId, data.readBlockPos(), inv, inv.player)));
+            () -> new SimpleMenuType<>((windowId, inv, data) -> new BoosterT1Container(windowId, data.readBlockPos(), inv, inv.player)));
     public static final RegistryObject<MenuType<BoosterT2Container>> BLOCKBOOSTER_T2_CONTAINER = CONTAINERS.register("booster_t2",
-            () -> IForgeMenuType.create((windowId, inv, data) -> new BoosterT2Container(windowId, data.readBlockPos(), inv, inv.player)));
+            () -> new SimpleMenuType<>((windowId, inv, data) -> new BoosterT2Container(windowId, data.readBlockPos(), inv, inv.player)));
     public static final RegistryObject<MenuType<BoosterT3Container>> BLOCKBOOSTER_T3_CONTAINER = CONTAINERS.register("booster_t3",
-            () -> IForgeMenuType.create((windowId, inv, data) -> new BoosterT3Container(windowId, data.readBlockPos(), inv, inv.player)));
+            () -> new SimpleMenuType<>((windowId, inv, data) -> new BoosterT3Container(windowId, data.readBlockPos(), inv, inv.player)));
     public static final RegistryObject<MenuType<BoosterManaContainer>> BLOCKBOOSTER_MANA_CONTAINER = registerManaContainer();
 
     private static RegistryObject<MenuType<BoosterManaContainer>> registerManaContainer() {
@@ -85,7 +86,7 @@ public class Registration {
             return null;
         }
         return CONTAINERS.register("booster_mana",
-                () -> IForgeMenuType.create((windowId, inv, data) -> new BoosterManaContainer(windowId, data.readBlockPos(), inv, inv.player)));
+                () -> new SimpleMenuType<>((windowId, inv, data) -> new BoosterManaContainer(windowId, data.readBlockPos(), inv, inv.player)));
     }
 
     public static <B extends Block> RegistryObject<Item> fromBlock(RegistryObject<B> block) {
