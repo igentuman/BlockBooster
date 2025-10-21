@@ -38,9 +38,9 @@ public class BoosterT1Screen extends AbstractContainerScreen<BoosterT1Container>
 
     @Override
     public void renderBg(GuiGraphics graphics, float pPartialTick, int pMouseX, int pMouseY) {
-        this.renderBackground(graphics);
         int relX = (this.width - this.imageWidth) / 2;
         int relY = (this.height - this.imageHeight) / 2;
+        //this.renderBackground(graphics, relX, relY, pPartialTick);
         graphics.blit(GUI, relX, relY, 0, 0, this.imageWidth, this.imageHeight);
         this.renderTooltip(graphics, pMouseX, pMouseY);
         drawEnergyBar(graphics);

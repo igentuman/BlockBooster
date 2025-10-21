@@ -5,26 +5,42 @@ import igentuman.blockbooster.setup.Messages;
 import igentuman.blockbooster.setup.Registration;
 import igentuman.blockbooster.tile.TileBoosterT2;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.energy.IEnergyStorage;
 
 import java.util.HashMap;
 
 public class BoosterT2Container extends AbstractContainerMenu {
 
-    private TileBoosterT2 blockEntity;
-    private Player playerEntity;
+    private final TileBoosterT2 blockEntity;
+    private final Player playerEntity;
 
-    public BoosterT2Container(int windowId, BlockPos pos, Inventory playerInventory, Player player) {
+    // Constructor for network instantiation (called by MenuType factory)
+    public BoosterT2Container(int windowId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
         super(Registration.BLOCKBOOSTER_T2_CONTAINER.get(), windowId);
+        Player player = playerInventory.player;
+        BlockPos pos = buf.readBlockPos();
         blockEntity = (TileBoosterT2)player.getCommandSenderWorld().getBlockEntity(pos);
         this.playerEntity = player;
+    }
+
+    // Constructor for server-side instantiation
+    public BoosterT2Container(int windowId, BlockPos pos, Inventory playerInventory) {
+        super(Registration.BLOCKBOOSTER_T2_CONTAINER.get(), windowId);
+        Player player = playerInventory.player;
+        blockEntity = (TileBoosterT2)player.getCommandSenderWorld().getBlockEntity(pos);
+        this.playerEntity = player;
+    }
+
+    public BoosterT2Container(int windowId, Inventory playerInventory, BlockPos pos) {
+        super(Registration.BLOCKBOOSTER_T2_CONTAINER.get(), windowId);
+        blockEntity = (TileBoosterT2)playerInventory.player.getCommandSenderWorld().getBlockEntity(pos);
+        this.playerEntity = playerInventory.player;
     }
 
     public int getEnergyScaled(int scale)
@@ -48,7 +64,8 @@ public class BoosterT2Container extends AbstractContainerMenu {
     }
 
     public int getEnergy() {
-        return blockEntity.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
+        // NeoForge 1.21: No getCapability method, use direct access instead
+        return blockEntity != null ? blockEntity.getEnergy() : 0;
     }
 
     public int getMaxEnergy() {

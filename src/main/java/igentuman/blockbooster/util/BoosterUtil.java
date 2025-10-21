@@ -1,8 +1,10 @@
 package igentuman.blockbooster.util;
 
-import igentuman.blockbooster.mixin.mm.MachineControllerBlockEntityInvoker;
-import igentuman.blockbooster.mixin.mekanism.TileEntityMekanismInvoker;
+// Optional mixin integrations disabled - waiting for NeoForge 1.21 compatibility
+// import igentuman.blockbooster.mixin.mm.MachineControllerBlockEntityInvoker;
+// import igentuman.blockbooster.mixin.mekanism.TileEntityMekanismInvoker;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
@@ -10,7 +12,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashSet;
 
@@ -21,10 +22,13 @@ public class BoosterUtil {
     public static HashSet<Block> getBlocksByTagKey(String key)
     {
         HashSet<Block> tmp = new HashSet<>();
-        TagKey<Block> tag = TagKey.create(ForgeRegistries.BLOCKS.getRegistryKey(), ResourceLocation.tryParse(key));
-        for(Block holder : ForgeRegistries.BLOCKS.tags().getTag(tag).stream().toList()) {
-            tmp.add(holder);
-        }
+        TagKey<Block> tag = TagKey.create(BuiltInRegistries.BLOCK.key(), ResourceLocation.tryParse(key));
+        // NeoForge 1.21: getTag returns Named<Block> holders, need to get the actual value
+        BuiltInRegistries.BLOCK.getTag(tag).ifPresent(holders -> {
+            for(var holder : holders) {
+                tmp.add(holder.value());
+            }
+        });
         return tmp;
     }
 
@@ -73,16 +77,18 @@ public class BoosterUtil {
         if (ticker != null) {
             long startTime = System.nanoTime();
             for (int i = 0; i < boostRate; i++) {
-                if(isMekanismLoaded() && be instanceof mekanism.common.tile.base.TileEntityMekanism mekTile) {
-                    ((TileEntityMekanismInvoker)mekTile).onServerTick();
-                    continue;
-                }
-                if(isMMLoaded() && be instanceof io.ticticboom.mods.mm.controller.machine.register.MachineControllerBlockEntity mmTile) {
-                    if(((MachineControllerBlockEntityInvoker)mmTile).getCurrentRecipe() != null) {
-                        ((MachineControllerBlockEntityInvoker)mmTile).tickRecipe();
-                    }
-                    continue;
-                }
+                // Mekanism integration disabled - waiting for NeoForge 1.21 compatibility
+                // if(isMekanismLoaded() && be instanceof mekanism.common.tile.base.TileEntityMekanism mekTile) {
+                //     ((TileEntityMekanismInvoker)mekTile).onServerTick();
+                //     continue;
+                // }
+                // Masterful Machinery integration disabled - waiting for NeoForge 1.21 compatibility
+                // if(isMMLoaded() && be instanceof io.ticticboom.mods.mm.controller.machine.register.MachineControllerBlockEntity mmTile) {
+                //     if(((MachineControllerBlockEntityInvoker)mmTile).getCurrentRecipe() != null) {
+                //         ((MachineControllerBlockEntityInvoker)mmTile).tickRecipe();
+                //     }
+                //     continue;
+                // }
 
                 ticker.tick(level, be.getBlockPos(), be.getBlockState(), be);
 

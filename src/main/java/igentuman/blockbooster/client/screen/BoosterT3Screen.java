@@ -37,9 +37,9 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
 
     @Override
     public void renderBg(GuiGraphics graphics, float pPartialTick, int pMouseX, int pMouseY) {
-        this.renderBackground(graphics);
         int relX = (this.width - this.imageWidth) / 2;
         int relY = (this.height - this.imageHeight) / 2;
+        //this.renderBackground(graphics, relX, relY, pPartialTick);
         graphics.blit(GUI, relX, relY, 0, 0, this.imageWidth, this.imageHeight);
         this.renderTooltip(graphics, pMouseX, pMouseY);
         drawEnergyBar(graphics);
@@ -292,18 +292,19 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         int maxItemsVisible = maxVisibleRows * itemsPerRow;
         if(totalItems > maxItemsVisible) {
             int oldOffset = scrollOffset;
-            scrollOffset = Math.max(0, Math.min(totalItems - maxItemsVisible, scrollOffset - (int)(delta * itemsPerRow)));
+            // Use scrollY for vertical scrolling (negative = scroll up, positive = scroll down)
+            scrollOffset = Math.max(0, Math.min(totalItems - maxItemsVisible, scrollOffset - (int)(scrollY * itemsPerRow)));
             
             if(oldOffset != scrollOffset) {
                 updateCheckboxes();
                 return true;
             }
         }
-        return super.mouseScrolled(mouseX, mouseY, delta);
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     @Override

@@ -2,45 +2,53 @@ package igentuman.blockbooster.setup;
 
 import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.network.BoosterPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 
 public class Messages {
 
-    private static SimpleChannel INSTANCE;
+    // StreamCodec for serializing and deserializing BoosterPacket
+    public static final StreamCodec<RegistryFriendlyByteBuf, BoosterPacket> BOOSTER_STREAM_CODEC =
+            StreamCodec.of(
+                    (buf, packet) -> packet.write(buf),
+                    BoosterPacket::new
+            );
 
-    private static int packetId = 0;
-    private static int id() {
-        return packetId++;
+    public static void register(RegisterPayloadHandlersEvent event) {
+        var registrar = event.registrar(BlockBooster.MODID + ":1");
+
+        registrar.playBidirectional(
+                BoosterPacket.TYPE,
+                BOOSTER_STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        Messages::handleClientPacket,
+                        Messages::handleServerPacket
+                )
+        );
     }
 
-    public static void register() {
-        SimpleChannel net = NetworkRegistry.ChannelBuilder
-                .named(new ResourceLocation(BlockBooster.MODID, "messages"))
-                .networkProtocolVersion(() -> "1.0")
-                .clientAcceptedVersions(s -> true)
-                .serverAcceptedVersions(s -> true)
-                .simpleChannel();
-
-        INSTANCE = net;
-
-        net.messageBuilder(BoosterPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(BoosterPacket::new)
-                .encoder(BoosterPacket::toBytes)
-                .consumerMainThread(BoosterPacket::handle)
-                .add();
+    // Handle packet on the client side (if needed for client-specific logic)
+    private static void handleClientPacket(BoosterPacket packet, net.neoforged.neoforge.network.handling.IPayloadContext context) {
+        // Client-side handling is typically empty for server->client packets
+        // But left here for potential future use
     }
 
-    public static <MSG> void sendToServer(MSG message) {
-        INSTANCE.sendToServer(message);
+    // Handle packet on the server side
+    private static void handleServerPacket(BoosterPacket packet, net.neoforged.neoforge.network.handling.IPayloadContext context) {
+        BoosterPacket.handle(packet, context);
     }
 
-    public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
-        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), message);
+    // Send packet to the server
+    public static void sendToServer(BoosterPacket message) {
+        PacketDistributor.sendToServer(message);
     }
 
+    // Send packet to a specific player
+    public static void sendToPlayer(BoosterPacket message, ServerPlayer player) {
+        PacketDistributor.sendToPlayer(player, message);
+    }
 }

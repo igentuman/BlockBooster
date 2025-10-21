@@ -1,9 +1,7 @@
-// 1.20.1	2025-10-09T12:17:04.69094099	Recipes
-ce86eb6864c7b56f66a6f84e47c07420fe8c0bfc data/blockbooster/advancements/recipes/misc/booster_mana.json
-21a651744cb39f969bb0e3eedcfcdce7ad3cc87e data/blockbooster/advancements/recipes/misc/booster_t1.json
-75d06f414eab0e32f99e3c3e876efc666cae3247 data/blockbooster/advancements/recipes/misc/booster_t2.json
-9eaa040382946b370f03198173d2bb9d82fc32db data/blockbooster/advancements/recipes/misc/booster_t3.json
-cfb791c6260882d73a0aa4c4a5c061d37021e0ee data/blockbooster/recipes/booster_mana.json
-53192c9ef9e0b51bd3db789b82605cd0190215fb data/blockbooster/recipes/booster_t1.json
-3573ab85a0717933f9155fa1d32a49d2fb9cb323 data/blockbooster/recipes/booster_t2.json
-c594fef32ab02081e8024fd723075cf9a2291239 data/blockbooster/recipes/booster_t3.json
+// 1.21.1	2025-10-20T12:53:09.18095226	Recipes
+47d4355e9225a4491ee2f298c011350acee5bbc9 data/blockbooster/advancement/recipes/misc/booster_t1.json
+5cf8edbd7db57ec6f3352d0b09fba61aa1be5936 data/blockbooster/advancement/recipes/misc/booster_t2.json
+cd41429919d2835819dc64a7a72902fbb0f589f8 data/blockbooster/advancement/recipes/misc/booster_t3.json
+cf25ebfafefec777933f6e1e1a1bc0e5a7651239 data/blockbooster/recipe/booster_t1.json
+65e0e7011954f4cf807400ab9c7799e1b0bbe0f3 data/blockbooster/recipe/booster_t2.json
+d50cc7a499283f6bbc5e8a5cd7228fb72868c8fc data/blockbooster/recipe/booster_t3.json

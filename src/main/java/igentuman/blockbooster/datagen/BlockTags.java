@@ -3,8 +3,8 @@ package igentuman.blockbooster.datagen;
 import igentuman.blockbooster.setup.Registration;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -22,16 +22,14 @@ public class BlockTags extends BlockTagsProvider {
                 .add(
                         Registration.BLOCKBOOSTER_T1.get(),
                         Registration.BLOCKBOOSTER_T2.get(),
-                        Registration.BLOCKBOOSTER_T3.get(),
-                        Registration.BLOCKBOOSTER_MANA.get()
+                        Registration.BLOCKBOOSTER_T3.get()
                         );
 
         tag(net.minecraft.tags.BlockTags.NEEDS_IRON_TOOL)
                 .add(
                         Registration.BLOCKBOOSTER_T1.get(),
                         Registration.BLOCKBOOSTER_T2.get(),
-                        Registration.BLOCKBOOSTER_T3.get(),
-                        Registration.BLOCKBOOSTER_MANA.get()
+                        Registration.BLOCKBOOSTER_T3.get()
                 );
     }
 

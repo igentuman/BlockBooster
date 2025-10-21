@@ -5,10 +5,15 @@ plugins {
 }
 
 // Update version and archivesBaseName
-version = '1.0.14' // Increment version
+version = '1.1.13' // Increment version
 group = 'igentuman.blockbooster'
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
 base {
-    archivesName = 'BlockBooster-1.21.10'
+    archivesName = 'BlockBooster-1.21.1'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -34,7 +39,7 @@ runs {
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
     }
 
-    datagen {
+    data {
         arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
@@ -110,12 +115,12 @@ dependencies {
     
     // KubeJS - update when NeoForge version is available
     if (project.hasProperty('kubejs_version')) {
-        implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+        implementation "curse.maven:kubejs-238086:${kubejs_version}"
     }
     
     // Rhino - update when NeoForge version is available
     if (project.hasProperty('rhino_version')) {
-        implementation "dev.latvian.mods:rhino-neoforge:${rhino_version}"
+        implementation "curse.maven:rhino-416294:${rhino_version}"
     }
     
     // Masterful Machinery - update when NeoForge version is available

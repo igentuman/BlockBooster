@@ -1,5 +1,4 @@
 {
-  "block.blockbooster.booster_mana": "Mana Block Booster",
   "block.blockbooster.booster_t1": "Block Booster Tier 1",
   "block.blockbooster.booster_t2": "Block Booster Tier 2",
   "block.blockbooster.booster_t3": "Block Booster Tier 3",
@@ -19,8 +18,6 @@
   "gui.tps.ok": "§aServer TPS: OK",
   "hint.booster_boost_rate": "Boost rate: x%s",
   "hint.booster_fe_tick": "FE per boost: %s",
-  "hint.booster_mana": "Uses mana to work. \nMana per block: %s. \nBoost rate: x%s",
-  "hint.booster_mana_descr": "Boosts up to 6 blocks around",
   "hint.booster_mana_tick": "Mana per boost: %s",
   "hint.booster_t1_descr": "Boosts only Top/Bottom blocks",
   "hint.booster_t2_descr": "Boosts up to 6 blocks around",

@@ -4,15 +4,12 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "blockbooster.refmap.json",
   "mixins": [
-    "mm.MachineControllerBlockEntityInvoker",
-    "mekanism.TileEntityMekanismInvoker",
-    "TickingBlockEntityMixin",
     "RebindableTickingBlockEntityAccessor",
     "BoundTickingBlockEntityAccessor"
   ],
   "client": [],
   "injectors": {
-    "defaultRequire": 1
+    "defaultRequire": 0
   },
   "overwrites": {
     "requireAnnotations": true

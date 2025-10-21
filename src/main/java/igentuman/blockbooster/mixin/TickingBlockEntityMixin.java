@@ -1,3 +1,8 @@
+/*
+ * DISABLED - Mixin target mapping issue in NeoForge 1.21
+ * The "tick" method in LevelChunk$BoundTickingBlockEntity cannot be found or has changed.
+ * This performance monitoring mixin can be re-enabled when the method mapping is updated.
+ */
 package igentuman.blockbooster.mixin;
 
 import igentuman.blockbooster.util.BlockEntityTickDataAccessor;
@@ -11,8 +16,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Mixin to measure tick time for TickingBlockEntity
+ * DISABLED - Mixin to measure tick time for TickingBlockEntity
+ * Obfuscation mapping not available for NeoForge 1.21
  */
+/*
 @Mixin(targets = "net.minecraft.world.level.chunk.LevelChunk$BoundTickingBlockEntity")
 public abstract class TickingBlockEntityMixin implements BlockEntityTickDataAccessor {
     
@@ -78,5 +85,27 @@ public abstract class TickingBlockEntityMixin implements BlockEntityTickDataAcce
     @Override
     public void world_balance$setTickCount(long count) {
         world_balance$tickCount = count;
+    }
+}
+*/
+
+// Placeholder class to prevent compilation errors - actual implementation disabled
+public abstract class TickingBlockEntityMixin implements BlockEntityTickDataAccessor {
+    @Override
+    public double world_balance$getAvgTickTime() {
+        return 0.0;
+    }
+    
+    @Override
+    public void world_balance$setAvgTickTime(double time) {
+    }
+    
+    @Override
+    public long world_balance$getTickCount() {
+        return 0L;
+    }
+    
+    @Override
+    public void world_balance$setTickCount(long count) {
     }
 }

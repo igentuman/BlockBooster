@@ -1,5 +1,4 @@
-// 1.20.1	2025-10-09T12:23:25.558118113	Loot Tables
-7cea5ae255590695e14113b59a49d2933c05d80a data/blockbooster/loot_tables/booster_mana.json
-6d734e1dcbaf5ba2468f7632f42992026249d62b data/blockbooster/loot_tables/booster_t1.json
-bf202d3a004d9f97d2f76feb2afc29bcc6745c39 data/blockbooster/loot_tables/booster_t2.json
-7f54e78f3cf3c6113ce35a63607dc91125bf0e4d data/blockbooster/loot_tables/booster_t3.json
+// 1.21.1	2025-10-20T12:53:09.180840389	Loot Tables
+da49de3ff43cd05e806e67235b463c7b963679b3 data/blockbooster/loot_table/blocks/booster_t1.json
+41cb6af64c5e529d538477e93e6cb0895ba6c3ae data/blockbooster/loot_table/blocks/booster_t2.json
+d3e92c2809758265489165031b971b85ea3a1434 data/blockbooster/loot_table/blocks/booster_t3.json

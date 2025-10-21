@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "blockbooster:booster_t1"
+        "recipe": "blockbooster:booster_t3"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "minecraft:emerald"
-            ]
+            "items": "blockbooster:booster_t2"
           }
         ]
       },
@@ -22,14 +20,13 @@
   },
   "requirements": [
     [
-      "mysterious",
-      "has_the_recipe"
+      "has_the_recipe",
+      "mysterious"
     ]
   ],
   "rewards": {
     "recipes": [
-      "blockbooster:booster_t1"
+      "blockbooster:booster_t3"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

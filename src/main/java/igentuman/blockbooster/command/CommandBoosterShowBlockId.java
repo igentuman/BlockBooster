@@ -4,7 +4,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -13,15 +13,14 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.NeoForge;
 
 public class CommandBoosterShowBlockId {
 
     private CommandBoosterShowBlockId() {}
 
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
-        MinecraftForge.EVENT_BUS.register(CommandBoosterShowBlockId.class);
+        NeoForge.EVENT_BUS.register(CommandBoosterShowBlockId.class);
         return Commands.literal("booster_show_block_id")
                 .executes(ctx -> {
             return execute(ctx.getSource());
@@ -41,7 +40,7 @@ public class CommandBoosterShowBlockId {
 
     public static String getBlockName(BlockEntity be)
     {
-        return ForgeRegistries.BLOCKS.getKey(be.getBlockState().getBlock()).toString();
+        return BuiltInRegistries.BLOCK.getKey(be.getBlockState().getBlock()).toString();
     }
 
     public static BlockHitResult rayTrace(Player player, double reach) {

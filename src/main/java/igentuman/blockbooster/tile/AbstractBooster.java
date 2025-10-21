@@ -6,6 +6,8 @@ import igentuman.blockbooster.util.TPSTracker;
 import igentuman.blockbooster.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -17,7 +19,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -79,7 +80,7 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
                     HashSet<Block> blocks = getBlocksByTagKey(tagKey);
                     if (blocks != null && !blocks.isEmpty()) {
                         list.addAll(blocks.stream()
-                                .map(b -> ForgeRegistries.BLOCKS.getKey(b).toString())
+                                .map(b -> BuiltInRegistries.BLOCK.getKey(b).toString())
                                 .toList());
                     }
                 } catch (Exception e) {
@@ -98,7 +99,7 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
      * Get the name of a block entity for whitelist/blacklist checking
      */
     public String getBlockName(BlockEntity be) {
-        return ForgeRegistries.BLOCKS.getKey(be.getBlockState().getBlock()).toString();
+        return BuiltInRegistries.BLOCK.getKey(be.getBlockState().getBlock()).toString();
     }
 
     /**
@@ -320,17 +321,10 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
 
     // NBT Serialization
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
-        saveClientData(tag);
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
+        saveAdditional(tag, registries);
         return tag;
-    }
-
-    @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        if (tag != null) {
-            loadClientData(tag);
-        }
     }
 
     @Nullable
@@ -340,18 +334,8 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        CompoundTag tag = pkt.getTag();
-        handleUpdateTag(tag);
-    }
-
-    protected void saveClientData(CompoundTag tag) {
-        tag.putBoolean("isDisabled", isDisabled);
-        tag.putBoolean("isLagging", isLagging);
-        saveBoosterData(tag);
-    }
-
-    protected void loadClientData(CompoundTag tag) {
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         isDisabled = tag.getBoolean("isDisabled");
         isLagging = tag.getBoolean("isLagging");
         loadBoosterData(tag);
@@ -363,20 +347,15 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
         }
     }
 
+    // NeoForge 1.21: BlockEntity uses saveAdditional for writing data with HolderLookup.Provider
     @Override
-    public void load(CompoundTag tag) {
-        isDisabled = tag.getBoolean("isDisabled");
-        isLagging = tag.getBoolean("isLagging");
-        loadBoosterData(tag);
-        super.load(tag);
-    }
-
-    @Override
-    public void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         tag.putBoolean("isDisabled", isDisabled);
         tag.putBoolean("isLagging", isLagging);
         saveBoosterData(tag);
     }
+
 
     public boolean isLagging() {
         return isLagging;

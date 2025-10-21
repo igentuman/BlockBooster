@@ -10,7 +10,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-public class CheckBox extends ImageButton {
+public class CheckBox extends Button {
 
     private ResourceLocation resourceLocation;
     private int xTexStart;
@@ -26,13 +26,13 @@ public class CheckBox extends ImageButton {
     private boolean isChecked = false;
 
     public CheckBox(int pX, int pY, int pWidth, int pHeight, int pXTexStart, int pYTexStart, int yDiffTex, ResourceLocation pResourceLocation, Button.OnPress pOnPress) {
-        super(pX, pY, pWidth, pHeight, pXTexStart, pYTexStart, yDiffTex, pResourceLocation, pOnPress);
+        super(pX, pY, pWidth, pHeight, Component.translatable("gui.checkbox.boost"), pOnPress, DEFAULT_NARRATION);
         resourceLocation = pResourceLocation;
+        xTexStart = pXTexStart;
         yTexStart = pYTexStart;
         this.yDiffTex = yDiffTex;
         this.textureWidth = 256;
         this.textureHeight = 256;
-        setMessage(Component.translatable("gui.checkbox.boost"));
     }
 
     public void toggleChecked()

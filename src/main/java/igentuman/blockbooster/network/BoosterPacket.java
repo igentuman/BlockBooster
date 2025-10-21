@@ -1,16 +1,19 @@
 package igentuman.blockbooster.network;
 
 import igentuman.blockbooster.tile.ITileBooster;
-import igentuman.blockbooster.tile.TileBoosterT1;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
+public class BoosterPacket implements CustomPacketPayload {
 
-public class BoosterPacket {
+    public static final ResourceLocation ID = ResourceLocation.parse("blockbooster:booster_packet");
+    public static final Type<BoosterPacket> TYPE = new Type<>(ID);
 
     private BlockPos pos;
     private long posKey;
@@ -29,24 +32,32 @@ public class BoosterPacket {
         this.val = buf.readBoolean();
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
         buf.writeBlockPos(pos);
         buf.writeLong(posKey);
         buf.writeBoolean(val);
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context context = supplier.get();
+    public static void handle(BoosterPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
-
-            ServerPlayer player = context.getSender();
-            BlockEntity be = player.level().getBlockEntity(pos);
-            if(be instanceof ITileBooster) {
-                // For T3 boosters, use the posKey directly
-                // For T1/T2 boosters, the posKey will be a small value (direction ordinal)
-                ((ITileBooster) be).setIndexStatus(posKey, val);
+            // NeoForge 1.21: context.player() returns a generic Player, cast to ServerPlayer for server handling
+            if (context.player() instanceof ServerPlayer player) {
+                BlockEntity be = player.level().getBlockEntity(packet.pos);
+                if(be instanceof ITileBooster) {
+                    // For T3 boosters, use the posKey directly
+                    // For T1/T2 boosters, the posKey will be a small value (direction ordinal)
+                    ((ITileBooster) be).setIndexStatus(packet.posKey, packet.val);
+                }
             }
         });
-        return true;
+    }
+
+    // NeoForge 1.21: CustomPacketPayload interface requires id() and type() methods
+    public @NotNull ResourceLocation id() {
+        return ID;
+    }
+
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

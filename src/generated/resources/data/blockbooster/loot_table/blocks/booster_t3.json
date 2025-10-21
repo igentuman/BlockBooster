@@ -6,12 +6,12 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "blockbooster:booster_t1"
+          "name": "blockbooster:booster_t3"
         }
       ],
-      "name": "booster_t1",
+      "name": "booster_t3",
       "rolls": 1.0
     }
   ],
-  "random_sequence": "blockbooster:booster_t1"
+  "random_sequence": "blockbooster:blocks/booster_t3"
 }

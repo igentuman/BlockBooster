@@ -1,5 +1,9 @@
 package igentuman.blockbooster.mixin.mm;
 
+// Masterful Machinery integration disabled - waiting for NeoForge 1.21 compatibility
+// This file will be re-enabled once Masterful Machinery provides NeoForge 1.21 support
+
+/*
 import io.ticticboom.mods.mm.controller.machine.register.MachineControllerBlockEntity;
 import io.ticticboom.mods.mm.recipe.RecipeModel;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,3 +18,4 @@ public interface MachineControllerBlockEntityInvoker {
     @Invoker("performRecipeTick")
     void tickRecipe();
 }
+*/

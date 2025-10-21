@@ -1,14 +1,14 @@
 package igentuman.blockbooster.util;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 /**
  * Tracks server TPS (Ticks Per Second) to detect lag
  */
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class TPSTracker {
     private static final int SAMPLE_SIZE = 20; // Sample over 1 second (20 ticks)
     private static long[] tickTimes = new long[SAMPLE_SIZE];
@@ -17,30 +17,28 @@ public class TPSTracker {
     private static double currentTPS = 20.0;
     
     @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            long currentTime = System.currentTimeMillis();
+    public static void onServerTick(ServerTickEvent.Post event) {
+        long currentTime = System.currentTimeMillis();
+        
+        if (lastTickTime > 0) {
+            long tickTime = currentTime - lastTickTime;
+            tickTimes[currentIndex] = tickTime;
+            currentIndex = (currentIndex + 1) % SAMPLE_SIZE;
             
-            if (lastTickTime > 0) {
-                long tickTime = currentTime - lastTickTime;
-                tickTimes[currentIndex] = tickTime;
-                currentIndex = (currentIndex + 1) % SAMPLE_SIZE;
-                
-                // Calculate average tick time
-                long totalTime = 0;
-                for (long time : tickTimes) {
-                    totalTime += time;
-                }
-                double averageTickTime = (double) totalTime / SAMPLE_SIZE;
-                
-                // Calculate TPS (1000ms / average tick time in ms)
-                if (averageTickTime > 0) {
-                    currentTPS = Math.min(20.0, 1000.0 / averageTickTime);
-                }
+            // Calculate average tick time
+            long totalTime = 0;
+            for (long time : tickTimes) {
+                totalTime += time;
             }
+            double averageTickTime = (double) totalTime / SAMPLE_SIZE;
             
-            lastTickTime = currentTime;
+            // Calculate TPS (1000ms / average tick time in ms)
+            if (averageTickTime > 0) {
+                currentTPS = Math.min(20.0, 1000.0 / averageTickTime);
+            }
         }
+        
+        lastTickTime = currentTime;
     }
     
     /**

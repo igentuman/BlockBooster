@@ -118,9 +118,14 @@ public class BlockEntityLookTracker {
     
     /**
      * Find the TickingBlockEntity data for a specific BlockEntity
+     * NOTE: This method is disabled in NeoForge 1.21 as LevelChunk.tickersInLevel is now private
+     * and RebindableTickingBlockEntityWrapper is not accessible from outside the package
      */
     private static BlockEntityTickDataAccessor findTickingBlockEntityData(LevelChunk chunk, BlockEntity targetBlockEntity) {
         try {
+            // Access to LevelChunk internals has been restricted in NeoForge 1.21
+            // This functionality would need to be reimplemented using public API or Mixins
+            /*
             var tickers =  chunk.tickersInLevel;
             
             if (tickers != null) {
@@ -145,6 +150,7 @@ public class BlockEntityLookTracker {
                     }
                 }
             }
+            */
         } catch (Exception e) {
             // Silently ignore reflection errors
         }

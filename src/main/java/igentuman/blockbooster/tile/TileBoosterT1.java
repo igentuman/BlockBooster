@@ -7,18 +7,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileBoosterT1 extends AbstractBooster {
 
-    private final CustomEnergyStorage energy = createEnergyStorage();
-    private final LazyOptional<IEnergyStorage> energyHandler = LazyOptional.of(() -> energy);
+    public final CustomEnergyStorage energy = createEnergyStorage();
     public int fePerTick = CommonConfig.GENERAL.t1_fe_per_tick.get();
 
     public TileBoosterT1(BlockPos pos, BlockState state) {
@@ -48,7 +42,8 @@ public class TileBoosterT1 extends AbstractBooster {
 
     @Override
     protected void saveBoosterData(CompoundTag tag) {
-        tag.put("Energy", energy.serializeNBT());
+        // Directly save energy value instead of using serializeNBT
+        tag.putInt("Energy", energy.getEnergyStored());
         
         // Save boost flags for direction-based indexing
         CompoundTag flagsTag = new CompoundTag();
@@ -60,8 +55,9 @@ public class TileBoosterT1 extends AbstractBooster {
 
     @Override
     protected void loadBoosterData(CompoundTag tag) {
+        // Directly load energy value instead of using deserializeNBT
         if (tag.contains("Energy")) {
-            energy.deserializeNBT(tag.get("Energy"));
+            energy.setEnergy(tag.getInt("Energy"));
         }
         
         // Load boost flags
@@ -100,14 +96,5 @@ public class TileBoosterT1 extends AbstractBooster {
                 return rc;
             }
         };
-    }
-
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ENERGY) {
-            return energyHandler.cast();
-        }
-        return super.getCapability(cap, side);
     }
 }

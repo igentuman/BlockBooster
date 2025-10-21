@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -32,7 +31,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -57,8 +55,8 @@ public class BlockBoosterT3 extends Block implements EntityBlock, IBoosterBlock 
         return RENDER_SHAPE;
     }
 
-
-    @Override
+    // Note: appendHoverText doesn't override Block method in NeoForge 1.21
+    // This method is called through Item.appendHoverText instead
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter reader, List<Component> list, TooltipFlag flags) {
         list.add(Component.translatable("hint.booster_t3_descr", CommonConfig.GENERAL.t3_scan_radius.get()).withStyle(ChatFormatting.BLUE));
         list.add(Component.translatable("hint.booster_boost_rate", CommonConfig.GENERAL.t3_boost_rate.get()).withStyle(ChatFormatting.BLUE));
@@ -97,29 +95,30 @@ public class BlockBoosterT3 extends Block implements EntityBlock, IBoosterBlock 
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return super.getStateForPlacement(context).setValue(BlockStateProperties.POWERED, false);
+        BlockState state = super.getStateForPlacement(context);
+        return state != null ? state.setValue(BlockStateProperties.POWERED, false) : defaultBlockState().setValue(BlockStateProperties.POWERED, false);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult trace) {
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (!level.isClientSide) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof TileBoosterT3) {
-                MenuProvider containerProvider = new MenuProvider() {
-                    @Override
-                    public Component getDisplayName() {
-                        return MutableComponent.create(ComponentContents.EMPTY);
-                    }
+                if (player instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.openMenu(new MenuProvider() {
+                        @Override
+                        public Component getDisplayName() {
+                            return Component.empty();
+                        }
 
-                    @Override
-                    public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
-                        return new BoosterT3Container(windowId, pos, playerInventory, playerEntity);
-                    }
-                };
-                NetworkHooks.openScreen((ServerPlayer) player, containerProvider, be.getBlockPos());
+                        @Override
+                        public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
+                            return new BoosterT3Container(windowId, playerInventory, pos);
+                        }
+                    }, be.getBlockPos());
+                }
             } else {
-                throw new IllegalStateException("Our named container provider is missing!");
+                throw new IllegalStateException("Our named block entity is missing!");
             }
         }
         return InteractionResult.SUCCESS;

@@ -4,7 +4,7 @@ import igentuman.blockbooster.setup.Registration;
 import igentuman.blockbooster.block.BlockBoosterT1;
 import igentuman.blockbooster.setup.ModSetup;
 import net.minecraft.data.DataGenerator;
-import net.minecraftforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class BbLanguageProvider extends LanguageProvider {
 
@@ -34,13 +34,10 @@ public class BbLanguageProvider extends LanguageProvider {
         add("hint.booster_t1_descr", "Boosts only Top/Bottom blocks");
         add("hint.booster_t2_descr", "Boosts up to 6 blocks around");
         add("hint.booster_t3_descr", "Boosts blocks around in radius of %s blocks");
-        add("hint.booster_mana_descr", "Boosts up to 6 blocks around");
-        add("hint.booster_mana", "Uses mana to work. \nMana per block: %s. \nBoost rate: x%s");
         add("booster.limit_message", "Boosters per chunk limit reached. Only %s per chunk.");
 
         add(Registration.BLOCKBOOSTER_T1.get(), "Block Booster Tier 1");
         add(Registration.BLOCKBOOSTER_T2.get(), "Block Booster Tier 2");
         add(Registration.BLOCKBOOSTER_T3.get(), "Block Booster Tier 3");
-        add(Registration.BLOCKBOOSTER_MANA.get(), "Mana Block Booster");
     }
 }

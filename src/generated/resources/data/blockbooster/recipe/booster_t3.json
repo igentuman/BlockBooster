@@ -4,16 +4,16 @@
   "group": "blockbooster",
   "key": {
     "#": {
-      "tag": "forge:ingots/gold"
+      "tag": "c:gems/diamond"
     },
     "c": {
-      "item": "blockbooster:booster_t1"
+      "item": "blockbooster:booster_t2"
     },
     "m": {
-      "tag": "forge:gems/emerald"
+      "tag": "c:gems/emerald"
     },
     "x": {
-      "tag": "forge:dusts/redstone"
+      "tag": "c:dusts/redstone"
     }
   },
   "pattern": [
@@ -22,7 +22,7 @@
     "#x#"
   ],
   "result": {
-    "item": "blockbooster:booster_t2"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "blockbooster:booster_t3"
+  }
 }

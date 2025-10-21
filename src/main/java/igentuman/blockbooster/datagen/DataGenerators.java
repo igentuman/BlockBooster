@@ -4,25 +4,26 @@ import igentuman.blockbooster.BlockBooster;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.Collections;
 import java.util.List;
 
 import static igentuman.blockbooster.BlockBooster.MODID;
 
-@Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MODID)
 public class DataGenerators {
 
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         if (event.includeServer()) {
-            generator.addProvider(true, new BbRecipes(generator));
+            generator.addProvider(true, new BbRecipes(generator, event.getLookupProvider()));
             generator.addProvider(event.includeServer(), new LootTableProvider(generator.getPackOutput(), Collections.emptySet(),
-                    List.of(new LootTableProvider.SubProviderEntry(BoosterLootTable::new, LootContextParamSets.BLOCK))));
+                    List.of(new LootTableProvider.SubProviderEntry(paramSet -> new BoosterLootTable(), LootContextParamSets.BLOCK)),
+                    event.getLookupProvider()));
             BlockTags blockTags = new BlockTags(generator, event.getLookupProvider(), event.getExistingFileHelper());
             event.getGenerator().addProvider(
                     event.includeServer(),

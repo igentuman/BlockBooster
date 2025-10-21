@@ -1,14 +1,14 @@
 package igentuman.blockbooster.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CommonConfig {
-    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     public static final General GENERAL = new General(BUILDER);
-    public static final ForgeConfigSpec spec = BUILDER.build();
+    public static final ModConfigSpec spec = BUILDER.build();
 
     private static boolean loaded = false;
     private static List<Runnable> loadActions = new ArrayList<>();
@@ -31,33 +31,30 @@ public class CommonConfig {
     }
 
     public static class General {
-        public final ForgeConfigSpec.ConfigValue<Integer> boosters_per_chunk;
+        public final ModConfigSpec.ConfigValue<Integer> boosters_per_chunk;
 
-        public final ForgeConfigSpec.ConfigValue<Integer> t1_fe_per_tick;
-        public final ForgeConfigSpec.ConfigValue<Integer> t1_boost_rate;
+        public final ModConfigSpec.ConfigValue<Integer> t1_fe_per_tick;
+        public final ModConfigSpec.ConfigValue<Integer> t1_boost_rate;
 
-        public final ForgeConfigSpec.ConfigValue<Integer> t2_fe_per_tick;
-        public final ForgeConfigSpec.ConfigValue<Integer> t2_boost_rate;
+        public final ModConfigSpec.ConfigValue<Integer> t2_fe_per_tick;
+        public final ModConfigSpec.ConfigValue<Integer> t2_boost_rate;
 
-        public final ForgeConfigSpec.ConfigValue<Integer> t3_fe_per_tick;
-        public final ForgeConfigSpec.ConfigValue<Integer> t3_boost_rate;
-        public final ForgeConfigSpec.ConfigValue<Integer> t3_scan_radius;
+        public final ModConfigSpec.ConfigValue<Integer> t3_fe_per_tick;
+        public final ModConfigSpec.ConfigValue<Integer> t3_boost_rate;
+        public final ModConfigSpec.ConfigValue<Integer> t3_scan_radius;
 
-        public final ForgeConfigSpec.ConfigValue<Integer> mana_per_tick;
-        public final ForgeConfigSpec.ConfigValue<Integer> mana_booster_rate;
+        public final ModConfigSpec.ConfigValue<Boolean> deactivate_with_redstone;
 
-        public final ForgeConfigSpec.ConfigValue<Boolean> deactivate_with_redstone;
+        public final ModConfigSpec.ConfigValue<List<String>> white_list;
+        public final ModConfigSpec.ConfigValue<List<String>> black_list;
 
-        public final ForgeConfigSpec.ConfigValue<List<String>> white_list;
-        public final ForgeConfigSpec.ConfigValue<List<String>> black_list;
+        public final ModConfigSpec.ConfigValue<Boolean> enable_tps_protection;
+        public final ModConfigSpec.ConfigValue<Double> min_tps_threshold;
 
-        public final ForgeConfigSpec.ConfigValue<Boolean> enable_tps_protection;
-        public final ForgeConfigSpec.ConfigValue<Double> min_tps_threshold;
+        public final ModConfigSpec.ConfigValue<Boolean> prevent_slow_blocks;
+        public final ModConfigSpec.ConfigValue<Long> slow_block_threshold_ns;
 
-        public final ForgeConfigSpec.ConfigValue<Boolean> prevent_slow_blocks;
-        public final ForgeConfigSpec.ConfigValue<Long> slow_block_threshold_ns;
-
-        public General(ForgeConfigSpec.Builder builder) {
+        public General(ModConfigSpec.Builder builder) {
             builder.push("General");
             boosters_per_chunk = builder
                     .comment("Limit boosters per chunk. Boosters might affect server performance negatively. Consider limiting boosters per chunk")
@@ -83,12 +80,6 @@ public class CommonConfig {
             t3_scan_radius = builder
                     .comment("Booster Tier 3 scan radius (scans a cube area)")
                     .defineInRange("t3_scan_radius", 3, 1, 10);
-            mana_per_tick = builder
-                    .comment("Mana Booster mana per tick to operate")
-                    .define("mana_per_tick", 100);
-            mana_booster_rate = builder
-                    .comment("Mana Booster boost rate")
-                    .define("mana_booster_rate", 5);
             deactivate_with_redstone = builder
                     .comment("Deactivate booster with redstone signal")
                     .define("deactivate_with_redstone", true);

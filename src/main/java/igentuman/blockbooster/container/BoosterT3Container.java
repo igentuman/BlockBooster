@@ -5,24 +5,34 @@ import igentuman.blockbooster.setup.Messages;
 import igentuman.blockbooster.setup.Registration;
 import igentuman.blockbooster.tile.TileBoosterT3;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.energy.IEnergyStorage;
 
 import java.util.HashMap;
 
 public class BoosterT3Container extends AbstractContainerMenu {
 
-    private TileBoosterT3 blockEntity;
-    private Player playerEntity;
+    private final TileBoosterT3 blockEntity;
+    private final Player playerEntity;
 
-    public BoosterT3Container(int windowId, BlockPos pos, Inventory playerInventory, Player player) {
+    // Constructor for network instantiation (called by MenuType factory)
+    public BoosterT3Container(int windowId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
         super(Registration.BLOCKBOOSTER_T3_CONTAINER.get(), windowId);
+        Player player = playerInventory.player;
+        BlockPos pos = buf.readBlockPos();
+        blockEntity = (TileBoosterT3)player.getCommandSenderWorld().getBlockEntity(pos);
+        this.playerEntity = player;
+    }
+
+    // Constructor for server-side instantiation
+    public BoosterT3Container(int windowId, Inventory playerInventory, BlockPos pos) {
+        super(Registration.BLOCKBOOSTER_T3_CONTAINER.get(), windowId);
+        Player player = playerInventory.player;
         blockEntity = (TileBoosterT3)player.getCommandSenderWorld().getBlockEntity(pos);
         this.playerEntity = player;
     }
@@ -48,7 +58,8 @@ public class BoosterT3Container extends AbstractContainerMenu {
     }
 
     public int getEnergy() {
-        return blockEntity.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
+        // NeoForge 1.21: No getCapability method, use direct access instead
+        return blockEntity != null ? blockEntity.getEnergy() : 0;
     }
 
     public int getMaxEnergy() {
