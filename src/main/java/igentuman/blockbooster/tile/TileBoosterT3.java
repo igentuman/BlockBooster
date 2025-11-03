@@ -49,7 +49,7 @@ public class TileBoosterT3 extends AbstractBooster {
                     BlockPos checkPos = getBlockPos().offset(x, y, z);
                     BlockEntity be = WorldUtil.getBlockEntity(checkPos, (ServerLevel) level);
 
-                    if (be == null) continue;
+                    if (be == null || be instanceof AbstractBooster) continue;
 
                     // Check whitelist/blacklist
                     if (!getWhiteList().isEmpty()) {

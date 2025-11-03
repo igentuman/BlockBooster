@@ -37,6 +37,7 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
     public boolean isDisabled = false;
     public boolean isLagging = false;
     protected long tick = 0;
+    protected long lastHeartbeat = 0;
     public boolean preventSlowBlocks = CommonConfig.GENERAL.prevent_slow_blocks.get();
     public long slowBlockThreshold = CommonConfig.GENERAL.slow_block_threshold_ns.get();
 
@@ -129,6 +130,15 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
             BlockPos checkPos = getBlockPos().relative(direction, 1);
             long posKey = checkPos.asLong();
             BlockEntity be = WorldUtil.getBlockEntity(checkPos, (ServerLevel) level);
+            if (be == null || be instanceof AbstractBooster) continue;
+            // Check whitelist/blacklist
+            if (!getWhiteList().isEmpty()) {
+                if (!getWhiteList().contains(getBlockName(be))) {
+                    continue;
+                }
+            } else if (getBlackList().contains(getBlockName(be))) {
+                continue;
+            }
             boolean contains = attachedBlocks.containsKey(posKey);
             
             if (be == null) {
@@ -204,7 +214,8 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
      */
     @Override
     public void tickServer() {
-        if (level == null) return;
+        if (level == null || level.getGameTime() == lastHeartbeat) return;
+        lastHeartbeat = level.getGameTime();
         tick++;
         
         if (tick % 20 == 0) {
@@ -249,7 +260,10 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
             if (preventSlowBlocks) {
                 Long lastBoostTime = boostTimes.get(posKey);
                 if (lastBoostTime != null && lastBoostTime > slowBlockThreshold) {
-                    continue; // Skip boosting this slow block
+                    assert level != null;
+                    if (level.getGameTime() % 10 != 0) {
+                        continue; // Skip boosting this slow block
+                    }
                 }
             }
 
