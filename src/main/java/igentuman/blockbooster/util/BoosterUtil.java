@@ -1,6 +1,5 @@
 package igentuman.blockbooster.util;
 
-import igentuman.blockbooster.mixin.mm.MachineControllerBlockEntityInvoker;
 import igentuman.blockbooster.mixin.mekanism.TileEntityMekanismInvoker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -75,12 +74,6 @@ public class BoosterUtil {
             for (int i = 0; i < boostRate; i++) {
                 if(isMekanismLoaded() && be instanceof mekanism.common.tile.base.TileEntityMekanism mekTile) {
                     ((TileEntityMekanismInvoker)mekTile).onServerTick();
-                    continue;
-                }
-                if(isMMLoaded() && be instanceof io.ticticboom.mods.mm.controller.machine.register.MachineControllerBlockEntity mmTile) {
-                    if(((MachineControllerBlockEntityInvoker)mmTile).getCurrentRecipe() != null) {
-                        ((MachineControllerBlockEntityInvoker)mmTile).tickRecipe();
-                    }
                     continue;
                 }
 

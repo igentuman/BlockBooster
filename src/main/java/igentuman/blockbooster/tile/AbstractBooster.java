@@ -251,15 +251,15 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
      * Override this for custom boosting logic
      */
     protected void processBoostingLogic() {
-        for (Long posKey : attachedBlocks.keySet()) {
+        for (long posKey : attachedBlocks.keySet()) {
             if (!boostFlags.getOrDefault(posKey, false)) continue;
             BlockEntity be = attachedBlocks.get(posKey);
             if (be == null || be.isRemoved() || !canBoost()) continue;
 
             // Check if slow block prevention is enabled and this block is slow
             if (preventSlowBlocks) {
-                Long lastBoostTime = boostTimes.get(posKey);
-                if (lastBoostTime != null && lastBoostTime > slowBlockThreshold) {
+                long lastBoostTime = boostTimes.getOrDefault(posKey, 0L);
+                if (lastBoostTime > slowBlockThreshold) {
                     assert level != null;
                     if (level.getGameTime() % 10 != 0) {
                         continue; // Skip boosting this slow block
@@ -269,7 +269,11 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
 
             BoosterUtil.BoostResult result = BoosterUtil.BoostBlockEntityWithTiming(level, be.getBlockPos(), be, getBoostRate());
             if (result.success) {
-                boostTimes.put(posKey, result.timeNanos);
+                if(boostTimes.containsKey(posKey)) {
+                    boostTimes.replace(posKey, result.timeNanos);
+                } else {
+                    boostTimes.put(posKey, result.timeNanos);
+                }
                 consumeResource();
             }
         }
