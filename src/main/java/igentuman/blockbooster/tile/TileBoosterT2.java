@@ -36,8 +36,14 @@ public class TileBoosterT2 extends AbstractBooster {
     }
 
     @Override
-    protected void consumeResource() {
+    protected long consumeResource() {
         consumeEnergy(fePerTick);
+        return fePerTick;
+    }
+
+    @Override
+    public String getResourceUnit() {
+        return "FE";
     }
 
     @Override

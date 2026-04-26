@@ -9,6 +9,7 @@
   "gui.block_booster_t3": "Block Booster Tier 3",
   "gui.boost.slow_block": "§cSlow block - not boosting",
   "gui.boost.time": "§7Boost time: %s ms",
+  "gui.boost.total_consumed": "§eTotal consumed: %s %s",
   "gui.checkbox.boost": "Boost",
   "gui.creative": "Creative Player can see block ids",
   "gui.energy.info": "Energy: %s/%s FE",

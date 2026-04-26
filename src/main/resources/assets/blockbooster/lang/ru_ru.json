@@ -15,5 +15,6 @@
   "gui.tps.current": "Текущий TPS: %s",
   "gui.tps.boosting_paused": "§7Ускорение приостановлено из-за лагов",
   "gui.boost.time": "§7Время ускорения: %s мс",
-  "gui.boost.slow_block": "§cМедленный блок - не бустится"
+  "gui.boost.slow_block": "§cМедленный блок - не бустится",
+  "gui.boost.total_consumed": "§eВсего потрачено: %s %s"
 }

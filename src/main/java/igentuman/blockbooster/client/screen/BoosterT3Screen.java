@@ -3,6 +3,7 @@ package igentuman.blockbooster.client.screen;
 import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.client.screen.element.CheckBox;
 import igentuman.blockbooster.container.BoosterT3Container;
+import igentuman.blockbooster.util.BoosterUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
@@ -96,24 +97,29 @@ public class BoosterT3Screen extends AbstractContainerScreen<BoosterT3Container>
                 int blockX = startX + colIndex * columnSpacing;
                 int blockY = startY + rowIndex * blockSpacing;
                 
-                if(x >= blockX && x < blockX + blockIconSize && 
+                if(x >= blockX && x < blockX + blockIconSize &&
                    y >= blockY && y < blockY + blockIconSize) {
                     ItemStack blockStack = new ItemStack(be.getBlockState().getBlock().asItem());
                     List<Component> tooltip = new ArrayList<>();
                     tooltip.add(Component.translatable(blockStack.getDescriptionId()));
                     tooltip.add(Component.literal(be.getBlockPos().toShortString()));
-                    
+
                     // Add boost time information
                     Long boostTime = boostTimes.get(key);
                     if(boostTime != null && boostTime > 0) {
                         double timeMs = boostTime / 1_000_000.0;
                         tooltip.add(Component.translatable("gui.boost.time", String.format("%.3f", timeMs)));
-                        
+
                         if(menu.isSlowBlock(key)) {
                             tooltip.add(Component.translatable("gui.boost.slow_block"));
                         }
                     }
-                    
+
+                    long total = menu.getTotalResourceConsumed(key);
+                    tooltip.add(Component.translatable("gui.boost.total_consumed",
+                            BoosterUtil.formatCompactAmount(total),
+                            menu.getResourceUnit()));
+
                     graphics.renderTooltip(Minecraft.getInstance().font, tooltip, Optional.empty(), x, y);
                     return;
                 }

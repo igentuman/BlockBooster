@@ -80,4 +80,12 @@ public class BoosterT2Container extends AbstractContainerMenu {
     public HashMap<Long, Boolean> getBoostFlags() {
         return blockEntity.getBoostFlags();
     }
+
+    public long getTotalResourceConsumed(long posKey) {
+        return blockEntity.getTotalResourceConsumed(posKey);
+    }
+
+    public String getResourceUnit() {
+        return blockEntity.getResourceUnit();
+    }
 }
