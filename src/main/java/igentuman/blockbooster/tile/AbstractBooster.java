@@ -7,6 +7,8 @@ import igentuman.blockbooster.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -34,6 +36,7 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
     protected HashMap<Long, BlockEntity> attachedBlocks = new HashMap<>();
     protected HashMap<Long, Long> boostTimes = new HashMap<>();
     protected HashMap<Long, Boolean> boostFlags = new HashMap<>();
+    protected HashMap<Long, Long> totalResourceConsumed = new HashMap<>();
     public boolean isDisabled = false;
     public boolean isLagging = false;
     protected long tick = 0;
@@ -187,6 +190,7 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
             //clear out flags for removed blocks
             boostFlags.keySet().removeIf(key -> !attachedBlocks.containsKey(key));
             boostTimes.keySet().removeIf(key -> !attachedBlocks.containsKey(key));
+            totalResourceConsumed.keySet().removeIf(key -> !attachedBlocks.containsKey(key));
             setChanged();
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
@@ -274,7 +278,10 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
                 } else {
                     boostTimes.put(posKey, result.timeNanos);
                 }
-                consumeResource();
+                long consumed = consumeResource();
+                if (consumed > 0) {
+                    totalResourceConsumed.merge(posKey, consumed, Long::sum);
+                }
             }
         }
     }
@@ -290,8 +297,14 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
 
     /**
      * Consume the resource needed for boosting (energy, mana, etc.)
+     * @return the amount of resource consumed (used for per-block total tracking)
      */
-    protected abstract void consumeResource();
+    protected abstract long consumeResource();
+
+    /**
+     * Identifier of the resource unit displayed in the GUI (e.g. "FE", "Mana").
+     */
+    public abstract String getResourceUnit();
 
     /**
      * Save booster-specific data to NBT
@@ -323,6 +336,14 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
 
     public HashMap<Long, Boolean> getBoostFlags() {
         return boostFlags;
+    }
+
+    public HashMap<Long, Long> getTotalResourceConsumed() {
+        return totalResourceConsumed;
+    }
+
+    public long getTotalResourceConsumed(long posKey) {
+        return totalResourceConsumed.getOrDefault(posKey, 0L);
     }
 
     public boolean isIndexEnabled(long i) {
@@ -366,12 +387,14 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
     protected void saveClientData(CompoundTag tag) {
         tag.putBoolean("isDisabled", isDisabled);
         tag.putBoolean("isLagging", isLagging);
+        saveTotalResourceConsumed(tag);
         saveBoosterData(tag);
     }
 
     protected void loadClientData(CompoundTag tag) {
         isDisabled = tag.getBoolean("isDisabled");
         isLagging = tag.getBoolean("isLagging");
+        loadTotalResourceConsumed(tag);
         loadBoosterData(tag);
         if(attachedBlocks.size() != boostFlags.size()) {
             attachedBlocks.clear();
@@ -385,6 +408,7 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
     public void load(CompoundTag tag) {
         isDisabled = tag.getBoolean("isDisabled");
         isLagging = tag.getBoolean("isLagging");
+        loadTotalResourceConsumed(tag);
         loadBoosterData(tag);
         super.load(tag);
     }
@@ -393,7 +417,30 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
     public void saveAdditional(CompoundTag tag) {
         tag.putBoolean("isDisabled", isDisabled);
         tag.putBoolean("isLagging", isLagging);
+        saveTotalResourceConsumed(tag);
         saveBoosterData(tag);
+    }
+
+    protected void saveTotalResourceConsumed(CompoundTag tag) {
+        ListTag list = new ListTag();
+        for (Long key : totalResourceConsumed.keySet()) {
+            CompoundTag entry = new CompoundTag();
+            entry.putLong("posKey", key);
+            entry.putLong("total", totalResourceConsumed.get(key));
+            list.add(entry);
+        }
+        tag.put("totalResourceConsumed", list);
+    }
+
+    protected void loadTotalResourceConsumed(CompoundTag tag) {
+        if (tag.contains("totalResourceConsumed")) {
+            totalResourceConsumed.clear();
+            ListTag list = tag.getList("totalResourceConsumed", Tag.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                CompoundTag entry = list.getCompound(i);
+                totalResourceConsumed.put(entry.getLong("posKey"), entry.getLong("total"));
+            }
+        }
     }
 
     public boolean isLagging() {

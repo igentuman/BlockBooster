@@ -81,4 +81,12 @@ public class BoosterT1Container extends AbstractContainerMenu {
     public int getMaxEnergy() {
         return blockEntity.getMaxEnergy();
     }
+
+    public long getTotalResourceConsumed(long posKey) {
+        return blockEntity.getTotalResourceConsumed(posKey);
+    }
+
+    public String getResourceUnit() {
+        return blockEntity.getResourceUnit();
+    }
 }

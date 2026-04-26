@@ -55,8 +55,14 @@ public class TileBoosterMana extends AbstractBooster implements ManaPool {
     }
 
     @Override
-    protected void consumeResource() {
+    protected long consumeResource() {
         consumeMana();
+        return manaPerTick;
+    }
+
+    @Override
+    public String getResourceUnit() {
+        return "Mana";
     }
 
     @Override

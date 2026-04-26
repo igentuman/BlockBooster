@@ -28,6 +28,7 @@ public class BbLanguageProvider extends LanguageProvider {
         add("gui.tps.boosting_paused", "§7Boosting paused due to lag");
         add("gui.boost.time", "§7Boost time: %s ms");
         add("gui.boost.slow_block", "§cSlow block - not boosting");
+        add("gui.boost.total_consumed", "§eTotal consumed: %s %s");
         add("hint.booster_boost_rate", "Boost rate: x%s");
         add("hint.booster_fe_tick", "FE per boost: %s");
         add("hint.booster_mana_tick", "Mana per boost: %s");

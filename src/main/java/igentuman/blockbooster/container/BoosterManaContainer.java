@@ -81,4 +81,12 @@ public class BoosterManaContainer extends AbstractContainerMenu {
     public int getMaxMana() {
         return blockEntity.getMaxMana();
     }
+
+    public long getTotalResourceConsumed(long posKey) {
+        return blockEntity.getTotalResourceConsumed(posKey);
+    }
+
+    public String getResourceUnit() {
+        return blockEntity.getResourceUnit();
+    }
 }

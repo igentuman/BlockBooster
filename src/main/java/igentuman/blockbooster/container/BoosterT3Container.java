@@ -88,4 +88,12 @@ public class BoosterT3Container extends AbstractContainerMenu {
     public boolean isSlowBlock(long posKey) {
         return blockEntity.isSlowBlock(posKey);
     }
+
+    public long getTotalResourceConsumed(long posKey) {
+        return blockEntity.getTotalResourceConsumed(posKey);
+    }
+
+    public String getResourceUnit() {
+        return blockEntity.getResourceUnit();
+    }
 }

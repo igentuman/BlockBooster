@@ -96,6 +96,7 @@ public class TileBoosterT3 extends AbstractBooster {
             //clear out flags for removed blocks
             boostFlags.keySet().removeIf(key -> !attachedBlocks.containsKey(key));
             boostTimes.keySet().removeIf(key -> !attachedBlocks.containsKey(key));
+            totalResourceConsumed.keySet().removeIf(key -> !attachedBlocks.containsKey(key));
             setChanged();
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
@@ -112,8 +113,14 @@ public class TileBoosterT3 extends AbstractBooster {
     }
 
     @Override
-    protected void consumeResource() {
+    protected long consumeResource() {
         consumeEnergy(fePerTick);
+        return fePerTick;
+    }
+
+    @Override
+    public String getResourceUnit() {
+        return "FE";
     }
 
     @Override

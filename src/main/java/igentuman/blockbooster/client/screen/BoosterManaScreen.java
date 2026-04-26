@@ -3,6 +3,7 @@ package igentuman.blockbooster.client.screen;
 import igentuman.blockbooster.BlockBooster;
 import igentuman.blockbooster.client.screen.element.CheckBox;
 import igentuman.blockbooster.container.BoosterManaContainer;
+import igentuman.blockbooster.util.BoosterUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
@@ -134,12 +135,16 @@ public class BoosterManaScreen extends AbstractContainerScreen<BoosterManaContai
             BlockEntity be = attachedBlocks.get(posKey);
             if(be != null && !be.isRemoved()) {
                 int blockY = startY + index * blockSpacing;
-                if(x >= blockIconX && x < blockIconX + blockIconSize && 
+                if(x >= blockIconX && x < blockIconX + blockIconSize &&
                    y >= blockY && y < blockY + blockIconSize) {
                     ItemStack blockStack = new ItemStack(be.getBlockState().getBlock().asItem());
                     List<Component> tooltip = new ArrayList<>();
                     tooltip.add(Component.translatable(blockStack.getDescriptionId()));
                     tooltip.add(Component.literal(be.getBlockPos().toShortString()));
+                    long total = menu.getTotalResourceConsumed(posKey);
+                    tooltip.add(Component.translatable("gui.boost.total_consumed",
+                            BoosterUtil.formatCompactAmount(total),
+                            menu.getResourceUnit()));
                     graphics.renderTooltip(Minecraft.getInstance().font, tooltip, Optional.empty(), x, y);
                     return;
                 }

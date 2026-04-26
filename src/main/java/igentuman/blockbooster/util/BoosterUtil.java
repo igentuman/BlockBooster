@@ -96,4 +96,28 @@ public class BoosterUtil {
             this.timeNanos = timeNanos;
         }
     }
+
+    /**
+     * Formats a resource amount into a compact human-readable string with SI suffix.
+     * Examples: 999 -> "999", 1500 -> "1.5K", 12_500_000 -> "12.5M", 3_400_000_000 -> "3.4G".
+     */
+    public static String formatCompactAmount(long amount) {
+        if (amount < 1000L) {
+            return Long.toString(amount);
+        }
+        String[] suffixes = {"K", "M", "G", "T", "P", "E"};
+        double value = amount;
+        int suffixIndex = -1;
+        while (value >= 1000.0 && suffixIndex < suffixes.length - 1) {
+            value /= 1000.0;
+            suffixIndex++;
+        }
+        if (value >= 100.0) {
+            return String.format("%.0f%s", value, suffixes[suffixIndex]);
+        }
+        if (value >= 10.0) {
+            return String.format("%.1f%s", value, suffixes[suffixIndex]);
+        }
+        return String.format("%.2f%s", value, suffixes[suffixIndex]);
+    }
 }
