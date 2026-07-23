@@ -4,7 +4,7 @@ import igentuman.blockbooster.tile.ITileBooster;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class BoosterPacket implements CustomPacketPayload {
 
-    public static final ResourceLocation ID = ResourceLocation.parse("blockbooster:booster_packet");
+    public static final Identifier ID = Identifier.parse("blockbooster:booster_packet");
     public static final Type<BoosterPacket> TYPE = new Type<>(ID);
 
     private BlockPos pos;
@@ -53,7 +53,7 @@ public class BoosterPacket implements CustomPacketPayload {
     }
 
     // NeoForge 1.21: CustomPacketPayload interface requires id() and type() methods
-    public @NotNull ResourceLocation id() {
+    public @NotNull Identifier id() {
         return ID;
     }
 

@@ -5,10 +5,9 @@ import igentuman.blockbooster.network.BoosterPacket;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
-
 public class Messages {
 
     // StreamCodec for serializing and deserializing BoosterPacket
@@ -24,10 +23,8 @@ public class Messages {
         registrar.playBidirectional(
                 BoosterPacket.TYPE,
                 BOOSTER_STREAM_CODEC,
-                new DirectionalPayloadHandler<>(
-                        Messages::handleClientPacket,
-                        Messages::handleServerPacket
-                )
+                Messages::handleServerPacket,
+                Messages::handleClientPacket
         );
     }
 
@@ -42,9 +39,9 @@ public class Messages {
         BoosterPacket.handle(packet, context);
     }
 
-    // Send packet to the server
+    // Send packet to the server (client-side only)
     public static void sendToServer(BoosterPacket message) {
-        PacketDistributor.sendToServer(message);
+        ClientPacketDistributor.sendToServer(message);
     }
 
     // Send packet to a specific player

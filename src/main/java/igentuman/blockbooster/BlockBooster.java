@@ -1,12 +1,11 @@
 package igentuman.blockbooster;
 
-import igentuman.blockbooster.command.CommandBoosterShowBlockId;
+import com.mojang.logging.LogUtils;
 import igentuman.blockbooster.config.CommonConfig;
 import igentuman.blockbooster.event.PlayerTickHandler;
-import igentuman.blockbooster.setup.ModSetup;
 import igentuman.blockbooster.setup.ClientSetup;
-import igentuman.blockbooster.setup.Registration;
 import igentuman.blockbooster.setup.Messages;
+import igentuman.blockbooster.setup.Registration;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -16,11 +15,7 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.slf4j.Logger;
-import com.mojang.logging.LogUtils;
-
-import static igentuman.blockbooster.setup.Registration.TABS;
 
 @Mod(BlockBooster.MODID)
 public class BlockBooster {
@@ -47,7 +42,7 @@ public class BlockBooster {
         modEventBus.addListener(Messages::register);
         
         // Client-only setup
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
             modEventBus.addListener(ClientSetup::init);
         }
         

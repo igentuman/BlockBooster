@@ -1,15 +1,13 @@
 {
   "required": true,
   "package": "igentuman.blockbooster.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "refmap": "blockbooster.refmap.json",
   "mixins": [
-    "RebindableTickingBlockEntityAccessor",
-    "BoundTickingBlockEntityAccessor"
+
   ],
-  "client": [],
   "injectors": {
-    "defaultRequire": 0
+    "defaultRequire": 1
   },
   "overwrites": {
     "requireAnnotations": true

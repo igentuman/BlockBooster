@@ -25,14 +25,14 @@ public class BoosterT1Container extends AbstractContainerMenu {
     public BoosterT1Container(int windowId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
         super(Registration.BLOCKBOOSTER_T1_CONTAINER.get(), windowId);
         Player player = playerInventory.player;
-        blockEntity = (TileBoosterT1)player.getCommandSenderWorld().getBlockEntity(buf.readBlockPos());
+        blockEntity = (TileBoosterT1)player.level().getBlockEntity(buf.readBlockPos());
         this.playerEntity = player;
     }
 
     // Constructor for server-side instantiation
     public BoosterT1Container(int windowId, Inventory playerInventory, BlockPos pos) {
         super(Registration.BLOCKBOOSTER_T1_CONTAINER.get(), windowId);
-        blockEntity = (TileBoosterT1)playerInventory.player.getCommandSenderWorld().getBlockEntity(pos);
+        blockEntity = (TileBoosterT1)playerInventory.player.level().getBlockEntity(pos);
         this.playerEntity = playerInventory.player;
     }
 

@@ -37,19 +37,13 @@ public class BlockBoosterT1 extends Block implements EntityBlock, IBoosterBlock 
 
     private static final VoxelShape RENDER_SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
-    public BlockBoosterT1() {
-        super(Properties.of()
-                .sound(SoundType.METAL)
-                .strength(2.0f)
-                .lightLevel(state -> state.getValue(BlockStateProperties.POWERED) ? 14 : 0)
-                .noOcclusion()
-                .requiresCorrectToolForDrops()
-        );
+    public BlockBoosterT1(Properties props) {
+        super(props);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public VoxelShape getOcclusionShape(BlockState state, BlockGetter reader, BlockPos pos) {
+    public VoxelShape getOcclusionShape(BlockState state) {
         return RENDER_SHAPE;
     }
 
@@ -99,7 +93,7 @@ public class BlockBoosterT1 extends Block implements EntityBlock, IBoosterBlock 
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof TileBoosterT1) {
                 if (player instanceof ServerPlayer serverPlayer) {

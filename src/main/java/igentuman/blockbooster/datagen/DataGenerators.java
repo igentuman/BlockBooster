@@ -1,6 +1,5 @@
 package igentuman.blockbooster.datagen;
 
-import igentuman.blockbooster.BlockBooster;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -17,23 +16,18 @@ import static igentuman.blockbooster.BlockBooster.MODID;
 public class DataGenerators {
 
     @SubscribeEvent
-    public static void gatherData(GatherDataEvent event) {
+    public static void gatherServerData(GatherDataEvent.Server event) {
         DataGenerator generator = event.getGenerator();
-        if (event.includeServer()) {
-            generator.addProvider(true, new BbRecipes(generator, event.getLookupProvider()));
-            generator.addProvider(event.includeServer(), new LootTableProvider(generator.getPackOutput(), Collections.emptySet(),
-                    List.of(new LootTableProvider.SubProviderEntry(paramSet -> new BoosterLootTable(), LootContextParamSets.BLOCK)),
-                    event.getLookupProvider()));
-            BlockTags blockTags = new BlockTags(generator, event.getLookupProvider(), event.getExistingFileHelper());
-            event.getGenerator().addProvider(
-                    event.includeServer(),
-                    blockTags
-            );
-        }
+        generator.addProvider(true, new BbRecipes.Runner(generator.getPackOutput(), event.getLookupProvider()));
+        generator.addProvider(true, new LootTableProvider(generator.getPackOutput(), Collections.emptySet(),
+                List.of(new LootTableProvider.SubProviderEntry(paramSet -> new BoosterLootTable(), LootContextParamSets.BLOCK)),
+                event.getLookupProvider()));
+        generator.addProvider(true, new BlockTags(generator, event.getLookupProvider()));
+    }
 
-
-        if (event.includeClient()) {
-            generator.addProvider(true, new BbLanguageProvider(generator, "en_us"));
-        }
+    @SubscribeEvent
+    public static void gatherClientData(GatherDataEvent.Client event) {
+        DataGenerator generator = event.getGenerator();
+        generator.addProvider(true, new BbLanguageProvider(generator, "en_us"));
     }
 }

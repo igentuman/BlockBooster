@@ -15,19 +15,19 @@ public class CapabilityEvents {
     @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
-                Capabilities.EnergyStorage.BLOCK,
+                Capabilities.Energy.BLOCK,
                 Registration.BLOCKBOOSTER_T1_BE.get(),
                 (be, side) -> be.energy
         );
 
         event.registerBlockEntity(
-                Capabilities.EnergyStorage.BLOCK,
+                Capabilities.Energy.BLOCK,
                 Registration.BLOCKBOOSTER_T2_BE.get(),
                 (be, side) -> be.energy
         );
 
         event.registerBlockEntity(
-                Capabilities.EnergyStorage.BLOCK,
+                Capabilities.Energy.BLOCK,
                 Registration.BLOCKBOOSTER_T3_BE.get(),
                 (be, side) -> be.energy
         );

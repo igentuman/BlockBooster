@@ -1,14 +1,15 @@
 package igentuman.blockbooster.util;
 
 import net.neoforged.neoforge.energy.EnergyStorage;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
-public class CustomEnergyStorage extends EnergyStorage {
+public class CustomEnergyStorage extends EnergyStorage implements EnergyHandler {
 
     public CustomEnergyStorage(int capacity, int maxTransfer) {
         super(capacity, maxTransfer, 0);
     }
 
-    // Override this to (for example) call setChanged() on your block entity
     protected void onEnergyChanged() {
     }
 
@@ -38,7 +39,7 @@ public class CustomEnergyStorage extends EnergyStorage {
     public void addEnergy(int energy) {
         this.energy += energy;
         if (this.energy > getMaxEnergyStored()) {
-            this.energy = getEnergyStored();
+            this.energy = getMaxEnergyStored();
         }
         onEnergyChanged();
     }
@@ -49,5 +50,26 @@ public class CustomEnergyStorage extends EnergyStorage {
             this.energy = 0;
         }
         onEnergyChanged();
+    }
+
+    // EnergyHandler implementation
+    @Override
+    public long getAmountAsLong() {
+        return getEnergyStored();
+    }
+
+    @Override
+    public long getCapacityAsLong() {
+        return getMaxEnergyStored();
+    }
+
+    @Override
+    public int insert(int amount, TransactionContext ctx) {
+        return receiveEnergy(amount, false);
+    }
+
+    @Override
+    public int extract(int amount, TransactionContext ctx) {
+        return extractEnergy(amount, false);
     }
 }

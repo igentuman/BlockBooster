@@ -6,6 +6,8 @@ import igentuman.blockbooster.util.CustomEnergyStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class TileBoosterT2 extends AbstractBooster {
 
@@ -13,7 +15,7 @@ public class TileBoosterT2 extends AbstractBooster {
     public int fePerTick = CommonConfig.GENERAL.t2_fe_per_tick.get();
 
     public TileBoosterT2(BlockPos pos, BlockState state) {
-        super(Registration.BLOCKBOOSTER_T2_BE.get(), pos, state);
+        super(igentuman.blockbooster.setup.Registration.BLOCKBOOSTER_T2_BE.get(), pos, state);
     }
 
     @Override
@@ -32,33 +34,23 @@ public class TileBoosterT2 extends AbstractBooster {
     }
 
     @Override
-    protected void saveBoosterData(CompoundTag tag) {
-        // Directly save energy value instead of using serializeNBT
-        tag.putInt("Energy", energy.getEnergyStored());
-        
-        // Save boost flags for direction-based indexing
-        CompoundTag flagsTag = new CompoundTag();
+    protected void saveBoosterData(ValueOutput output) {
+        output.putInt("Energy", energy.getEnergyStored());
+        ValueOutput flagsOut = output.child("boostFlags");
         for (Long key : boostFlags.keySet()) {
-            flagsTag.putBoolean(String.valueOf(key), boostFlags.get(key));
+            flagsOut.putBoolean(String.valueOf(key), boostFlags.get(key));
         }
-        tag.put("boostFlags", flagsTag);
     }
 
     @Override
-    protected void loadBoosterData(CompoundTag tag) {
-        // Directly load energy value instead of using deserializeNBT
-        if (tag.contains("Energy")) {
-            energy.setEnergy(tag.getInt("Energy"));
-        }
-        
-        // Load boost flags
-        if (tag.contains("boostFlags")) {
-            boostFlags.clear();
-            CompoundTag flagsTag = tag.getCompound("boostFlags");
-            for (String key : flagsTag.getAllKeys()) {
-                boostFlags.put(Long.parseLong(key), flagsTag.getBoolean(key));
+    protected void loadBoosterData(ValueInput input) {
+        energy.setEnergy(input.getIntOr("Energy", 0));
+        boostFlags.clear();
+        input.read("boostFlags", CompoundTag.CODEC).ifPresent(flagsTag -> {
+            for (String key : flagsTag.keySet()) {
+                boostFlags.put(Long.parseLong(key), flagsTag.getBooleanOr(key, false));
             }
-        }
+        });
     }
 
     public int getEnergy() {

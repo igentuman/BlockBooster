@@ -4,7 +4,6 @@ import igentuman.blockbooster.setup.Registration;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -12,8 +11,8 @@ import static igentuman.blockbooster.BlockBooster.MODID;
 
 public class BlockTags extends BlockTagsProvider {
 
-    public BlockTags(DataGenerator generator, CompletableFuture<HolderLookup.Provider> lookupProvider,ExistingFileHelper existingFileHelper) {
-        super(generator.getPackOutput(), lookupProvider, MODID, existingFileHelper);
+    public BlockTags(DataGenerator generator, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+        super(generator.getPackOutput(), lookupProvider, MODID);
     }
 
     @Override

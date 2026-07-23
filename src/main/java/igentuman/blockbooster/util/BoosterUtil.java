@@ -5,7 +5,6 @@ package igentuman.blockbooster.util;
 // import igentuman.blockbooster.mixin.mekanism.TileEntityMekanismInvoker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -22,13 +21,10 @@ public class BoosterUtil {
     public static HashSet<Block> getBlocksByTagKey(String key)
     {
         HashSet<Block> tmp = new HashSet<>();
-        TagKey<Block> tag = TagKey.create(BuiltInRegistries.BLOCK.key(), ResourceLocation.tryParse(key));
-        // NeoForge 1.21: getTag returns Named<Block> holders, need to get the actual value
-        BuiltInRegistries.BLOCK.getTag(tag).ifPresent(holders -> {
-            for(var holder : holders) {
-                tmp.add(holder.value());
-            }
-        });
+        TagKey<Block> tag = TagKey.create(BuiltInRegistries.BLOCK.key(), net.minecraft.resources.Identifier.tryParse(key));
+        for (var holder : BuiltInRegistries.BLOCK.getTagOrEmpty(tag)) {
+            tmp.add(holder.value());
+        }
         return tmp;
     }
 
@@ -80,13 +76,6 @@ public class BoosterUtil {
                 // Mekanism integration disabled - waiting for NeoForge 1.21 compatibility
                 // if(isMekanismLoaded() && be instanceof mekanism.common.tile.base.TileEntityMekanism mekTile) {
                 //     ((TileEntityMekanismInvoker)mekTile).onServerTick();
-                //     continue;
-                // }
-                // Masterful Machinery integration disabled - waiting for NeoForge 1.21 compatibility
-                // if(isMMLoaded() && be instanceof io.ticticboom.mods.mm.controller.machine.register.MachineControllerBlockEntity mmTile) {
-                //     if(((MachineControllerBlockEntityInvoker)mmTile).getCurrentRecipe() != null) {
-                //         ((MachineControllerBlockEntityInvoker)mmTile).tickRecipe();
-                //     }
                 //     continue;
                 // }
 

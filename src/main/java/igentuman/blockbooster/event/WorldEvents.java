@@ -25,7 +25,9 @@ public class WorldEvents {
         }
         if(!placed) {
             event.setCanceled(true);
-            event.getEntity().sendSystemMessage(Component.translatable("booster.limit_message", GENERAL.boosters_per_chunk.get()));
+            if (event.getEntity() instanceof net.minecraft.world.entity.player.Player player) {
+                player.sendSystemMessage(Component.translatable("booster.limit_message", GENERAL.boosters_per_chunk.get()));
+            }
         }
     }
 

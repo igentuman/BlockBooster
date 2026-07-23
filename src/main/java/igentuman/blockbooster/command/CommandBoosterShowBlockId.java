@@ -51,7 +51,7 @@ public class CommandBoosterShowBlockId {
         Vec3 headVec = getHeadVec(player);
         Vec3 lookVec = player.getViewVector(1);
         Vec3 endVec = headVec.add(lookVec.x * reach, lookVec.y * reach, lookVec.z * reach);
-        return player.getCommandSenderWorld().clip(new ClipContext(headVec, endVec, ClipContext.Block.OUTLINE, fluidMode, player));
+        return player.level().clip(new ClipContext(headVec, endVec, ClipContext.Block.OUTLINE, fluidMode, player));
     }
 
     private static Vec3 getHeadVec(Player player) {

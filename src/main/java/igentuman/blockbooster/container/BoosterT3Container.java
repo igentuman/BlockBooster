@@ -25,7 +25,7 @@ public class BoosterT3Container extends AbstractContainerMenu {
         super(Registration.BLOCKBOOSTER_T3_CONTAINER.get(), windowId);
         Player player = playerInventory.player;
         BlockPos pos = buf.readBlockPos();
-        blockEntity = (TileBoosterT3)player.getCommandSenderWorld().getBlockEntity(pos);
+        blockEntity = (TileBoosterT3)player.level().getBlockEntity(pos);
         this.playerEntity = player;
     }
 
@@ -33,7 +33,7 @@ public class BoosterT3Container extends AbstractContainerMenu {
     public BoosterT3Container(int windowId, Inventory playerInventory, BlockPos pos) {
         super(Registration.BLOCKBOOSTER_T3_CONTAINER.get(), windowId);
         Player player = playerInventory.player;
-        blockEntity = (TileBoosterT3)player.getCommandSenderWorld().getBlockEntity(pos);
+        blockEntity = (TileBoosterT3)player.level().getBlockEntity(pos);
         this.playerEntity = player;
     }
 

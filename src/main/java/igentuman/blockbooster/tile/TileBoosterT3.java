@@ -6,10 +6,9 @@ import igentuman.blockbooster.util.BoosterUtil;
 import igentuman.blockbooster.util.CustomEnergyStorage;
 import igentuman.blockbooster.util.WorldUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,7 +21,7 @@ public class TileBoosterT3 extends AbstractBooster {
     public int fePerTick = CommonConfig.GENERAL.t3_fe_per_tick.get();
 
     public TileBoosterT3(BlockPos pos, BlockState state) {
-        super(Registration.BLOCKBOOSTER_T3_BE.get(), pos, state);
+        super(igentuman.blockbooster.setup.Registration.BLOCKBOOSTER_T3_BE.get(), pos, state);
     }
 
     @Override
@@ -109,58 +108,38 @@ public class TileBoosterT3 extends AbstractBooster {
     }
 
     @Override
-    protected void saveBoosterData(CompoundTag tag) {
-        // Directly save energy value instead of using serializeNBT
-        tag.putInt("Energy", energy.getEnergyStored());
+    protected void saveBoosterData(ValueOutput output) {
+        output.putInt("Energy", energy.getEnergyStored());
 
-        // Save boost flags
-        ListTag flagsList = new ListTag();
+        ValueOutput.ValueOutputList flagsList = output.childrenList("boostFlags");
         for (Long key : boostFlags.keySet()) {
-            CompoundTag flagTag = new CompoundTag();
-            flagTag.putLong("posKey", key);
-            flagTag.putBoolean("enabled", boostFlags.get(key));
-            flagsList.add(flagTag);
+            ValueOutput flagOut = flagsList.addChild();
+            flagOut.putLong("posKey", key);
+            flagOut.putBoolean("enabled", boostFlags.get(key));
         }
-        tag.put("boostFlags", flagsList);
 
-        // Save boost times
-        ListTag timesList = new ListTag();
+        ValueOutput.ValueOutputList timesList = output.childrenList("boostTimes");
         for (Long key : boostTimes.keySet()) {
-            CompoundTag timeTag = new CompoundTag();
-            timeTag.putLong("posKey", key);
-            timeTag.putLong("time", boostTimes.get(key));
-            timesList.add(timeTag);
+            ValueOutput timeOut = timesList.addChild();
+            timeOut.putLong("posKey", key);
+            timeOut.putLong("time", boostTimes.get(key));
         }
-        tag.put("boostTimes", timesList);
     }
 
     @Override
-    protected void loadBoosterData(CompoundTag tag) {
-        // Directly load energy value instead of using deserializeNBT
-        if (tag.contains("Energy")) {
-            energy.setEnergy(tag.getInt("Energy"));
+    protected void loadBoosterData(ValueInput input) {
+        energy.setEnergy(input.getIntOr("Energy", 0));
+
+        boostFlags.clear();
+        for (ValueInput flagIn : input.childrenListOrEmpty("boostFlags")) {
+            long key = flagIn.getLongOr("posKey", 0L);
+            boostFlags.put(key, flagIn.getBooleanOr("enabled", false));
         }
 
-        // Load boost flags
-        if (tag.contains("boostFlags")) {
-            boostFlags.clear();
-            ListTag flagsList = tag.getList("boostFlags", Tag.TAG_COMPOUND);
-            for (int i = 0; i < flagsList.size(); i++) {
-                CompoundTag flagTag = flagsList.getCompound(i);
-                long key = flagTag.contains("posKey") ? flagTag.getLong("posKey") : flagTag.getInt("index");
-                boostFlags.put(key, flagTag.getBoolean("enabled"));
-            }
-        }
-
-        // Load boost times
-        if (tag.contains("boostTimes")) {
-            boostTimes.clear();
-            ListTag timesList = tag.getList("boostTimes", Tag.TAG_COMPOUND);
-            for (int i = 0; i < timesList.size(); i++) {
-                CompoundTag timeTag = timesList.getCompound(i);
-                long key = timeTag.contains("posKey") ? timeTag.getLong("posKey") : timeTag.getInt("index");
-                boostTimes.put(key, timeTag.getLong("time"));
-            }
+        boostTimes.clear();
+        for (ValueInput timeIn : input.childrenListOrEmpty("boostTimes")) {
+            long key = timeIn.getLongOr("posKey", 0L);
+            boostTimes.put(key, timeIn.getLongOr("time", 0L));
         }
     }
 

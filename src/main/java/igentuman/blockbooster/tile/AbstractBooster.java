@@ -9,8 +9,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -279,12 +280,12 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
     /**
      * Save booster-specific data to NBT
      */
-    protected abstract void saveBoosterData(CompoundTag tag);
+    protected abstract void saveBoosterData(ValueOutput output);
 
     /**
      * Load booster-specific data from NBT
      */
-    protected abstract void loadBoosterData(CompoundTag tag);
+    protected abstract void loadBoosterData(ValueInput input);
 
     @Override
     public void tickClient() {
@@ -322,9 +323,7 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
     // NBT Serialization
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag tag = super.getUpdateTag(registries);
-        saveAdditional(tag, registries);
-        return tag;
+        return saveWithoutMetadata(registries);
     }
 
     @Nullable
@@ -334,11 +333,11 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        isDisabled = tag.getBoolean("isDisabled");
-        isLagging = tag.getBoolean("isLagging");
-        loadBoosterData(tag);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        isDisabled = input.getBooleanOr("isDisabled", false);
+        isLagging = input.getBooleanOr("isLagging", false);
+        loadBoosterData(input);
         if(attachedBlocks.size() != boostFlags.size()) {
             attachedBlocks.clear();
             for(Long key: boostFlags.keySet()) {
@@ -347,13 +346,12 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
         }
     }
 
-    // NeoForge 1.21: BlockEntity uses saveAdditional for writing data with HolderLookup.Provider
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putBoolean("isDisabled", isDisabled);
-        tag.putBoolean("isLagging", isLagging);
-        saveBoosterData(tag);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.putBoolean("isDisabled", isDisabled);
+        output.putBoolean("isLagging", isLagging);
+        saveBoosterData(output);
     }
 
 

@@ -43,7 +43,7 @@ public abstract class TickingBlockEntityMixin implements BlockEntityTickDataAcce
         }
         
         Level level = blockEntity.getLevel();
-        if (level == null || level.isClientSide) {
+        if (level == null || level.isClientSide()) {
             return;
         }
         
@@ -54,7 +54,7 @@ public abstract class TickingBlockEntityMixin implements BlockEntityTickDataAcce
     private void afterTick(CallbackInfo ci) {
         if (blockEntity != null && world_balance$tickStartTime > 0) {
             Level level = blockEntity.getLevel();
-            if (level != null && !level.isClientSide) {
+            if (level != null && !level.isClientSide()) {
                 long endTime = System.nanoTime();
                 double tickTimeMs = (endTime - world_balance$tickStartTime) / 1_000_000.0;
                 long count = world_balance$tickCount;
