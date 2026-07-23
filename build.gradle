@@ -39,7 +39,7 @@ neoForge {
         }
 
         data {
-            clientData()
+            serverData()
 
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
@@ -99,8 +99,10 @@ dependencies {
     // JEI
    // compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
    // compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
-    //localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
-    
+    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    localRuntime "curse.maven:applied-energistics-2-223794:8257570"
+    localRuntime "curse.maven:guideme-1173950:8204880"
+
     // Mekanism - update when NeoForge version is available
     if (project.hasProperty('mekanism_version')) {
         implementation "mekanism:Mekanism:${mekanism_version}"

@@ -23,11 +23,6 @@ public class DataGenerators {
                 List.of(new LootTableProvider.SubProviderEntry(paramSet -> new BoosterLootTable(), LootContextParamSets.BLOCK)),
                 event.getLookupProvider()));
         generator.addProvider(true, new BlockTags(generator, event.getLookupProvider()));
-    }
-
-    @SubscribeEvent
-    public static void gatherClientData(GatherDataEvent.Client event) {
-        DataGenerator generator = event.getGenerator();
         generator.addProvider(true, new BbLanguageProvider(generator, "en_us"));
     }
 }

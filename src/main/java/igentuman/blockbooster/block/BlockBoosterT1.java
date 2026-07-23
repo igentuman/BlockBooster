@@ -12,10 +12,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -47,12 +44,11 @@ public class BlockBoosterT1 extends Block implements EntityBlock, IBoosterBlock 
         return RENDER_SHAPE;
     }
 
-    // Note: appendHoverText doesn't override Block method in NeoForge 1.21
-    // This method is called through Item.appendHoverText instead
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter reader, List<Component> list, TooltipFlag flags) {
+    @Override
+    public void appendBoosterTooltip(List<Component> list) {
         list.add(Component.translatable("hint.booster_t1_descr").withStyle(ChatFormatting.BLUE));
-        list.add(Component.translatable("hint.booster_boost_rate", CommonConfig.GENERAL.t1_boost_rate.get()).withStyle(ChatFormatting.BLUE));
-        list.add(Component.translatable("hint.booster_fe_tick", CommonConfig.GENERAL.t1_fe_per_tick.get()).withStyle(ChatFormatting.BLUE));
+        list.add(Component.translatable("hint.booster_boost_rate", CommonConfig.GENERAL.t1_boost_rate.get()).withStyle(ChatFormatting.GOLD));
+        list.add(Component.translatable("hint.booster_fe_tick", CommonConfig.GENERAL.t1_fe_per_tick.get()).withStyle(ChatFormatting.GOLD));
     }
 
     @Nullable

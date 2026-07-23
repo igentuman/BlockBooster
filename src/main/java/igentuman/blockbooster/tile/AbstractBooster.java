@@ -341,7 +341,8 @@ public abstract class AbstractBooster extends BlockEntity implements BlockEntity
         if(attachedBlocks.size() != boostFlags.size()) {
             attachedBlocks.clear();
             for(Long key: boostFlags.keySet()) {
-                attachedBlocks.put(key, level.getBlockEntity(BlockPos.of(key)));
+                assert getLevel() != null;
+                attachedBlocks.put(key, getLevel().getBlockEntity(BlockPos.of(key)));
             }
         }
     }

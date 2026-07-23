@@ -3,18 +3,10 @@
   "category": "misc",
   "group": "blockbooster",
   "key": {
-    "#": {
-      "tag": "c:ingots/iron"
-    },
-    "c": {
-      "item": "minecraft:clock"
-    },
-    "m": {
-      "tag": "c:gems/emerald"
-    },
-    "x": {
-      "tag": "c:dusts/redstone"
-    }
+    "#": "#c:ingots/iron",
+    "c": "minecraft:clock",
+    "m": "#c:gems/emerald",
+    "x": "#c:dusts/redstone"
   },
   "pattern": [
     "m#m",
@@ -22,7 +14,6 @@
     "#x#"
   ],
   "result": {
-    "count": 1,
     "id": "blockbooster:booster_t1"
   }
 }

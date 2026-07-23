@@ -37,6 +37,7 @@ public class BoosterT2Screen extends AbstractContainerScreen<BoosterT2Container>
         drawEnergyBar(graphics);
         drawAttachedBlocks(graphics);
         drawTPSIndicator(graphics);
+        super.extractRenderState(graphics, pMouseX, pMouseY, pPartialTick);
     }
 
     @Override

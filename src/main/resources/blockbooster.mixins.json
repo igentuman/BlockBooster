@@ -4,7 +4,6 @@
   "compatibilityLevel": "JAVA_25",
   "refmap": "blockbooster.refmap.json",
   "mixins": [
-
   ],
   "injectors": {
     "defaultRequire": 1
